@@ -1,0 +1,11 @@
+package com.teammander.salamander.transaction;
+
+import java.util.Date;
+
+public class PrecinctBoundaryTransaction extends Transaction {
+
+    public PrecinctBoundaryTransaction(int tid, String before, String after, String comment, String changedRegion, Date timeStamp) {
+        super(tid, before, after, comment, changedRegion, timeStamp);
+    }
+
+}

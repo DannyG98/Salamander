@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Manders</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+
+        <!--Leaflet-->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+        integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+        crossorigin=""></script>
+
+        <!--Angular-->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+        <!--jQuery CDN-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+        <!--Bootstrap CDNs-->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js" 
+        integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" href="styles/style.css">
+        <script src="scripts/sidebar.js"></script>
+
+    </head>
+
+    <body>
+        <div id="wrapper">
+            <div id="toolbar">
+                <div class="navbar navbar-dark bg-dark">
+                    <a class="navbar-brand">Team Mander</a>
+                    <div id="tool-wrapper">
+                    <a id="insert-precinct-btn" class="btn btn-light">Insert Precinct</a>
+                    <a id="insert-comment-btn" class="btn btn-light">Comment</a>
+                    <a id="reset-btn" class="btn btn-light">Reset</a>
+                    </div>
+                    <a id="collapse-menu-btn" class="btn btn-dark">Menu</a>
+                </div>
+            </div>
+
+            <!--Main body of website-->
+            <div id="content-wrapper" class="overflow-auto">
+                    <div id="mapid" class="mi"></div>
+    
+                    <div id="sidebar" class="sd">
+                        <div class="sidebar-header overflow-hidden">
+                        <h3 id="state-name">Colorado</h3>
+                        </div>
+                        <div class="sidebar-contents overflow-auto">
+                        <ul class="init-menu">
+                            <h3 id="state-demographic" class="menu-tab-headers sidemenu-items">Demographic Data</h3>
+                            <li>
+                                <a href="#" data-toggle="collapse" data-target="#data-1">2000</a>
+                                <div class="info-field collapse data-info" id="data-1">
+                                    Age, median: 24<br />
+                                    Male, %: 48<br />
+                                    unemployed, %: 15<br />
+                                    White, %: 76.5<br />
+                                    African American, %: 13.5<br />
+                                    Hispanic, %: 5<br />
+                                    Other, %: 5
+                                </div>
+                            </li>
+                            <li>
+                                <a href="#" data-toggle="collapse" data-target="#data-2">2005</a>
+                                <div class="info-field collapse data-info" id="data-2">
+                                    Age, median: 25<br />
+                                    Male, %: 50<br />
+                                    unemployed, %: 10<br />
+                                    White, %: 76.5<br />
+                                    African American, %: 13.5<br />
+                                    Hispanic, %: 5<br />
+                                    Other, %: 5
+                                </div>
+                            </li>
+                            <li>
+                                <a href="#" data-toggle="collapse" data-target="#data-3">2010</a>
+                                <div class="info-field collapse data-info" id="data-3">
+                                    Age, median: 25<br />
+                                    Male, %: 50<br />
+                                    unemployed, %: 10<br />
+                                    White, %: 70<br />
+                                    African American, %: 10<br />
+                                    Hispanic, %: 10<br />
+                                    Other, %: 10
+                                </div>
+                            </li>
+                            <li>
+                                <h3 id="state-election" class="menu-tab-headers sidemenu-items">Election Data</h3>
+                                <li>
+                                    <a href="#" data-toggle="collapse" data-target="#data-1">2000</a>
+                                    <div class="info-field collapse data-info" id="data-1">
+                                        Democrats, %: 40<br />
+                                        Republicans, %: 40<br />
+                                        Other, %: 20
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="#" class="year-label" data-toggle="collapse" data-target="#data-2">2005</a>
+                                    <div class="info-field collapse data-info" id="data-2">
+                                        Democrats, %: 35<br />
+                                        Republicans, %: 45<br />
+                                        Other, %: 20
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="#" data-toggle="collapse" data-target="#data-3">2010</a>
+                                    <div class="info-field collapse data-info" id="data-3">
+                                        Democrats, %: 50<br />
+                                        Republicans, %: 30<br />
+                                        Other, %: 20
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <a href='#' class="init-menu-item sidemenu-items" id="error-dropdwn" data-toggle="collapse" data-target="#error-tab">Errors</a>
+                                    <div class="info-field collapse data-info" id="error-tab">
+                                        <ul id="error-list"></ul>
+                                    </div>
+                                    </li>
+                                </li>
+                                                        <!-- need to add in: disable buttons unless valid neighbor precincts are chosen-->
+                                <li>
+                                    <a href="#" class="init-menu-item sidemenu-items" id="precinct-dropdown" data-toggle="collapse" data-target="#precinct-merge-tab">Combine Precincts</a>
+                                    <div class="info-field collapse" id="precinct-merge-tab">
+                                        
+                                        <div class="centerize">
+                                            <select id="precinct-select1">
+                                            <option> Precinct</option>
+                                            <option value="Precinct 1">Precinct 1</option>
+                                            <option value="Precinct 2">Precinct 2</option>
+                                            <option value="Precinct 3">Precinct 3</option>
+                                            <option value="Precinct 4">Precinct 4</option>
+                                            <option value="Precinct 5">Precinct 5</option>
+                                            <option value="Precinct 6">Precinct 6</option>
+                                            </select>
+                                            <select id="precinct-select2">
+                                            <option>Precinct</option>
+                                            <option value="Precinct 1">Precinct 1</option>
+                                            <option value="Precinct 2">Precinct 2</option>
+                                            <option value="Precinct 3">Precinct 3</option>
+                                            <option value="Precinct 4">Precinct 4</option>
+                                            <option value="Precinct 5">Precinct 5</option>
+                                            <option value="Precinct 6">Precinct 6</option>
+                                        </select>
+                                            <button type="button" id="precinct-merge-button" onclick="handle_CombinePrecinct_Click()" class="btn btn-secondary btn-sm">Confirm</button>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                        <a href="#" data-toggle="collapse"class="menu-tab-headers sidemenu-items" data-target="#source-data">Sources</a>
+                                        <div class="info-field collapse data-info" id="source-data">
+                                                <a href=https://www2.census.gov/census_2010/03-Demographic_Profile_with_SF1geos/0README_DPSFwSF1geos.pdf class="errlist-item" style="color:black" target="_blank">Demographic Data</a>
+                                                <a href= "https://github.com/loganpowell/census-geojson" class="errlist-item" style="color:black" target="_blank">Geographic Data</a>
+                                                <a href= "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NH5S2I" class="errlist-item" style="color:black" target="_blank">Election Data</a>
+                                        </div>
+                                </li>
+
+                                
+                                
+                                
+                        </ul>
+                        </div>
+                    </div>
+    
+                </div>
+                <div id="done-edit-btn" style="display:none" class="btn btn-dark">Done</div>
+            </div>
+
+        </div>
+    </body>
+
+    <script src="scripts/map.js"></script>
+</html>
+    
