@@ -574,7 +574,7 @@ var mymap = L.map('mapid',
     minZoom:5,
     maxZoom: 15,
     //if map is dragged outside of United states, then it moves view back to U.S
-    maxBounds:[[27.761329874505233,-128.05664062500003], [49.55372551347579, -64.77539062500001]]
+    maxBounds:[[20.396308, -135.848974], [49.384358, -55.885444]]
     }).setView(usaCoords, 5);
 
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -582,6 +582,7 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     id: 'mapbox/streets-v11',
     accessToken: 'pk.eyJ1IjoiZGFuZzk4IiwiYSI6ImNrNmlsbGZqNTAyYzgzZHFtcjczMmI2Z3EifQ.N6aBfLfiwLfyTn_Iz0TvIw'
 }).addTo(mymap);
+
 
 
 mymap.on('click', function(e) {
@@ -696,7 +697,7 @@ function resetHighlight(e) {
    
 }
 
-/* Handles Clicks on States */
+/* Handles Clicks onS States */
 function onClickHandler(e) {
     zoomToFeature(e);
     stateChangeHandler(e.target.feature.properties.name);
@@ -735,7 +736,7 @@ function removeCircles() {
   }
 }
 
-function panMap(long, lat, zoom) {
+function panMap(lat, long, zoom) {
   mymap.setView([lat, long], zoom);
 }
 

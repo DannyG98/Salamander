@@ -129,3 +129,4 @@ function displayErrors(json) {
 function stateChangeHandler(stateName) {
     $("#state-name").text(stateName);
 }
+

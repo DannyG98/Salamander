@@ -11,6 +11,9 @@
         <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
         integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
         crossorigin=""></script>
+        <!--Leaflet Geoman-->
+        <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
+        <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
 
         <!--Angular-->
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
@@ -33,11 +36,54 @@
         <div id="wrapper">
             <div id="toolbar">
                 <div class="navbar navbar-dark bg-dark">
-                    <a class="navbar-brand">Team Mander</a>
-                    <div id="tool-wrapper">
-                    <a id="insert-precinct-btn" class="btn btn-light">Insert Precinct</a>
-                    <a id="insert-comment-btn" class="btn btn-light">Comment</a>
-                    <a id="reset-btn" class="btn btn-light">Reset</a>
+                    <div class="btn-group">
+                        <a class="navbar-brand">Team Mander</a>
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-primary dropdown-toggle mr-1" data-toggle="dropdown">
+                              States
+                            </button>
+                            <div id="states" class="dropdown-menu">
+                              <a class="dropdown-item" href="#">Colorado</a>
+                              <a class="dropdown-item" href="#">Florida</a>
+                              <a class="dropdown-item" href="#">Maryland</a>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-primary dropdown-toggle mr-1" data-toggle="dropdown">
+                              Elections
+                            </button>
+                            <div id="elections" class="dropdown-menu">
+                              <a class="dropdown-item active" href="#">Election1</a>
+                              <a class="dropdown-item" href="#">Election2</a>
+                              <a class="dropdown-item" href="#">Election3</a>
+                              <a class="dropdown-item" href="#">Election4</a>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-primary dropdown-toggle mr-1" data-toggle="dropdown">
+                              Filters
+                            </button>
+                            <div id="filters" class="dropdown-menu">
+                              <a class="dropdown-item" href="#">Precincts</a>
+                              <a class="dropdown-item" href="#">National Parks</a>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-primary dropdown-toggle mr-1" data-toggle="dropdown">
+                              Tools
+                            </button>
+                            <div id="tools" class="dropdown-menu">
+                              <a id="insert" class="dropdown-item" href="#">Insert Precinct</a>
+                              <a id="merge" class="dropdown-item" href="#">Merge Precinct</a>
+                              <a id="modify" class="dropdown-item" href="#">Modify Precinct</a>
+                              <a id="create" class="dropdown-item" href="#">Create Comment</a>
+                              <a id="reset" class="dropdown-item" href="#">Reset Map</a>
+                            </div>
+                        </div>
+                        <div id="tool-wrapper">
+                            <a id="done-btn" style="display:none" class="btn btn-light">Done</a>
+                            <a id="cancel-btn" style="display:none" class="btn btn-light">Cancel</a>
+                            </div>
                     </div>
                     <a id="collapse-menu-btn" class="btn btn-dark">Menu</a>
                 </div>
@@ -46,7 +92,6 @@
             <!--Main body of website-->
             <div id="content-wrapper" class="overflow-auto">
                     <div id="mapid" class="mi"></div>
-    
                     <div id="sidebar" class="sd">
                         <div class="sidebar-header overflow-hidden">
                         <h3 id="state-name">Colorado</h3>
@@ -174,7 +219,7 @@
 
         </div>
     </body>
-
-    <script src="scripts/map.js"></script>
+    <script src="scripts/toolbar.js"></script>
+    <script src="scripts/leafletmap.js"></script>
 </html>
     
