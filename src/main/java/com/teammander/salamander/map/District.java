@@ -11,8 +11,8 @@ public class District extends Region{
     State state;
     Set<Precinct> precinct;
 
-    public District(String canonName, String displayName, List<Coordinate> boundary, DemographicData demoData, Election elecData, State aState, Set<Precinct> aPrecinct) {
-        super(canonName, displayName, boundary, demoData, elecData);
+    public District(String canonName, String displayName, List<Polygon> shape, DemographicData demoData, Election elecData, State aState, Set<Precinct> aPrecinct) {
+        super(canonName, displayName, shape, demoData, elecData);
         state= aState;
         precinct= aPrecinct;
     }

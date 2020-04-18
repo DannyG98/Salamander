@@ -10,8 +10,8 @@ public class State extends Region {
 
     Set<District> district;
 
-    public State(String canonName, String displayName, List<Coordinate> boundary, DemographicData demoData, Election elecData, Set<District> aDistrict) {
-        super(canonName, displayName, boundary, demoData, elecData);
+    public State(String canonName, String displayName, List<Polygon> shape, DemographicData demoData, Election elecData, Set<District> aDistrict) {
+        super(canonName, displayName, shape, demoData, elecData);
         district= aDistrict;
     }
 

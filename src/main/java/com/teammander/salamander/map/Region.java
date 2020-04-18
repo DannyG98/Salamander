@@ -7,14 +7,14 @@ import java.util.List;
 public abstract class Region {
     String canonName;
     String displayName;
-    List<Coordinate> boundary;
+    List<Polygon> shape;
     DemographicData demoData;
     Election elecData;
 
-    public Region(String canonName, String displayName, List<Coordinate> boundary, DemographicData demoData, Election elecData) {
+    public Region(String canonName, String displayName, List<Polygon> shape, DemographicData demoData, Election elecData) {
         this.canonName = canonName;
         this.displayName = displayName;
-        this.boundary = boundary;
+        this.shape = shape;
         this.demoData = demoData;
         this.elecData = elecData;
     }
@@ -35,12 +35,12 @@ public abstract class Region {
         this.displayName = displayName;
     }
 
-    public List<Coordinate> getBoundary() {
-        return boundary;
+    public List<Polygon> getShape() {
+        return this.shape;
     }
 
-    public void setBoundary(List<Coordinate> boundary) {
-        this.boundary = boundary;
+    public void setShape(List<Polygon> shape) {
+        this.shape = shape;
     }
 
     public DemographicData getDemoData() {

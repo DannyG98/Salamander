@@ -25,8 +25,8 @@ public class StateService {
         return states;
     }
 
-    public String getState(String stateCanonName) {
-        return null;
+    public State getState(String stateCanonName) {
+        return getSr().getState(stateCanonName);
     }
 
     public void updateState() {
