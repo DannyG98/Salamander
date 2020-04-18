@@ -21,7 +21,7 @@ var Colorado_errs = [
 
 $(document).ready(function () {
 
-    $("#collapse-menu-btn").click( function() 
+    $("#collapse-menu-btn").click( function()
     {
         $("#mapid").toggleClass('showSide');
         $("#sidebar").toggleClass('showSide');
