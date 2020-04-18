@@ -14,7 +14,7 @@
         <!--Leaflet Geoman-->
         <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
         <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
-        
+
         <!--jQuery CDN-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
@@ -61,8 +61,9 @@
                               Filters
                             </button>
                             <div id="filters" class="dropdown-menu">
-                              <a class="dropdown-item" href="#">Precincts</a>
-                              <a class="dropdown-item" href="#">National Parks</a>
+                              <a id="district-filter" class="dropdown-item active" href="#">District Boundaries</a>
+                              <a id="precinct-filter" class="dropdown-item active" href="#">Precinct Boundaries</a>
+                              <a id="national-parks-filter" class="dropdown-item active" href="#">National Parks</a>
                             </div>
                         </div>
                         <div class="dropdown">

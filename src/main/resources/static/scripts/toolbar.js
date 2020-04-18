@@ -89,7 +89,7 @@ var ToolBar = {
                     newPrecinctCoordinates.push([coordinatesList[i].lng, coordinatesList[i].lat])
                 };
                 
-                // Add new precinct boundaries to a temporary data structure to display
+                // Add new precinct boundaries to a temporary variable
                 LeafletMap.tempPrecinctBoundaries.push( 
                 {
                     "type": "Feature",
@@ -164,50 +164,13 @@ var ToolBar = {
 
     editButtonHandler: function() {
         $('#done-btn').click( function() {
+            // Update the PrecinctData on client
+            ToolBar.updatePrecinctData();
             // TODO
             // Send updated data to server
 
-            switch(LeafletMap.currentMode) {
-                case LeafletMap.modes.insert: 
-                    // Add all the new precincts to the current list of precincts
-                    for (var i = 0; i < LeafletMap.tempPrecinctBoundaries.length; i++) {
-                        coloradoPrecincts.push(LeafletMap.tempPrecinctBoundaries[i]);
-                    }
-                    // Update the GUI
-                    if (LeafletMap.map.hasLayer(LeafletMap.precinctGeojson)) { 
-                        LeafletMap.map.removeLayer(LeafletMap.precinctGeojson); 
-                        LeafletMap.precinctGeojson = L.geoJson(coloradoPrecincts, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
-                    }
-                    break;
-                case LeafletMap.modes.modify:
-                    // Replace precinctCoordinates with the new ones from the precinctGeojson layer
-                    for (var i in LeafletMap.precinctGeojson._layers) {
-                        var precinctName = LeafletMap.precinctGeojson._layers[i].feature.properties.name;
-                        for (var j in coloradoPrecincts) {
-                            if (precinctName == coloradoPrecincts[j].properties.name) {
-                                console.log("Update the coordinates");
-                                var newPrecinctCoordinates = [];
-                                var coordinatesList = LeafletMap.precinctGeojson._layers[i]._latlngs[0];
-                                for (var k in coordinatesList) {
-                                    newPrecinctCoordinates.push([coordinatesList[k].lng, coordinatesList[k].lat]);
-                                };
-                                coloradoPrecincts[j].geometry.type = LeafletMap.precinctGeojson._layers[i].feature.geometry.type;
-                                coloradoPrecincts[j].geometry.coordinates = [newPrecinctCoordinates];
-                                break;
-                            }
-                        }
-                    };
-
-    
-                    break;
-                default:
-                    console.log("INVALID CURRENT MODE");
-            }
-
-
             // Reset map functionalities
             ToolBar.resetMapFunctionalities();
-
         });
         $('#cancel-btn').click( function() {
             // TODO
@@ -255,6 +218,43 @@ var ToolBar = {
         LeafletMap.currentMode = LeafletMap.modes.default;
         LeafletMap.map.options.minZoom = 5;
         ToolBar.toggleEditButtons();
+    },
+
+    updatePrecinctData: function() {
+        switch(LeafletMap.currentMode) {
+            case LeafletMap.modes.insert: 
+                // Add all the new precincts to the current list of precincts
+                for (var i = 0; i < LeafletMap.tempPrecinctBoundaries.length; i++) {
+                    coloradoPrecincts.push(LeafletMap.tempPrecinctBoundaries[i]);
+                }
+                // Update the GUI
+                if (LeafletMap.map.hasLayer(LeafletMap.precinctGeojson)) { 
+                    LeafletMap.map.removeLayer(LeafletMap.precinctGeojson); 
+                    LeafletMap.precinctGeojson = L.geoJson(coloradoPrecincts, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
+                }
+                break;
+            case LeafletMap.modes.modify:
+                // Replace precinctCoordinates with the new ones from the precinctGeojson layer
+                for (var i in LeafletMap.precinctGeojson._layers) {
+                    var precinctName = LeafletMap.precinctGeojson._layers[i].feature.properties.name;
+                    for (var j in coloradoPrecincts) {
+                        if (precinctName == coloradoPrecincts[j].properties.name) {
+                            console.log("Update the coordinates");
+                            var newPrecinctCoordinates = [];
+                            var coordinatesList = LeafletMap.precinctGeojson._layers[i]._latlngs[0];
+                            for (var k in coordinatesList) {
+                                newPrecinctCoordinates.push([coordinatesList[k].lng, coordinatesList[k].lat]);
+                            };
+                            coloradoPrecincts[j].geometry.type = LeafletMap.precinctGeojson._layers[i].feature.geometry.type;
+                            coloradoPrecincts[j].geometry.coordinates = [newPrecinctCoordinates];
+                            break;
+                        }
+                    }
+                };
+                break;
+            default:
+                console.log("INVALID CURRENT MODE");
+        }
     }
 };
 
