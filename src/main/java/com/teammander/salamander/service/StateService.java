@@ -21,7 +21,8 @@ public class StateService {
     }
 
     public List<State> getAllStates() {
-        return null;
+        List<State> states= sr.getAllStates();
+        return states;
     }
 
     public String getState(String stateCanonName) {
