@@ -19,8 +19,8 @@ public class Precinct extends Region{
     Set<Precinct> neighbors;
     PrecinctType type;
 
-    public Precinct(String canonName, String displayName, List<Coordinate> boundary, DemographicData demoData, Election elecData, District dis, State aState, Set <Precinct> neigh, PrecinctType pType) {
-        super(canonName, displayName, boundary, demoData, elecData);
+    public Precinct(String canonName, String displayName, List<Polygon> shape, DemographicData demoData, Election elecData, District dis, State aState, Set <Precinct> neigh, PrecinctType pType) {
+        super(canonName, displayName, shape, demoData, elecData);
         district= dis;
         state= aState;
         neighbors= neigh;
