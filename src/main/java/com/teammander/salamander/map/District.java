@@ -3,18 +3,19 @@ package com.teammander.salamander.map;
 import com.teammander.salamander.data.DemographicData;
 import com.teammander.salamander.data.Election;
 
-import java.util.List;
+import mil.nga.sf.geojson.Geometry;
+
 import java.util.Set;
 
 public class District extends Region{
 
     State state;
-    Set<Precinct> precinct;
+    Set<String> precinctCanonNames;
 
-    public District(String canonName, String displayName, List<Polygon> shape, DemographicData demoData, Election elecData, State aState, Set<Precinct> aPrecinct) {
-        super(canonName, displayName, shape, demoData, elecData);
-        state= aState;
-        precinct= aPrecinct;
+    public District(String canonName, String displayName, Geometry geometry, DemographicData demoData, Election elecData, State aState, Set<String> aPrecinct) {
+        super(canonName, displayName, geometry, demoData, elecData);
+        this.state = aState;
+        this.precinctCanonNames= aPrecinct;
     }
 
     public State getState() {
@@ -25,11 +26,11 @@ public class District extends Region{
         this.state = state;
     }
 
-    public Set<Precinct> getPrecinct() {
-        return precinct;
+    public Set<String> getPrecinct() {
+        return this.precinctCanonNames;
     }
 
-    public void setPrecinct(Set<Precinct> precinct) {
-        this.precinct = precinct;
+    public void setPrecinct(Set<String> precinct) {
+        this.precinctCanonNames = precinct;
     }
 }

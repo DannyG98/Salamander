@@ -3,23 +3,24 @@ package com.teammander.salamander.map;
 import com.teammander.salamander.data.DemographicData;
 import com.teammander.salamander.data.Election;
 
-import java.util.List;
+import mil.nga.sf.geojson.Geometry;
+
 import java.util.Set;
 
 public class State extends Region {
 
-    Set<District> district;
+    Set<String> district;
 
-    public State(String canonName, String displayName, List<Polygon> shape, DemographicData demoData, Election elecData, Set<District> aDistrict) {
-        super(canonName, displayName, shape, demoData, elecData);
-        district= aDistrict;
+    public State(String canonName, String displayName, Geometry geometry, DemographicData demoData, Election elecData, Set<String> aDistrict) {
+        super(canonName, displayName, geometry, demoData, elecData);
+        this.district= aDistrict;
     }
 
-    public Set<District> getDistrict() {
+    public Set<String> getDistrictList() {
         return district;
     }
 
-    public void setDistrict(Set<District> district) {
+    public void setDistrict(Set<String> district) {
         this.district = district;
     }
 }
