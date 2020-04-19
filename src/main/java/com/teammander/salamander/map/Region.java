@@ -1,20 +1,22 @@
 package com.teammander.salamander.map;
+
 import com.teammander.salamander.data.DemographicData;
 import com.teammander.salamander.data.Election;
 
-import java.util.List;
+import mil.nga.sf.geojson.Geometry;
+
 
 public abstract class Region {
     String canonName;
     String displayName;
-    List<Polygon> shape;
+    Geometry geometry;
     DemographicData demoData;
     Election elecData;
 
-    public Region(String canonName, String displayName, List<Polygon> shape, DemographicData demoData, Election elecData) {
+    public Region(String canonName, String displayName, Geometry geometry, DemographicData demoData, Election elecData) {
         this.canonName = canonName;
         this.displayName = displayName;
-        this.shape = shape;
+        this.geometry = geometry;
         this.demoData = demoData;
         this.elecData = elecData;
     }
@@ -35,12 +37,12 @@ public abstract class Region {
         this.displayName = displayName;
     }
 
-    public List<Polygon> getShape() {
-        return this.shape;
+    public Geometry getGeometry() {
+        return this.geometry;
     }
 
-    public void setShape(List<Polygon> shape) {
-        this.shape = shape;
+    public void setGeometry(Geometry geoemtry) {
+        this.geometry = geoemtry;
     }
 
     public DemographicData getDemoData() {
