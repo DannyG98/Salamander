@@ -5,6 +5,8 @@ import com.teammander.salamander.transaction.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TransactionService {
     TransactionRepository tr;
@@ -15,12 +17,10 @@ public class TransactionService {
     }
 
     public void addTransaction(Transaction trans){
+        tr.addTransaction(trans);
     }
 
-    public TransactionRepository getTr() {
-        return tr;
-    }
-
-    public void updateTransaction(){
+    public List<Transaction> getTransactions() {
+        return tr.getTransactions();
     }
 }
