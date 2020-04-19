@@ -5,6 +5,9 @@ import com.teammander.salamander.service.PrecinctService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,28 +25,35 @@ public class PrecinctController {
         return ps;
     }
 
-    @GetMapping
-    public ResponseEntity find(String canonName){
-        return null;
+    @GetMapping("/getPrecinct/{precinctCanonName}")
+    public Precinct getPrecinct(@PathVariable String canonName) {
+        return getPs().getPrecinct(canonName);
     }
 
-    public ResponseEntity addNeighbor(Precinct precinctName1, Precinct precinctName2){
-        return null;
+    @GetMapping("/addNeighbor?p1={precinctName1}&p2={precinctName2}")
+    public void addNeighbor(@PathVariable String precinctName1, @PathVariable String precinctName2) {
+        getPs().addNeighbor(precinctName1, precinctName2);;
     }
 
-    public ResponseEntity deleteNeighbor(Precinct precinctName1, Precinct precinctName2){
-        return null;
+    @GetMapping("/deleteNeighbor?p1={precinctName1}&p2={precinctName2}")
+    public void deleteNeighbor(String precinctName1, String precinctName2) {
+        getPs().deleteNeighbor(precinctName1, precinctName2);
     }
 
-
-    public ResponseEntity mergePrecinct(Precinct canonName1, Precinct canonName2){
-        return null;
+    @GetMapping("/mergePrecinct?p1={precinctName1}&p2={precinctName2}")
+    public Precinct mergePrecinct(String precinctName1, String precinctName2) {
+        return getPs().mergePrecincts(precinctName1, precinctName2);
     }
 
-    public ResponseEntity remove(Precinct precinct1){
-        return null;
+    @GetMapping("/removePrecinct/{precinct1}")
+    public void remove(String precinct1) {
+        getPs().remove(precinct1);
     }
 
+    @PostMapping("/uploadPrecinct")
+    public void uploadPrecinct(@RequestBody Precinct precinct) {
+        getPs().insertPrecinct(precinct);
+    }
 
 
 }
