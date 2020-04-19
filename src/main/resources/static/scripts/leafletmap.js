@@ -651,6 +651,7 @@ var LeafletMap = {
     initZoomLevels: function () {
         LeafletMap.map.on('zoomend', function (e) {
             var zoomlevel = LeafletMap.map.getZoom();
+            if ($('#states').find(".active")[0] != null) {
                 //level 7 zoom is district level
                 if (zoomlevel == 7) {
                     // Remove all non-district layers
@@ -690,7 +691,7 @@ var LeafletMap = {
                     // Change the filter GUI element to match
                     LeafletMap.enableAllFilters();
                 }
-            
+            }
 
             console.log("Current Zoom Level =" + zoomlevel)
         });
@@ -738,7 +739,7 @@ var LeafletMap = {
         });
 
         if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-            layer.bringToFront();
+            //layer.bringToFront();
         }
         LeafletMap.infoBox.update(layer.feature.properties);
     },
@@ -759,6 +760,19 @@ var LeafletMap = {
     },
 
     onClickHandler: function (e) {
+        // Check if there clicked layer is a state layer
+        var name = e.target.feature.properties.name;
+        var states = $('#states').find(".dropdown-item");
+        for (var i = 0; i < states.length; i++) {
+            if (states[i].text == name) {
+                var currentState = $('#states').find(".active")[0];
+                if (currentState != null) {
+                    currentState.className = currentState.className.replace("active", "");
+                }
+                states[i].className += " active";
+                break;
+            }
+        }
         LeafletMap.zoomToFeature(e);
         stateChangeHandler(e.target.feature.properties.name);
     },
@@ -782,7 +796,8 @@ var LeafletMap = {
         switch(option) {
             case true:
                 if (!LeafletMap.map.hasLayer(LeafletMap.precinctLayers)) {
-                    LeafletMap.precinctLayers = L.geoJson(precinctsGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map); }
+                    LeafletMap.precinctLayers = L.geoJson(precinctsGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
+                    LeafletMap.precinctLayers.bringToFront(); }
                 if (!LeafletMap.map.hasLayer(LeafletMap.tempLayer)) {
                     LeafletMap.tempLayer = L.geoJson(LeafletMap.tempPrecinctBoundaries, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map); }
                 break;
@@ -800,7 +815,7 @@ var LeafletMap = {
         switch(option) {
             case true:
                 if (!LeafletMap.map.hasLayer(LeafletMap.districtLayers)) { 
-                    LeafletMap.districtLayers = L.geoJson(coloradoDistricts, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: true } }).addTo(LeafletMap.map); }
+                    LeafletMap.districtLayers = L.geoJson(coloradoDistricts, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: true } }).addTo(LeafletMap.map).bringToFront(); }
                 break;
             case false:
                 if (LeafletMap.map.hasLayer(LeafletMap.districtLayers)) { LeafletMap.map.removeLayer(LeafletMap.districtLayers); }
@@ -812,7 +827,7 @@ var LeafletMap = {
         switch(option) {
             case true:
                 if (!LeafletMap.map.hasLayer(LeafletMap.stateLayers)) {
-                    LeafletMap.stateLayers = L.geoJson(statesBorders, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: true } }).addTo(LeafletMap.map); }
+                    LeafletMap.stateLayers = L.geoJson(statesGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: true } }).addTo(LeafletMap.map); }
                 break;
             case false:
                 if (LeafletMap.map.hasLayer(LeafletMap.stateLayers)) { LeafletMap.map.removeLayer(LeafletMap.stateLayers);}
