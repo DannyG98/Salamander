@@ -17,7 +17,6 @@ var ToolBar = {
         var states = $('#states').find('.dropdown-item');
         for (var i = 0; i  < states.length; i++) {
             states[i].addEventListener("click", function() {
-                var state = this.text;
                 LeafletMap.panMap(ToolBar.stateCoordinates[state][0], ToolBar.stateCoordinates[state][1], 7);
             })
         }
@@ -39,21 +38,18 @@ var ToolBar = {
     },
 
     initFiltersDropdown: function() {
-        var toggleFilters = function(element){
-             // TODO
-            // Toggle the visibility of the indicated element
-        };
         var options = $('#filters').find('.dropdown-item');
         for (var i = 0; i  < options.length; i++) {
             options[i].addEventListener("click", function() {
                 // Highlights filters dropdown menu elements when active
                 if (this.className.includes("active")) {
-                    this.className = this.className.replace("active", "");
+                    this.className = this.className.replace(/active/g, "");
+                    ToolBar.enableFilter(this.id, false);
                 }
                 else {
                     this.className += " active";
+                    ToolBar.enableFilter(this.id, true);
                 }
-                toggleFilters(this.text);
             })
         }
     },
@@ -89,7 +85,7 @@ var ToolBar = {
                     newPrecinctCoordinates.push([coordinatesList[i].lng, coordinatesList[i].lat])
                 };
                 
-                // Add new precinct boundaries to a temporary variable
+3                // Add new precinct boundaries to a temporary variable
                 LeafletMap.tempPrecinctBoundaries.push( 
                 {
                     "type": "Feature",
@@ -255,6 +251,15 @@ var ToolBar = {
             default:
                 console.log("INVALID CURRENT MODE");
         }
+    },
+
+    enableFilter: function(filterid, option) {
+        if (filterid == 'district-filter')
+            LeafletMap.enableDistrictLayer(!option);
+        else if (filterid == 'precinct-filter') 
+            LeafletMap.enablePrecinctLayer(!option);
+        else if (filterid == 'national-parks-filter')
+            console.log('no national park data');
     }
 };
 

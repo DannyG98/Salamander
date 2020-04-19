@@ -562,12 +562,12 @@ var LeafletMap = {
     modes: { default: 0, insert: 1, merge: 2, modify: 3, create: 4, reset: 5 },
     currentMode: 0,
 
-    statesGeojson: null,
-    precinctGeojson: null,
-    districtGeojson: null,
-    tempGeojson: null,
+    statesGeojson: {},
+    precinctGeojson: {},
+    districtGeojson: {},
+    tempGeojson: {},
     infoBox: L.control(),
-
+    states: [...statesBorders],
     tempPrecinctBoundaries: [],
 
     usaCoordinates: [39.51073, -96.4247],
@@ -576,22 +576,29 @@ var LeafletMap = {
 
     init: function () {
         LeafletMap.map.setView(this.usaCoordinates, 5);
-        LeafletMap.addLeafletLayers();
+        LeafletMap.initStateData();
+        LeafletMap.initLeafletLayers();
         LeafletMap.initZoomHandlers();
         LeafletMap.initInfoBox();
     },
 
-    addLeafletLayers: function () {
+    initStateData: function() {
+        // TODO
+        // Need to request stateObject from server to populate the map with the state borders 
+
+    },
+
+    initLeafletLayers: function () {
         L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
             attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
             id: 'mapbox/streets-v11',
             accessToken: 'pk.eyJ1IjoiZGFuZzk4IiwiYSI6ImNrNmlsbGZqNTAyYzgzZHFtcjczMmI2Z3EifQ.N6aBfLfiwLfyTn_Iz0TvIw'
         }).addTo(this.map);
 
-        LeafletMap.statesGeojson = L.geoJson(statesBorders, {
+        // Add the state layer
+        LeafletMap.statesGeojson = L.geoJson(this.states, {
             onEachFeature: LeafletMap.onEachFeature
         }).addTo(LeafletMap.map);
-        console.log(LeafletMap.statesGeojson);
     },
 
     initZoomHandlers: function () {
