@@ -1,4 +1,4 @@
-var statesBorders = [
+var statesGeojson = [
     {
         "type": "Feature",
         "id": "08",
@@ -557,17 +557,48 @@ var coloradoPrecincts = [
     }
 ]
 
+var floridaPrecincts = [
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Precinct 1",
+            "density": 49.33,
+            "population": 1111,
+            "Democratic": 11,
+            "Republican": 89,
+            "White": 22,
+            "Hispanic": 50,
+            "AfricanAmerican": 33
+        },
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [-82.76000976562501, 29.7596087873038],
+                    [-81.31530761718751, 28.51696944040106],
+                    [-82.22717285156251, 28.076827124762378],
+                    [-83.05664062500001, 29.430029404571762],
+                ]
+            ]
+        }
+    },
+]
+
+var precinctsGeojson = [];
+
 var LeafletMap = {
     // Used for keeping of track what tool is being used
     modes: { default: 0, insert: 1, merge: 2, modify: 3, create: 4, reset: 5 },
     currentMode: 0,
 
-    statesGeojson: {},
-    precinctGeojson: {},
-    districtGeojson: {},
-    tempGeojson: {},
+    stateLayers: null,
+    districtLayers: null,
+    precinctLayers: null,
+    tempLayer: null,
     infoBox: L.control(),
-    states: [...statesBorders],
+    states: {},
+    districts: {},
+    precincts: {},
     tempPrecinctBoundaries: [],
 
     usaCoordinates: [39.51073, -96.4247],
@@ -576,16 +607,26 @@ var LeafletMap = {
 
     init: function () {
         LeafletMap.map.setView(this.usaCoordinates, 5);
-        LeafletMap.initStateData();
+        LeafletMap.initData();
         LeafletMap.initLeafletLayers();
         LeafletMap.initZoomHandlers();
         LeafletMap.initInfoBox();
     },
 
-    initStateData: function() {
+    initData: function() {
         // TODO
         // Need to request stateObject from server to populate the map with the state borders 
 
+        // Create a hashmap that maps state canonical names to geojson data
+        for (var i = 0; i < statesGeojson.length; i++) {
+            this.states[statesGeojson[i].properties.name] = statesGeojson[i];
+        }
+        // Create a hashmap that maps precinct canonical names to geojson data
+        precinctsGeojson.push(...coloradoPrecincts);
+        precinctsGeojson.push(...floridaPrecincts);
+        for (var i = 0; i < precinctsGeojson.length; i++) {
+            this.states[precinctsGeojson[i].properties.name] = precinctsGeojson[i];
+        }
     },
 
     initLeafletLayers: function () {
@@ -596,7 +637,7 @@ var LeafletMap = {
         }).addTo(this.map);
 
         // Add the state layer
-        LeafletMap.statesGeojson = L.geoJson(this.states, {
+        LeafletMap.stateLayers = L.geoJson(statesGeojson, {
             onEachFeature: LeafletMap.onEachFeature
         }).addTo(LeafletMap.map);
     },
@@ -703,16 +744,16 @@ var LeafletMap = {
     },
 
     resetHighlight: function (e) {
-        if (LeafletMap.map.hasLayer(LeafletMap.statesGeojson)) {
-            LeafletMap.statesGeojson.resetStyle(e.target);
+        if (LeafletMap.map.hasLayer(LeafletMap.stateLayers)) {
+            LeafletMap.stateLayers.resetStyle(e.target);
             LeafletMap.infoBox.update();
         }
-        else if (LeafletMap.map.hasLayer(LeafletMap.precinctGeojson)) {
-            LeafletMap.precinctGeojson.resetStyle(e.target);
+        else if (LeafletMap.map.hasLayer(LeafletMap.precinctLayers)) {
+            LeafletMap.precinctLayers.resetStyle(e.target);
             LeafletMap.infoBox.update();
         }
-        else if (LeafletMap.map.hasLayer(LeafletMap.districtGeojson)) {
-            LeafletMap.districtGeojson.resetStyle(e.target);
+        else if (LeafletMap.map.hasLayer(LeafletMap.districtLayers)) {
+            LeafletMap.districtLayers.resetStyle(e.target);
             LeafletMap.infoBox.update();
         }
     },
@@ -740,17 +781,17 @@ var LeafletMap = {
     enablePrecinctLayer: function(option) {
         switch(option) {
             case true:
-                if (!LeafletMap.map.hasLayer(LeafletMap.precinctGeojson)) {
-                    LeafletMap.precinctGeojson = L.geoJson(coloradoPrecincts, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map); }
-                if (!LeafletMap.map.hasLayer(LeafletMap.tempGeojson)) {
-                    LeafletMap.tempGeojson = L.geoJson(LeafletMap.tempPrecinctBoundaries, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map); }
+                if (!LeafletMap.map.hasLayer(LeafletMap.precinctLayers)) {
+                    LeafletMap.precinctLayers = L.geoJson(precinctsGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map); }
+                if (!LeafletMap.map.hasLayer(LeafletMap.tempLayer)) {
+                    LeafletMap.tempLayer = L.geoJson(LeafletMap.tempPrecinctBoundaries, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map); }
                 break;
                 
             case false:
-                if (LeafletMap.map.hasLayer(LeafletMap.precinctGeojson)) {
-                    LeafletMap.map.removeLayer(LeafletMap.precinctGeojson); }
-                if (LeafletMap.map.hasLayer(LeafletMap.tempGeojson)) {
-                    LeafletMap.map.removeLayer(LeafletMap.tempGeojson); }
+                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayers)) {
+                    LeafletMap.map.removeLayer(LeafletMap.precinctLayers); }
+                if (LeafletMap.map.hasLayer(LeafletMap.tempLayer)) {
+                    LeafletMap.map.removeLayer(LeafletMap.tempLayer); }
                 break;
         }
     },
@@ -758,11 +799,11 @@ var LeafletMap = {
     enableDistrictLayer: function(option) {
         switch(option) {
             case true:
-                if (!LeafletMap.map.hasLayer(LeafletMap.districtGeojson)) { 
-                    LeafletMap.districtGeojson = L.geoJson(coloradoDistricts, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: true } }).addTo(LeafletMap.map); }
+                if (!LeafletMap.map.hasLayer(LeafletMap.districtLayers)) { 
+                    LeafletMap.districtLayers = L.geoJson(coloradoDistricts, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: true } }).addTo(LeafletMap.map); }
                 break;
             case false:
-                if (LeafletMap.map.hasLayer(LeafletMap.districtGeojson)) { LeafletMap.map.removeLayer(LeafletMap.districtGeojson); }
+                if (LeafletMap.map.hasLayer(LeafletMap.districtLayers)) { LeafletMap.map.removeLayer(LeafletMap.districtLayers); }
                 break;
         }
     },
@@ -770,11 +811,11 @@ var LeafletMap = {
     enableStateLayer: function(option) {
         switch(option) {
             case true:
-                if (!LeafletMap.map.hasLayer(LeafletMap.statesGeojson)) {
-                    LeafletMap.statesGeojson = L.geoJson(statesBorders, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: true } }).addTo(LeafletMap.map); }
+                if (!LeafletMap.map.hasLayer(LeafletMap.stateLayers)) {
+                    LeafletMap.stateLayers = L.geoJson(statesBorders, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: true } }).addTo(LeafletMap.map); }
                 break;
             case false:
-                if (LeafletMap.map.hasLayer(LeafletMap.statesGeojson)) { LeafletMap.map.removeLayer(LeafletMap.statesGeojson);}
+                if (LeafletMap.map.hasLayer(LeafletMap.stateLayers)) { LeafletMap.map.removeLayer(LeafletMap.stateLayers);}
                 break;
         }
     },

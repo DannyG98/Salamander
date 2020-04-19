@@ -17,7 +17,17 @@ var ToolBar = {
         var states = $('#states').find('.dropdown-item');
         for (var i = 0; i  < states.length; i++) {
             states[i].addEventListener("click", function() {
+                // Move map view to the selected state
+                var state = this.text;
                 LeafletMap.panMap(ToolBar.stateCoordinates[state][0], ToolBar.stateCoordinates[state][1], 7);
+
+                // Highlight the selected state in the dropdown
+                var currentState = $('#states').find(".active")[0];
+                if (currentState != null) {
+                    currentState.className = currentState.className.replace("active", "");
+                }
+                this.className += " active";
+
             })
         }
     },
