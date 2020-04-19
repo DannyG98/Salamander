@@ -20,7 +20,7 @@ import java.util.List;
 @RequestMapping("/state")
 public class StateController {
     StateService ss;
-    Logger logger = LoggerFactory.getLogger(TestController.class);
+    //Logger logger = LoggerFactory.getLogger(TestController.class);
 
     @Autowired
     public StateController(StateService ss) {
@@ -34,7 +34,7 @@ public class StateController {
     //when page loads and we get all states to display
     @GetMapping("/getAllStates")
     public List<State> getAllStates(){
-        logger.info("/getAllStates endpoint called");
+        //logger.info("/getAllStates endpoint called");
         return ss.getAllStates();
         // return new ResponseEntity<>(allStates, new HttpHeaders(), HttpStatus.OK);
     }

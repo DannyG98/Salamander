@@ -96,7 +96,7 @@ var ToolBar = {
                 };
                 
 3                // Add new precinct boundaries to a temporary variable
-                LeafletMap.tempPrecinctBoundaries.push( 
+                LeafletMap.tempPrecinctGeojson.push( 
                 {
                     "type": "Feature",
                     "properties": 
@@ -117,9 +117,9 @@ var ToolBar = {
                     }
                 });
                 // Remove current temp geojson if it exists
-                if (LeafletMap.map.hasLayer(LeafletMap.tempGeojson)) { LeafletMap.map.removeLayer(LeafletMap.tempGeojson);}
+                if (LeafletMap.map.hasLayer(LeafletMap.tempLayer)) { LeafletMap.map.removeLayer(LeafletMap.tempLayer);}
                 // Add the new updated temp geojson
-                LeafletMap.tempGeojson = L.geoJson(LeafletMap.tempPrecinctBoundaries,{ onEachFeature: LeafletMap.onEachFeature }).addTo(LeafletMap.map);
+                LeafletMap.tempLayer = L.geoJson(LeafletMap.tempPrecinctGeojson,{ onEachFeature: LeafletMap.onEachFeature }).addTo(LeafletMap.map);
 
                 // Allow user to draw more than one precinct
                 LeafletMap.map.pm.enableDraw('Polygon');
@@ -139,10 +139,10 @@ var ToolBar = {
             // Go to precinct level
             LeafletMap.map.setZoom(8);
 
-            // Zooming recreates the precinct layers so must wait for precinctGeojson to be updated first
+            // Zooming recreates the precinct layers so must wait for precinctLayer to be updated first
             setTimeout (function () {
-                // Allow precinct borders to be edited
-                LeafletMap.precinctGeojson.pm.enable();
+                // Allow precinct layer to be edited
+                LeafletMap.precinctLayer.pm.enable();
             }, 300);
             // Switch map mode
             LeafletMap.currentMode = LeafletMap.modes.modify;
@@ -201,21 +201,21 @@ var ToolBar = {
         // Reset all temp variables and revert back to normal map functionality
         switch(LeafletMap.currentMode) {
             case LeafletMap.modes.insert:
-                // Need to remove all tempJson precincts from map and empty tempPrecinctBoundaries
-                if (LeafletMap.map.hasLayer(LeafletMap.tempGeojson)) { LeafletMap.map.removeLayer(LeafletMap.tempGeojson);}
-                LeafletMap.tempPrecinctBoundaries = [];
-                LeafletMap.tempGeojson = null;
+                // Need to remove all tempJson precincts from map and empty tempPrecinctGeojson
+                if (LeafletMap.map.hasLayer(LeafletMap.tempLayer)) { LeafletMap.map.removeLayer(LeafletMap.tempLayer);}
+                LeafletMap.tempPrecinctGeojson = [];
+                LeafletMap.tempLayer = null;
                 // Refresh the precinct layers
-                if (LeafletMap.map.hasLayer(LeafletMap.precinctGeojson)) { 
-                    LeafletMap.map.removeLayer(LeafletMap.precinctGeojson);
-                    LeafletMap.precinctGeojson = L.geoJson(coloradoPrecincts, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
+                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
+                    LeafletMap.map.removeLayer(LeafletMap.precinctLayer);
+                    LeafletMap.precinctLayer = L.geoJson(precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
                 }
                 LeafletMap.map.pm.disableDraw();
                 break;
             case LeafletMap.modes.modify:
-                if (LeafletMap.map.hasLayer(LeafletMap.precinctGeojson)) { 
-                    LeafletMap.map.removeLayer(LeafletMap.precinctGeojson);
-                    LeafletMap.precinctGeojson = L.geoJson(coloradoPrecincts, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
+                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
+                    LeafletMap.map.removeLayer(LeafletMap.precinctLayer);
+                    LeafletMap.precinctLayer = L.geoJson(precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
                 }
                 break;
             default:
@@ -230,29 +230,30 @@ var ToolBar = {
         switch(LeafletMap.currentMode) {
             case LeafletMap.modes.insert: 
                 // Add all the new precincts to the current list of precincts
-                for (var i = 0; i < LeafletMap.tempPrecinctBoundaries.length; i++) {
-                    coloradoPrecincts.push(LeafletMap.tempPrecinctBoundaries[i]);
+                for (var i = 0; i < LeafletMap.tempPrecinctGeojson.length; i++) {
+                    // 
+                    LeafletMap.precinctGeojson.push(LeafletMap.tempPrecinctGeojson[i]);
                 }
                 // Update the GUI
-                if (LeafletMap.map.hasLayer(LeafletMap.precinctGeojson)) { 
-                    LeafletMap.map.removeLayer(LeafletMap.precinctGeojson); 
-                    LeafletMap.precinctGeojson = L.geoJson(coloradoPrecincts, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
+                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
+                    LeafletMap.map.removeLayer(LeafletMap.precinctLayer); 
+                    LeafletMap.precinctLayer = L.geoJson(precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
                 }
                 break;
             case LeafletMap.modes.modify:
-                // Replace precinctCoordinates with the new ones from the precinctGeojson layer
-                for (var i in LeafletMap.precinctGeojson._layers) {
-                    var precinctName = LeafletMap.precinctGeojson._layers[i].feature.properties.name;
-                    for (var j in coloradoPrecincts) {
-                        if (precinctName == coloradoPrecincts[j].properties.name) {
-                            console.log("Update the coordinates");
+                // Replace precinctCoordinates with the new ones from the precinctLayer layer
+                for (var i in LeafletMap.precinctLayer._layers) {
+                    var precinctName = LeafletMap.precinctLayer._layers[i].feature.properties.name;
+                    for (var j in precinctGeojson) {
+                        if (precinctName == precinctGeojson[j].properties.name) {
+                            console.log("Precinct coordinates modified");
                             var newPrecinctCoordinates = [];
-                            var coordinatesList = LeafletMap.precinctGeojson._layers[i]._latlngs[0];
+                            var coordinatesList = LeafletMap.precinctLayer._layers[i]._latlngs[0];
                             for (var k in coordinatesList) {
                                 newPrecinctCoordinates.push([coordinatesList[k].lng, coordinatesList[k].lat]);
                             };
-                            coloradoPrecincts[j].geometry.type = LeafletMap.precinctGeojson._layers[i].feature.geometry.type;
-                            coloradoPrecincts[j].geometry.coordinates = [newPrecinctCoordinates];
+                            precinctGeojson[j].geometry.type = LeafletMap.precinctLayer._layers[i].feature.geometry.type;
+                            precinctGeojson[j].geometry.coordinates = [newPrecinctCoordinates];
                             break;
                         }
                     }

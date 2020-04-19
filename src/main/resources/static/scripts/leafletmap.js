@@ -1,74 +1,3 @@
-var statesGeojson = [
-    {
-        "type": "Feature",
-        "id": "08",
-        "properties": {
-            "name": "Colorado",
-            "density": 49.33,
-            "population": 144723,
-            "Democratic": 61,
-            "Republican": 39,
-            "White": 20,
-            "Hispanic": 41,
-            "AfricanAmerican": 39
-        },
-        "geometry": {
-            "type": "Polygon",
-            "coordinates": [
-                [
-                    [-107.919731, 41.003906], [-105.728954, 40.998429], [-104.053011, 41.003906], [-102.053927, 41.003906], [-102.053927, 40.001626], [-102.042974, 36.994786], [-103.001438, 37.000263], [-104.337812, 36.994786], [-106.868158, 36.994786], [-107.421329, 37.000263], [-109.042503, 37.000263], [-109.042503, 38.166851], [-109.058934, 38.27639], [-109.053457, 39.125316], [-109.04798, 40.998429], [-107.919731, 41.003906]
-                ]
-            ]
-        }
-    },
-    {
-        "type": "Feature",
-        "id": "12",
-        "properties": {
-            "name": "Florida",
-            "density": 353.4,
-            "population": 4144723,
-            "Democratic": 21,
-            "Republican": 89,
-            "White": 10,
-            "Hispanic": 71,
-            "AfricanAmerican": 19
-        },
-        "geometry": {
-            "type": "Polygon",
-            "coordinates": [
-                [
-                    [-85.497137, 30.997536], [-85.004212, 31.003013], [-84.867289, 30.712735], [-83.498053, 30.647012], [-82.216449, 30.570335], [-82.167157, 30.356734], [-82.046664, 30.362211], [-82.002849, 30.564858], [-82.041187, 30.751074], [-81.948079, 30.827751], [-81.718048, 30.745597], [-81.444201, 30.707258], [-81.383954, 30.27458], [-81.257985, 29.787132], [-80.967707, 29.14633], [-80.524075, 28.461713], [-80.589798, 28.41242], [-80.56789, 28.094758], [-80.381674, 27.738757], [-80.091397, 27.021277], [-80.03115, 26.796723], [-80.036627, 26.566691], [-80.146166, 25.739673], [-80.239274, 25.723243], [-80.337859, 25.465826], [-80.304997, 25.383672], [-80.49669, 25.197456], [-80.573367, 25.241272], [-80.759583, 25.164595], [-81.077246, 25.120779], [-81.170354, 25.224841], [-81.126538, 25.378195], [-81.351093, 25.821827], [-81.526355, 25.903982], [-81.679709, 25.843735], [-81.800202, 26.090198], [-81.833064, 26.292844], [-82.041187, 26.517399], [-82.09048, 26.665276], [-82.057618, 26.878877], [-82.172634, 26.917216], [-82.145249, 26.791246], [-82.249311, 26.758384], [-82.566974, 27.300601], [-82.692943, 27.437525], [-82.391711, 27.837342], [-82.588881, 27.815434], [-82.720328, 27.689464], [-82.851774, 27.886634], [-82.676512, 28.434328], [-82.643651, 28.888914], [-82.764143, 28.998453], [-82.802482, 29.14633], [-82.994175, 29.179192], [-83.218729, 29.420177], [-83.399469, 29.518762], [-83.410422, 29.66664], [-83.536392, 29.721409], [-83.640454, 29.885717], [-84.02384, 30.104795], [-84.357933, 30.055502], [-84.341502, 29.902148], [-84.451041, 29.929533], [-84.867289, 29.743317], [-85.310921, 29.699501], [-85.299967, 29.80904], [-85.404029, 29.940487], [-85.924338, 30.236241], [-86.29677, 30.362211], [-86.630863, 30.395073], [-86.910187, 30.373165], [-87.518128, 30.280057], [-87.37025, 30.427934], [-87.446927, 30.510088], [-87.408589, 30.674397], [-87.633143, 30.86609], [-87.600282, 30.997536], [-85.497137, 30.997536]
-                ]
-            ]
-        }
-    },
-    {
-        "type": "Feature",
-        "id": "24",
-        "properties": {
-            "name": "Maryland",
-            "density": 596.3,
-            "population": 999,
-            "Democratic": 20,
-            "Republican": 80,
-            "White": 40,
-            "Hispanic": 41,
-            "AfricanAmerican": 19
-        },
-        "geometry": {
-            "type": "MultiPolygon",
-            "coordinates": [
-                [
-                    [[-75.994645, 37.95325], [-76.016553, 37.95325], [-76.043938, 37.95325], [-75.994645, 37.95325]]
-                ],
-                [
-                    [[-79.477979, 39.722302], [-75.786521, 39.722302], [-75.693413, 38.462606], [-75.047134, 38.451652], [-75.244304, 38.029928], [-75.397659, 38.013497], [-75.671506, 37.95325], [-75.885106, 37.909435], [-75.879629, 38.073743], [-75.961783, 38.139466], [-75.846768, 38.210667], [-76.000122, 38.374975], [-76.049415, 38.303775], [-76.257538, 38.320205], [-76.328738, 38.500944], [-76.263015, 38.500944], [-76.257538, 38.736453], [-76.191815, 38.829561], [-76.279446, 39.147223], [-76.169907, 39.333439], [-76.000122, 39.366301], [-75.972737, 39.557994], [-76.098707, 39.536086], [-76.104184, 39.437501], [-76.367077, 39.311532], [-76.443754, 39.196516], [-76.460185, 38.906238], [-76.55877, 38.769315], [-76.514954, 38.539283], [-76.383508, 38.380452], [-76.399939, 38.259959], [-76.317785, 38.139466], [-76.3616, 38.057312], [-76.591632, 38.216144], [-76.920248, 38.292821], [-77.018833, 38.446175], [-77.205049, 38.358544], [-77.276249, 38.479037], [-77.128372, 38.632391], [-77.040741, 38.791222], [-76.909294, 38.895284], [-77.035264, 38.993869], [-77.117418, 38.933623], [-77.248864, 39.026731], [-77.456988, 39.076023], [-77.456988, 39.223901], [-77.566527, 39.306055], [-77.719881, 39.322485], [-77.834897, 39.601809], [-78.004682, 39.601809], [-78.174467, 39.694917], [-78.267575, 39.61824], [-78.431884, 39.623717], [-78.470222, 39.514178], [-78.765977, 39.585379], [-78.963147, 39.437501], [-79.094593, 39.470363], [-79.291763, 39.300578], [-79.488933, 39.20747], [-79.477979, 39.722302]]
-                ]
-            ]
-        }
-    }
-]
 
 var coloradoDistricts = [
     {
@@ -584,22 +513,23 @@ var floridaPrecincts = [
     },
 ]
 
-var precinctsGeojson = [];
-
 var LeafletMap = {
     // Used for keeping of track what tool is being used
     modes: { default: 0, insert: 1, merge: 2, modify: 3, create: 4, reset: 5 },
     currentMode: 0,
 
-    stateLayers: null,
-    districtLayers: null,
-    precinctLayers: null,
+    stateLayer: null,
+    districtLayer: null,
+    precinctLayer: null,
     tempLayer: null,
+    statesGeojson: [],
+    districtGeojson: [],
+    precinctGeojson: [],
+    tempPrecinctGeojson: [],
     infoBox: L.control(),
     states: {},
     districts: {},
     precincts: {},
-    tempPrecinctBoundaries: [],
 
     usaCoordinates: [39.51073, -96.4247],
     // The iteractive map that is going to be displayed on the webpage
@@ -616,16 +546,13 @@ var LeafletMap = {
     initData: function() {
         // TODO
         // Need to request stateObject from server to populate the map with the state borders 
+        LeafletMap.statesGeojson = LeafletMap.getStateData();
 
-        // Create a hashmap that maps state canonical names to geojson data
-        for (var i = 0; i < statesGeojson.length; i++) {
-            this.states[statesGeojson[i].properties.name] = statesGeojson[i];
-        }
         // Create a hashmap that maps precinct canonical names to geojson data
-        precinctsGeojson.push(...coloradoPrecincts);
-        precinctsGeojson.push(...floridaPrecincts);
-        for (var i = 0; i < precinctsGeojson.length; i++) {
-            this.states[precinctsGeojson[i].properties.name] = precinctsGeojson[i];
+        LeafletMap.precinctGeojson.push(...coloradoPrecincts);
+        LeafletMap.precinctGeojson.push(...floridaPrecincts);
+        for (var i = 0; i < LeafletMap.precinctGeojson.length; i++) {
+            this.states[LeafletMap.precinctGeojson[i].properties.name] = LeafletMap.precinctGeojson[i];
         }
     },
 
@@ -635,11 +562,6 @@ var LeafletMap = {
             id: 'mapbox/streets-v11',
             accessToken: 'pk.eyJ1IjoiZGFuZzk4IiwiYSI6ImNrNmlsbGZqNTAyYzgzZHFtcjczMmI2Z3EifQ.N6aBfLfiwLfyTn_Iz0TvIw'
         }).addTo(this.map);
-
-        // Add the state layer
-        LeafletMap.stateLayers = L.geoJson(statesGeojson, {
-            onEachFeature: LeafletMap.onEachFeature
-        }).addTo(LeafletMap.map);
     },
 
     initZoomHandlers: function () {
@@ -700,6 +622,8 @@ var LeafletMap = {
     initInfoBox: function () {
         // Create an function that creates a information box in the top right corner and populates it with the given props
         LeafletMap.infoBox.update = function (props) {
+            // TODO
+            // Need to update properties to their correct name in the geojson from server
             Window._div.innerHTML = '<h4>U.S State Data</h4>' + (props ?
                 '<b>' + props.name + '</b><br />' + 'Democratic: ' + props.Democratic + '%' +
                 '</b><br>Republican: ' + props.Republican + '%' + '</b><br />White: ' + props.White + '%' +
@@ -745,26 +669,26 @@ var LeafletMap = {
     },
 
     resetHighlight: function (e) {
-        if (LeafletMap.map.hasLayer(LeafletMap.stateLayers)) {
-            LeafletMap.stateLayers.resetStyle(e.target);
+        if (LeafletMap.map.hasLayer(LeafletMap.stateLayer)) {
+            LeafletMap.stateLayer.resetStyle(e.target);
             LeafletMap.infoBox.update();
         }
-        else if (LeafletMap.map.hasLayer(LeafletMap.precinctLayers)) {
-            LeafletMap.precinctLayers.resetStyle(e.target);
+        else if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
+            LeafletMap.precinctLayer.resetStyle(e.target);
             LeafletMap.infoBox.update();
         }
-        else if (LeafletMap.map.hasLayer(LeafletMap.districtLayers)) {
-            LeafletMap.districtLayers.resetStyle(e.target);
+        else if (LeafletMap.map.hasLayer(LeafletMap.districtLayer)) {
+            LeafletMap.districtLayer.resetStyle(e.target);
             LeafletMap.infoBox.update();
         }
     },
 
     onClickHandler: function (e) {
         // Check if there clicked layer is a state layer
-        var name = e.target.feature.properties.name;
+        var name = e.target.feature.properties.canonName;
         var states = $('#states').find(".dropdown-item");
         for (var i = 0; i < states.length; i++) {
-            if (states[i].text == name) {
+            if (states[i].text.toLowerCase() == name) {
                 var currentState = $('#states').find(".active")[0];
                 if (currentState != null) {
                     currentState.className = currentState.className.replace("active", "");
@@ -795,16 +719,16 @@ var LeafletMap = {
     enablePrecinctLayer: function(option) {
         switch(option) {
             case true:
-                if (!LeafletMap.map.hasLayer(LeafletMap.precinctLayers)) {
-                    LeafletMap.precinctLayers = L.geoJson(precinctsGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
-                    LeafletMap.precinctLayers.bringToFront(); }
+                if (!LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
+                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
+                    LeafletMap.precinctLayer.bringToFront(); }
                 if (!LeafletMap.map.hasLayer(LeafletMap.tempLayer)) {
-                    LeafletMap.tempLayer = L.geoJson(LeafletMap.tempPrecinctBoundaries, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map); }
+                    LeafletMap.tempLayer = L.geoJson(LeafletMap.tempPrecinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map); }
                 break;
                 
             case false:
-                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayers)) {
-                    LeafletMap.map.removeLayer(LeafletMap.precinctLayers); }
+                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
+                    LeafletMap.map.removeLayer(LeafletMap.precinctLayer); }
                 if (LeafletMap.map.hasLayer(LeafletMap.tempLayer)) {
                     LeafletMap.map.removeLayer(LeafletMap.tempLayer); }
                 break;
@@ -814,11 +738,11 @@ var LeafletMap = {
     enableDistrictLayer: function(option) {
         switch(option) {
             case true:
-                if (!LeafletMap.map.hasLayer(LeafletMap.districtLayers)) { 
-                    LeafletMap.districtLayers = L.geoJson(coloradoDistricts, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: true } }).addTo(LeafletMap.map).bringToFront(); }
+                if (!LeafletMap.map.hasLayer(LeafletMap.districtLayer)) { 
+                    LeafletMap.districtLayer = L.geoJson(coloradoDistricts, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: true } }).addTo(LeafletMap.map).bringToFront(); }
                 break;
             case false:
-                if (LeafletMap.map.hasLayer(LeafletMap.districtLayers)) { LeafletMap.map.removeLayer(LeafletMap.districtLayers); }
+                if (LeafletMap.map.hasLayer(LeafletMap.districtLayer)) { LeafletMap.map.removeLayer(LeafletMap.districtLayer); }
                 break;
         }
     },
@@ -826,15 +750,50 @@ var LeafletMap = {
     enableStateLayer: function(option) {
         switch(option) {
             case true:
-                if (!LeafletMap.map.hasLayer(LeafletMap.stateLayers)) {
-                    LeafletMap.stateLayers = L.geoJson(statesGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: true } }).addTo(LeafletMap.map); }
+                if (!LeafletMap.map.hasLayer(LeafletMap.stateLayer)) {
+                    LeafletMap.stateLayer = L.geoJson(LeafletMap.statesGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: true } }).addTo(LeafletMap.map); }
                 break;
             case false:
-                if (LeafletMap.map.hasLayer(LeafletMap.stateLayers)) { LeafletMap.map.removeLayer(LeafletMap.stateLayers);}
+                if (LeafletMap.map.hasLayer(LeafletMap.stateLayer)) { LeafletMap.map.removeLayer(LeafletMap.stateLayer);}
                 break;
         }
     },
-    
 
+    getStateData: function() {
+        fetch('/state/getAllStates').then(function(response) {
+            return response.text();
+        }).then(function(text) {
+            LeafletMap.statesGeojson = JSON.parse(text);
+            // Create a hashmap that maps state canonical names to geojson data
+            for (var i = 0; i < LeafletMap.statesGeojson.length; i++) {
+                this.states[LeafletMap.statesGeojson[i].canonName] = LeafletMap.statesGeojson[i];
+                LeafletMap.statesGeojson[i] = jsonHandler.convert(LeafletMap.statesGeojson[i]);
+            }
+            // Add the state layer
+            LeafletMap.stateLayer = L.geoJson(LeafletMap.statesGeojson, {
+                onEachFeature: LeafletMap.onEachFeature
+            }).addTo(LeafletMap.map);
+        });
+    },
+
+    // TODO
+    // Get district geojson from server
+    getDistrictData: function() {
+
+    },
+    // Get precinct geojson from server
+    getPrecinctData: function() {
+
+    },
+    // Get election data from server to populate sidebar
+    getElectionData: function() {
+
+    },
+    // Send modified data to the server
+    sendUpdatedData: function() {
+
+    },
+
+    
 }
 LeafletMap.init();
