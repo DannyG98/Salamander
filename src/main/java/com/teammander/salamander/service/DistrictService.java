@@ -18,11 +18,15 @@ public class DistrictService {
         return dr;
     }
 
-    public District getDistrict(String canonName){
+    public District getDistrict(String canonName) {
         return null;
     }
 
     public void updateAll(){
     }
+
+	public void putDistrict(District district) {
+        getDr().save(district);
+	}
 
 }

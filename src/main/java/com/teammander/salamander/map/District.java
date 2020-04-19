@@ -3,29 +3,40 @@ package com.teammander.salamander.map;
 import com.teammander.salamander.data.DemographicData;
 import com.teammander.salamander.data.Election;
 
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import mil.nga.sf.geojson.Geometry;
 
 import java.util.Set;
 
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "districts")
+@EntityListeners(AuditingEntityListener.class)
 public class District extends Region{
 
-    State state;
+    String stateCanonicalName;
     Set<String> precinctCanonNames;
 
-    public District(String canonName, String displayName, Geometry geometry, DemographicData demoData, Election elecData, State aState, Set<String> aPrecinct) {
+    public District(String canonName, String displayName, Geometry geometry, DemographicData demoData, Election elecData, String aState, Set<String> aPrecinct) {
         super(canonName, displayName, geometry, demoData, elecData);
-        this.state = aState;
+        this.stateCanonicalName = aState;
         this.precinctCanonNames= aPrecinct;
     }
 
-    public State getState() {
-        return state;
+    public String getStateCanonicalName() {
+        return this.stateCanonicalName;
     }
 
-    public void setState(State state) {
-        this.state = state;
+    public void setStateCanonicalName(String state) {
+        this.stateCanonicalName = state;
     }
 
+    @ElementCollection
     public Set<String> getPrecinct() {
         return this.precinctCanonNames;
     }

@@ -1,5 +1,17 @@
 package com.teammander.salamander.data;
 
+import javax.annotation.Generated;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+@Entity
+@Table(name = "demographic_data")
+@EntityListeners(AuditingEntityListener.class)
 public class DemographicData {
     int demographicDataID;
     int whitePop;
@@ -17,6 +29,8 @@ public class DemographicData {
         this.otherPop = otherPop;
     }
 
+    @Id
+    @GeneratedValue
     public int getDemographicDataID() {
         return demographicDataID;
     }

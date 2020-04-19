@@ -23,24 +23,24 @@ public class PrecinctController {
     }
 
     @GetMapping
-    public ResponseEntity find(String canonName){
+    public ResponseEntity find(String canonName) {
         return null;
     }
 
-    public ResponseEntity addNeighbor(Precinct precinctName1, Precinct precinctName2){
+    public ResponseEntity addNeighbor(Precinct precinctName1, Precinct precinctName2) {
         return null;
     }
 
-    public ResponseEntity deleteNeighbor(Precinct precinctName1, Precinct precinctName2){
+    public ResponseEntity deleteNeighbor(Precinct precinctName1, Precinct precinctName2) {
         return null;
     }
 
 
-    public ResponseEntity mergePrecinct(Precinct canonName1, Precinct canonName2){
+    public ResponseEntity mergePrecinct(Precinct canonName1, Precinct canonName2) {
         return null;
     }
 
-    public ResponseEntity remove(Precinct precinct1){
+    public ResponseEntity remove(Precinct precinct1) {
         return null;
     }
 

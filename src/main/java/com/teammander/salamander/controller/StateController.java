@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,7 +35,7 @@ public class StateController {
 
     //when page loads and we get all states to display
     @GetMapping("/getAllStates")
-    public List<State> getAllStates(){
+    public List<State> getAllStates() {
      //   logger.info("/getAllStates endpoint called");
         return ss.getAllStates();
         // return new ResponseEntity<>(allStates, new HttpHeaders(), HttpStatus.OK);
@@ -42,8 +44,13 @@ public class StateController {
 
     //get specific state data for clicking on state on map/dropdown
     @GetMapping("/getState/{stateCanonName}")
-    public State getState(@PathVariable String stateCanonName){
+    public State getState(@PathVariable String stateCanonName) {
         return getSs().getState(stateCanonName);
     }
 
+    @PostMapping("/uploadState")
+    public ResponseEntity uploadState(@RequestBody State state) {
+        getSs().addState(state);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

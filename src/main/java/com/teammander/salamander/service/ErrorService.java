@@ -18,10 +18,10 @@ public class ErrorService {
         return er;
     }
 
-    public DataError getError(int id){
+    public DataError getError(int id) {
         return null;
     }
 
-    public void deleteError(DataError err){
+    public void deleteError(DataError err) {
     }
 }

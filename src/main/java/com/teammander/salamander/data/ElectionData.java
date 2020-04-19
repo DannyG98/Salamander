@@ -1,5 +1,8 @@
 package com.teammander.salamander.data;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
 //enum for year of election
 enum Year{
@@ -21,9 +24,10 @@ enum ElectionType{
     PRESIDENTIAL, CONGRESSIONAL
 }
 
-
+@MappedSuperclass
 public abstract class ElectionData {
 
+    int electionDataId;
     Year year;
     ElectionType type;
     int democraticVotes;
@@ -40,6 +44,16 @@ public abstract class ElectionData {
         this.libertarianVotes = libertarianVotes;
         this.greenVotes = greenVotes;
         this.otherVotes = otherVotes;
+    }
+
+    @Id
+    @GeneratedValue
+    public int getElectionDataID() {
+        return this.electionDataId;
+    }
+
+    public void setElectionDataID(int id) {
+        this.electionDataId = id;
     }
 
     public Year getYear() {

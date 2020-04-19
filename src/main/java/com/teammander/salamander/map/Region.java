@@ -1,11 +1,17 @@
 package com.teammander.salamander.map;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToOne;
+
 import com.teammander.salamander.data.DemographicData;
 import com.teammander.salamander.data.Election;
 
 import mil.nga.sf.geojson.Geometry;
 
-
+@MappedSuperclass
 public abstract class Region {
     String canonName;
     String displayName;
@@ -21,6 +27,7 @@ public abstract class Region {
         this.elecData = elecData;
     }
 
+    @Id
     public String getCanonName() {
         return canonName;
     }
@@ -45,6 +52,8 @@ public abstract class Region {
         this.geometry = geoemtry;
     }
 
+    @OneToOne
+    @JoinColumn(name = "demographic_data_id")
     public DemographicData getDemoData() {
         return demoData;
     }
@@ -53,6 +62,8 @@ public abstract class Region {
         this.demoData = demoData;
     }
 
+    @OneToOne
+    @JoinColumn(name = "election_data_id")
     public Election getElecData() {
         return elecData;
     }
