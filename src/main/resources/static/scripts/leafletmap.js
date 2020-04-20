@@ -767,6 +767,7 @@ var LeafletMap = {
             // Create a hashmap that maps state canonical names to geojson data
             for (var i = 0; i < LeafletMap.statesGeojson.length; i++) {
                 this.states[LeafletMap.statesGeojson[i].canonName] = LeafletMap.statesGeojson[i];
+                // Need to convert the json from server into geojson
                 LeafletMap.statesGeojson[i] = jsonHandler.convert(LeafletMap.statesGeojson[i]);
             }
             // Add the state layer
@@ -778,35 +779,57 @@ var LeafletMap = {
 
     // TODO
     // Get district geojson from server
-    getDistrictData: function() {
-        fetch('').then(function(response) {
+    getDistrictData: function(districtList) {
+        var postTemplate = {
+            method: 'post',
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            },
+            body: districtList
+        }
+        fetch('/district/getMultipleDistricts', postTemplate).then(function(response) {
             return response.text();
         }).then(function(text) {
-
+            LeafletMap.districtGeojson = JSON.parse(text);
+            for (var i = 0; i < LeafletMap.districtGeojson.length; i++) {
+                this.districts[LeafletMap.districtGeojson[i].canonName] = LeafletMap.districtGeojson[i];
+                LeafletMap.districtGeojson[i] = jsonHandler.convert(LeafletMap.districtGeojson[i]);
+            }
+            // Add the district layer
+            LeafletMap.districtLayer= L.geoJson(LeafletMap.districtGeojson, {
+                onEachFeature: LeafletMap.onEachFeature
+            }).addTo(LeafletMap.map);
         });
     },
     // Get precinct geojson from server
-    getPrecinctData: function() {
-        fetch('').then(function(response) {
+    getPrecinctData: function(precinctList) {
+        var postTemplate = {
+            method: 'post',
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            },
+            body: precinctList
+        }
+        fetch('/precinct/getMultiplePrecincts', postTemplate).then(function(response) {
             return response.text();
         }).then(function(text) {
-
-        });
-    },
-    // Get election data from server to populate sidebar
-    getElectionData: function() {
-        fetch('').then(function(response) {
-            return response.text();
-        }).then(function(text) {
-            
+            LeafletMap.precinctGeojson = JSON.parse(text);
+            for (var i = 0; i < LeafletMap.precinctGeojson.length; i++) {
+                this.precincts[LeafletMap.precinctGeojson[i].canonName] = LeafletMap.precinctGeojson[i];
+                LeafletMap.precinctGeojson[i] = jsonHandler.convert(LeftletMap.precinctGeojson[i]);
+            }
+            // Add the district layer
+            LeafletMap.precinctLayer= L.geoJson(LeafletMap.precinctGeojson, {
+                onEachFeature: LeafletMap.onEachFeature
+            }).addTo(LeafletMap.map);
         });
     },
     // Send modified data to the server
     sendUpdatedData: function() {
-        fetch('').then(function(response) {
+        send('').then(function(response) {
             return response.text();
         }).then(function(text) {
-            
+
         });
     },
 
