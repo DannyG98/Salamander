@@ -52,11 +52,6 @@ public class PrecinctController {
         getPs().remove(precinct1);
     }
 
-    @PostMapping("/uploadPrecinct")
-    public void uploadPrecinct(@RequestBody Precinct precinct) {
-        getPs().insertPrecinct(precinct);
-    }
-
     @PostMapping("/getMultiplePrecincts")
     public List<Precinct> getMultiplePrecincts(@RequestBody List<String> query) {
         List<Precinct> queryResponse = new ArrayList<>();
@@ -64,6 +59,17 @@ public class PrecinctController {
             queryResponse.add(getPs().getPrecinct(s));
         }
         return queryResponse;
-    } 
+    }
+
+    @PostMapping("/uploadPrecinct")
+    public void uploadPrecinct(@RequestBody Precinct precinct) {
+        getPs().insertPrecinct(precinct);
+    }
+    
+    @PostMapping("/multiUploadPrecincts")
+    public void multiUploadPrecincts(@RequestBody List<Precinct> precincts) {
+        for (Precinct p : precincts)
+            getPs().insertPrecinct(p);
+    }
 
 }

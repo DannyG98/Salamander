@@ -46,4 +46,10 @@ public class DistrictController {
     public void uploadDistrict(@RequestBody District district) {
         getDs().insertDistrict(district);
     }
+
+    @PostMapping("/multiUploadDistricts")
+    public void multiUploadDistricts(@RequestBody List<District> districts) {
+        for (District s : districts)
+            getDs().insertDistrict(s);
+    }
 }

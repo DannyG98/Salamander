@@ -9,28 +9,28 @@ import java.util.Set;
 
 public class District extends Region{
 
-    State state;
-    Set<String> precinctCanonNames;
+    String stateCName;
+    Set<String> precinctCNames;
 
-    public District(String canonName, String displayName, Geometry geometry, DemographicData demoData, Election elecData, State aState, Set<String> aPrecinct) {
+    public District(String canonName, String displayName, Geometry geometry, DemographicData demoData, Election elecData, String aState, Set<String> aPrecinct) {
         super(canonName, displayName, geometry, demoData, elecData);
-        this.state = aState;
-        this.precinctCanonNames= aPrecinct;
+        this.stateCName = aState;
+        this.precinctCNames= aPrecinct;
     }
 
-    public State getState() {
-        return state;
+    public String getStateCName() {
+        return stateCName;
     }
 
-    public void setState(State state) {
-        this.state = state;
+    public void setStateCName(String state) {
+        this.stateCName = state;
     }
 
-    public Set<String> getPrecinct() {
-        return this.precinctCanonNames;
+    public Set<String> getPrecinctCNames() {
+        return this.precinctCNames;
     }
 
-    public void setPrecinct(Set<String> precinct) {
-        this.precinctCanonNames = precinct;
+    public void setPrecinctCNames(Set<String> precinct) {
+        this.precinctCNames = precinct;
     }
 }
