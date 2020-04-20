@@ -15,69 +15,64 @@ enum PrecinctType{
 
 public class Precinct extends Region{
 
-    District district;
-    State state;
-    Set<String> neighborCanonNames;
+    String parentDistrictCName;
+    String parentStateCName;
+    Set<String> neighborCNames;
     PrecinctType type;
 
-    public Precinct(String canonName, String displayName, Geometry geometry, DemographicData demoData, Election elecData, District dis, State aState, Set<String> neigh, PrecinctType pType) {
+    public Precinct(String canonName, String displayName, Geometry geometry, DemographicData demoData, Election elecData, 
+                        String dis, String aState, Set<String> neigh, PrecinctType pType) {
         super(canonName, displayName, geometry, demoData, elecData);
-        this.district = dis;
-        this.state = aState;
-        this.neighborCanonNames = neigh;
+        this.parentDistrictCName = dis;
+        this.parentStateCName = aState;
+        this.neighborCNames = neigh;
         this.type = pType;
     }
 
     public boolean isNeighbor(Precinct neighbor){
-        return false;
+        return neighborCNames.contains(neighbor.getCanonName());
     }
 
     public void addNeighbor(Precinct neighbor){
-
+        neighborCNames.add(neighbor.getCanonName());
     }
 
     public void deleteNeighbor(Precinct neighbor){
-
+        neighborCNames.remove(neighbor.getCanonName());
     }
 
     public Precinct merge(Precinct p1){
         return null;
     }
 
-    public void updatePrecinct(){
-
-    }
-
     public void updateDemoData(DemographicData demoData){
-
     }
 
     public void updateElecData(Election elecData){
-
     }
 
-    public District getDistrict() {
-        return district;
+    public String getDistrictCName() {
+        return parentDistrictCName;
     }
 
-    public void setDistrict(District district) {
-        this.district = district;
+    public void setDistrictCName(String district) {
+        this.parentDistrictCName = district;
     }
 
-    public State getState() {
-        return state;
+    public String getStateCName() {
+        return parentStateCName;
     }
 
-    public void setState(State state) {
-        this.state = state;
+    public void setStateCName(String state) {
+        this.parentStateCName = state;
     }
 
-    public Set<String> getNeighbors() {
-        return this.neighborCanonNames;
+    public Set<String> getNeighborCNames() {
+        return this.neighborCNames;
     }
 
     public void setNeighbors(Set<String> neighbors) {
-        this.neighborCanonNames = neighbors;
+        this.neighborCNames = neighbors;
     }
 
     public PrecinctType getType() {
