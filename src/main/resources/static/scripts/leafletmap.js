@@ -779,19 +779,35 @@ var LeafletMap = {
     // TODO
     // Get district geojson from server
     getDistrictData: function() {
+        fetch('').then(function(response) {
+            return response.text();
+        }).then(function(text) {
 
+        });
     },
     // Get precinct geojson from server
     getPrecinctData: function() {
+        fetch('').then(function(response) {
+            return response.text();
+        }).then(function(text) {
 
+        });
     },
     // Get election data from server to populate sidebar
     getElectionData: function() {
-
+        fetch('').then(function(response) {
+            return response.text();
+        }).then(function(text) {
+            
+        });
     },
     // Send modified data to the server
     sendUpdatedData: function() {
-
+        fetch('').then(function(response) {
+            return response.text();
+        }).then(function(text) {
+            
+        });
     },
 
     

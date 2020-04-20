@@ -208,14 +208,14 @@ var ToolBar = {
                 // Refresh the precinct layers
                 if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
                     LeafletMap.map.removeLayer(LeafletMap.precinctLayer);
-                    LeafletMap.precinctLayer = L.geoJson(precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
+                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
                 }
                 LeafletMap.map.pm.disableDraw();
                 break;
             case LeafletMap.modes.modify:
                 if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
                     LeafletMap.map.removeLayer(LeafletMap.precinctLayer);
-                    LeafletMap.precinctLayer = L.geoJson(precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
+                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
                 }
                 break;
             default:
@@ -237,23 +237,23 @@ var ToolBar = {
                 // Update the GUI
                 if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
                     LeafletMap.map.removeLayer(LeafletMap.precinctLayer); 
-                    LeafletMap.precinctLayer = L.geoJson(precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
+                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
                 }
                 break;
             case LeafletMap.modes.modify:
                 // Replace precinctCoordinates with the new ones from the precinctLayer layer
                 for (var i in LeafletMap.precinctLayer._layers) {
                     var precinctName = LeafletMap.precinctLayer._layers[i].feature.properties.name;
-                    for (var j in precinctGeojson) {
-                        if (precinctName == precinctGeojson[j].properties.name) {
+                    for (var j in LeafletMap.precinctGeojson) {
+                        if (precinctName == LeafletMap.precinctGeojson[j].properties.name) {
                             console.log("Precinct coordinates modified");
                             var newPrecinctCoordinates = [];
                             var coordinatesList = LeafletMap.precinctLayer._layers[i]._latlngs[0];
                             for (var k in coordinatesList) {
                                 newPrecinctCoordinates.push([coordinatesList[k].lng, coordinatesList[k].lat]);
                             };
-                            precinctGeojson[j].geometry.type = LeafletMap.precinctLayer._layers[i].feature.geometry.type;
-                            precinctGeojson[j].geometry.coordinates = [newPrecinctCoordinates];
+                            LeafletMap.precinctGeojson[j].geometry.type = LeafletMap.precinctLayer._layers[i].feature.geometry.type;
+                            LeafletMap.precinctGeojson[j].geometry.coordinates = [newPrecinctCoordinates];
                             break;
                         }
                     }
