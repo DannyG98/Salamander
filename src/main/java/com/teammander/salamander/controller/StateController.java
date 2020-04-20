@@ -52,5 +52,11 @@ public class StateController {
     public void uploadState(@RequestBody State state) {
         getSs().insertState(state);
     }
+
+    @PostMapping("/multiUploadStates")
+    public void multiUploadState(@RequestBody List<State> states) {
+        for (State s : states)
+            getSs().insertState(s);
+    }
     
 }
