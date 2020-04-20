@@ -41,7 +41,6 @@ public class StateController {
         return ss.getAllStates();
     }
 
-
     //get specific state data for clicking on state on map/dropdown
     @GetMapping("/getState/{stateCanonName}")
     public State getState(@PathVariable String stateCanonName){

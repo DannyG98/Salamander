@@ -1,9 +1,11 @@
 package com.teammander.salamander.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.teammander.salamander.map.Precinct;
 import com.teammander.salamander.service.PrecinctService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,5 +57,13 @@ public class PrecinctController {
         getPs().insertPrecinct(precinct);
     }
 
+    @PostMapping("/getMultiplePrecincts")
+    public List<Precinct> getMultiplePrecincts(@RequestBody List<String> query) {
+        List<Precinct> queryResponse = new ArrayList<>();
+        for (String s : query) {
+            queryResponse.add(getPs().getPrecinct(s));
+        }
+        return queryResponse;
+    } 
 
 }

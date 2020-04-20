@@ -1,5 +1,8 @@
 package com.teammander.salamander.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.teammander.salamander.map.District;
 import com.teammander.salamander.service.DistrictService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +28,21 @@ public class DistrictController {
         return ds;
     }
 
+    @PostMapping("/getMultipleDistricts")
+    public List<District> getMultipleDistricts(@RequestBody List<String> query) {
+        List<District> queryResponse = new ArrayList<>();
+        for (String s : query) {
+            queryResponse.add(getDs().getDistrict(s));
+        }
+        return queryResponse;
+    } 
+
     @GetMapping("/getDistrict/{districtCanonName}")
     public District getDistrict(@PathVariable String districtCanonName) {
         return getDs().getDistrict(districtCanonName);
     }
 
-    @PostMapping("/uplaodDistrict")
+    @PostMapping("/uploadDistrict")
     public void uploadDistrict(@RequestBody District district) {
         getDs().insertDistrict(district);
     }
