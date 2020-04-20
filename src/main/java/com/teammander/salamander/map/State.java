@@ -9,18 +9,18 @@ import java.util.Set;
 
 public class State extends Region {
 
-    Set<String> district;
+    Set<String> districtCNames;
 
     public State(String canonName, String displayName, Geometry geometry, DemographicData demoData, Election elecData, Set<String> aDistrict) {
         super(canonName, displayName, geometry, demoData, elecData);
-        this.district= aDistrict;
+        this.districtCNames= aDistrict;
     }
 
-    public Set<String> getDistrictList() {
-        return district;
+    public Set<String> getDistrictCNames() {
+        return districtCNames;
     }
 
-    public void setDistrict(Set<String> district) {
-        this.district = district;
+    public void setDistrictCNames(Set<String> district) {
+        this.districtCNames = district;
     }
 }
