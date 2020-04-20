@@ -4,7 +4,6 @@ public class DemographicData {
     int demographicDataID;
     int whitePop;
     int blackPop;
-    int hispanicPop;
     int asianPop;
     int otherPop;
 
@@ -12,7 +11,6 @@ public class DemographicData {
         this.demographicDataID = demographicDataID;
         this.whitePop = whitePop;
         this.blackPop = blackPop;
-        this.hispanicPop = hispanicPop;
         this.asianPop = asianPop;
         this.otherPop = otherPop;
     }
@@ -39,14 +37,6 @@ public class DemographicData {
 
     public void setBlackPop(int blackPop) {
         this.blackPop = blackPop;
-    }
-
-    public int getHispanicPop() {
-        return hispanicPop;
-    }
-
-    public void setHispanicPop(int hispanicPop) {
-        this.hispanicPop = hispanicPop;
     }
 
     public int getAsianPop() {
