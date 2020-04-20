@@ -552,7 +552,7 @@ var LeafletMap = {
         LeafletMap.precinctGeojson.push(...coloradoPrecincts);
         LeafletMap.precinctGeojson.push(...floridaPrecincts);
         for (var i = 0; i < LeafletMap.precinctGeojson.length; i++) {
-            this.states[LeafletMap.precinctGeojson[i].properties.name] = LeafletMap.precinctGeojson[i];
+            this.precincts[LeafletMap.precinctGeojson[i].properties.name] = LeafletMap.precinctGeojson[i];
         }
     },
 
@@ -694,6 +694,8 @@ var LeafletMap = {
                     currentState.className = currentState.className.replace("active", "");
                 }
                 states[i].className += " active";
+                // Get district from server and display it
+                LeafletMap.getDistrictData(LeafletMap.states[name].districtList);
                 break;
             }
         }
@@ -766,7 +768,7 @@ var LeafletMap = {
             LeafletMap.statesGeojson = JSON.parse(text);
             // Create a hashmap that maps state canonical names to geojson data
             for (var i = 0; i < LeafletMap.statesGeojson.length; i++) {
-                this.states[LeafletMap.statesGeojson[i].canonName] = LeafletMap.statesGeojson[i];
+                LeafletMap.states[LeafletMap.statesGeojson[i].canonName] = LeafletMap.statesGeojson[i];
                 // Need to convert the json from server into geojson
                 LeafletMap.statesGeojson[i] = jsonHandler.convert(LeafletMap.statesGeojson[i]);
             }
@@ -785,14 +787,14 @@ var LeafletMap = {
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
             },
-            body: districtList
+            body: JSON.stringify(districtList)
         }
         fetch('/district/getMultipleDistricts', postTemplate).then(function(response) {
             return response.text();
         }).then(function(text) {
             LeafletMap.districtGeojson = JSON.parse(text);
             for (var i = 0; i < LeafletMap.districtGeojson.length; i++) {
-                this.districts[LeafletMap.districtGeojson[i].canonName] = LeafletMap.districtGeojson[i];
+                LeafletMap.districts[LeafletMap.districtGeojson[i].canonName] = LeafletMap.districtGeojson[i];
                 LeafletMap.districtGeojson[i] = jsonHandler.convert(LeafletMap.districtGeojson[i]);
             }
             // Add the district layer
