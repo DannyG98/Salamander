@@ -2,6 +2,7 @@ package com.teammander.salamander.map;
 
 import com.teammander.salamander.data.DemographicData;
 import com.teammander.salamander.data.Election;
+import com.teammander.salamander.data.ElectionData;
 
 import mil.nga.sf.geojson.Geometry;
 
@@ -20,7 +21,7 @@ public class Precinct extends Region{
     Set<String> neighborCNames;
     PrecinctType type;
 
-    public Precinct(String canonName, String displayName, Geometry geometry, DemographicData demoData, Election elecData, 
+    public Precinct(String canonName, String displayName, Geometry geometry, DemographicData demoData, ElectionData elecData, 
                         String dis, String aState, Set<String> neigh, PrecinctType pType) {
         super(canonName, displayName, geometry, demoData, elecData);
         this.parentDistrictCName = dis;
@@ -45,10 +46,16 @@ public class Precinct extends Region{
         return null;
     }
 
-    public void updateDemoData(DemographicData demoData){
+    public void updateDemoData(DemographicData demoData) {
+        this.demoData = demoData;
     }
 
-    public void updateElecData(Election elecData){
+    public void updateElecData(ElectionData elecData) {
+        this.elecData = elecData;
+    }
+
+    public void updateGeoemtry(Geometry geometry) {
+        this.geometry = geometry;
     }
 
     public String getDistrictCName() {

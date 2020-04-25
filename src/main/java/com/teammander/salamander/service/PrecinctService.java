@@ -1,9 +1,13 @@
 package com.teammander.salamander.service;
 
+import com.teammander.salamander.data.DemographicData;
+import com.teammander.salamander.data.ElectionData;
 import com.teammander.salamander.map.Precinct;
 import com.teammander.salamander.repository.PrecinctRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import mil.nga.sf.geojson.Geometry;
 
 @Service
 public class PrecinctService {
@@ -52,5 +56,29 @@ public class PrecinctService {
 
     public void insertPrecinct(Precinct precinct) {
         getPr().insertPrecinct(precinct);
+    }
+
+    public Precinct updateDemoData(String pCName, DemographicData demoData) {
+        Precinct targetPrecinct = this.getPrecinct(pCName);
+        if (targetPrecinct == null)
+            return null;
+        targetPrecinct.updateDemoData(demoData);
+        return targetPrecinct;
+    }
+
+    public Precinct updateBoundary(String pCName, Geometry geometry) {
+        Precinct targetPrecinct = this.getPrecinct(pCName);
+        if (targetPrecinct == null)
+            return null;
+        targetPrecinct.updateGeoemtry(geometry);
+        return targetPrecinct;
+    }
+
+    public Precinct updateElectionData(String pCName, ElectionData eData) {
+        Precinct targetPrecinct = this.getPrecinct(pCName);
+        if (targetPrecinct == null)
+            return null;
+        targetPrecinct.updateElecData(eData);
+        return targetPrecinct;
     }
 }

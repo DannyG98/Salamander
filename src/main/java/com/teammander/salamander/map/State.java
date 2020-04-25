@@ -2,6 +2,7 @@ package com.teammander.salamander.map;
 
 import com.teammander.salamander.data.DemographicData;
 import com.teammander.salamander.data.Election;
+import com.teammander.salamander.data.ElectionData;
 
 import mil.nga.sf.geojson.Geometry;
 
@@ -11,7 +12,7 @@ public class State extends Region {
 
     Set<String> districtCNames;
 
-    public State(String canonName, String displayName, Geometry geometry, DemographicData demoData, Election elecData, Set<String> aDistrict) {
+    public State(String canonName, String displayName, Geometry geometry, DemographicData demoData, ElectionData elecData, Set<String> aDistrict) {
         super(canonName, displayName, geometry, demoData, elecData);
         this.districtCNames= aDistrict;
     }
