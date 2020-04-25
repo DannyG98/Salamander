@@ -17,6 +17,7 @@ public class DistrictRepository {
     @Autowired
     public DistrictRepository() {
         allDistricts = new HashMap<>();
+
     }
 
     public District findDistrict(String canonName) {
