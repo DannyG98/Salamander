@@ -1,128 +1,3 @@
-
-var coloradoDistricts = [
-    {
-        "type": "Feature",
-        "properties": {
-            "name": "District 1",
-            "density": 49.33,
-            "population": 1111,
-            "Democratic": 11,
-            "Republican": 88,
-            "White": 10,
-            "Hispanic": 21,
-            "AfricanAmerican": 69
-        },
-
-        "geometry": {
-            "type": "Polygon",
-            "coordinates": [
-                [
-                    [
-                        -109.017333984375,
-                        37.02886944696474
-                    ],
-                    [
-                        -106.732177734375,
-                        37.02886944696474
-                    ],
-                    [
-                        -106.732177734375,
-                        40.88029480552824
-                    ],
-                    [
-                        -109.017333984375,
-                        40.88029480552824
-                    ],
-                    [
-                        -109.017333984375,
-                        37.02886944696474
-                    ]
-                ]
-            ]
-        }
-    },
-    {
-        "type": "Feature",
-        "properties": {
-            "name": "District 2",
-            "density": 49.33,
-            "population": 4123,
-            "Democratic": 15,
-            "Republican": 85,
-            "White": 90,
-            "Hispanic": 8,
-            "AfricanAmerican": 12
-        },
-        "geometry": {
-            "type": "Polygon",
-            "coordinates": [
-                [
-                    [
-                        -106.68823242187499,
-                        39.14710270770074
-                    ],
-                    [
-                        -102.12890625,
-                        39.14710270770074
-                    ],
-                    [
-                        -102.12890625,
-                        40.88029480552824
-                    ],
-                    [
-                        -106.68823242187499,
-                        40.88029480552824
-                    ],
-                    [
-                        -106.68823242187499,
-                        39.14710270770074
-                    ]
-                ]
-            ]
-        }
-    },
-    {
-        "type": "Feature",
-        "properties": {
-            "name": "District 3",
-            "density": 49.33,
-            "population": 74723,
-            "Democratic": 35,
-            "Republican": 65,
-            "White": 60,
-            "Hispanic": 12,
-            "AfricanAmerican": 28
-        },
-        "geometry": {
-            "type": "Polygon",
-            "coordinates": [
-                [
-                    [
-                        -106.666259765625,
-                        37.07271048132943
-                    ],
-                    [
-                        -102.12890625,
-                        37.07271048132943
-                    ],
-                    [
-                        -102.12890625,
-                        39.0533181067413
-                    ],
-                    [
-                        -106.666259765625,
-                        39.0533181067413
-                    ],
-                    [
-                        -106.666259765625,
-                        37.07271048132943
-                    ]
-                ]
-            ]
-        }
-    }
-]
-
 var coloradoPrecincts = [
     {
         "type": "Feature",
@@ -513,7 +388,7 @@ var floridaPrecincts = [
     },
 ]
 
-var LeafletMap = {
+const LeafletMap = {
     // Used for keeping of track what tool is being used
     modes: { default: 0, insert: 1, merge: 2, modify: 3, create: 4, reset: 5 },
     currentMode: 0,
@@ -565,58 +440,18 @@ var LeafletMap = {
     },
 
     initZoomHandlers: function () {
-        // Show only the revelant borders at each zoom level
-        LeafletMap.initZoomLevels();
-
-    },
-
-    initZoomLevels: function () {
         LeafletMap.map.on('zoomend', function (e) {
-            var zoomlevel = LeafletMap.map.getZoom();
-            if ($('#states').find(".active")[0] != null) {
-                //level 7 zoom is district level
-                if (zoomlevel == 7) {
-                    // Remove all non-district layers
-                    LeafletMap.enablePrecinctLayer(false);
-                    LeafletMap.enableStateLayer(false);
-                    // Add in district layers
-                    LeafletMap.enableDistrictLayer(true);
-                    // Change the filter GUI element to match
-                    LeafletMap.enableAllFilters();
-                    // Disable district filter
-                    var filter = $('#district-filter')[0];
-                    filter.className = filter.className.replace(/active/g, "");
-                 
-                }
-                //level 8 zoom is for precincts
-                else if (zoomlevel >= 8) {
-                    // Remove all non-precinct layers
-                    LeafletMap.enableStateLayer(false);
-                    LeafletMap.enableDistrictLayer(false);
-                    // Add in precinct layer
-                    LeafletMap.enablePrecinctLayer(true);
-                    // Change the filter GUI element to match
-                    LeafletMap.enableAllFilters();
-                    // Disable precinct filter
-                    var filter = $('#precinct-filter')[0];
-                    filter.className = filter.className.replace(/active/g, "");
-                    // Disalbe nation parks filter
-                    var filter = $('#national-parks-filter')[0];
-                    filter.className = filter.className.replace(/active/g, "");
-                }
-                else {
-                    // Remove all non-state layers
-                    LeafletMap.enablePrecinctLayer(false);
-                    LeafletMap.enableDistrictLayer(false);
-                    // Add in state layers
-                    LeafletMap.enableStateLayer(true);
-                    // Change the filter GUI element to match
-                    LeafletMap.enableAllFilters();
-                }
-            }
-
-            console.log("Current Zoom Level =" + zoomlevel)
-        });
+            // Display only the state borders when zoomed out too far
+            let zoomLevel = LeafletMap.map.getZoom();
+            if (zoomLevel <= 6) {
+                LeafletMap.enableStateLayer(true);
+                LeafletMap.enableDistrictLayer(false);
+                LeafletMap.enablePrecinctLayer(false);
+                ToolBar.enableAllFilters(true);
+                ToolBar.unselectState();
+            }     
+            console.log("Current Zoom Level =" + zoomLevel)
+         });
     },
 
     initInfoBox: function () {
@@ -625,10 +460,10 @@ var LeafletMap = {
             // TODO
             // Need to update properties to their correct name in the geojson from server
             Window._div.innerHTML = '<h4>U.S State Data</h4>' + (props ?
-                '<b>' + props.name + '</b><br />' + 'Democratic: ' + props.Democratic + '%' +
-                '</b><br>Republican: ' + props.Republican + '%' + '</b><br />White: ' + props.White + '%' +
-                '</b><br />Hispanic: ' + props.Hispanic + '%' + '</b><br />African American: '
-                + props.AfricanAmerican + '%' + '</b><br />Population:' + props.population
+                '<b>' + props.displayName + '</b><br />' + 'Democratic: ' + props.elecData.democraticVotes + '%' +
+                '</b><br>Republican: ' + props.elecData.republicanVotes + '%' + '</b><br />White: ' + props.demoData.whitePop + '%' +
+                '</b><br />Other: ' + props.demoData.otherPop + '%' + '</b><br />African American: '
+                + props.demoData.blackPop + '%' + '</b><br />Population:' + props.population
                 : 'Hover for more detail');
 
             //  '<b>' + props.name + '</b><br />' + props.density + ' people / mi<sup>2</sup>'
@@ -684,23 +519,48 @@ var LeafletMap = {
     },
 
     onClickHandler: function (e) {
-        // Check if there clicked layer is a state layer
-        var name = e.target.feature.properties.canonName;
-        var states = $('#states').find(".dropdown-item");
-        for (var i = 0; i < states.length; i++) {
-            if (states[i].text.toLowerCase() == name) {
-                var currentState = $('#states').find(".active")[0];
-                if (currentState != null) {
-                    currentState.className = currentState.className.replace("active", "");
-                }
-                states[i].className += " active";
-                // Get district from server and display it
-                LeafletMap.getDistrictData(LeafletMap.states[name].districtList);
+        const canonicalName = e.target.feature.properties.canonName;
+
+        // The clicked layer is a state layer
+        if (LeafletMap.states[canonicalName] != null) {
+            // Responsible for updating toolbar GUI and updating districtGeoson
+            LeafletMap.stateLayerHandler(canonicalName);
+            LeafletMap.enableStateLayer(false)
+             // Enable all the options in filter dropdown menu
+            ToolBar.enableAllFilters(true);
+            // Disable district filter 
+            let filter = $('#district-filter')[0];
+            filter.className = filter.className.replace(/active/g, "");
+        }
+        // The clicked layer is a district
+        else if (LeafletMap.districts[canonicalName] != null) {
+            // Responsible for updating precinctGeoson
+            LeafletMap.districtLayerHandler(canonicalName);
+            LeafletMap.enableDistrictLayer(false);
+            ToolBar.enableAllFilters(true);
+            // Disable precinct filter 
+            let filter = $('#precinct-filter')[0];
+            filter.className = filter.className.replace(/active/g, "");
+        }
+        LeafletMap.zoomToFeature(e);
+        stateChangeHandler(e.target.feature.properties.canonName);
+    },
+
+    stateLayerHandler: function(stateCanonName) {
+        // Update the states dropdown menu UI
+        const statesDropdownElements = $('#states').find(".dropdown-item");
+        for (let i = 0; i < statesDropdownElements.length; i++) {
+            if (statesDropdownElements[i].text.toLowerCase() == stateCanonName) {
+                ToolBar.unselectState();
+                statesDropdownElements[i].className += " active";
+                // Get district from server
+                LeafletMap.getDistrictData(LeafletMap.states[stateCanonName].districtCNames);
                 break;
             }
         }
-        LeafletMap.zoomToFeature(e);
-        stateChangeHandler(e.target.feature.properties.name);
+    },
+    districtLayerHandler: function(districtCanonName) {
+
     },
 
     zoomToFeature: function (e) {
@@ -710,11 +570,36 @@ var LeafletMap = {
     panMap: function (lat, long, zoom) {
         LeafletMap.map.setView([lat, long], zoom);
     },
+    
+    enableStateLayer: function(option) {
+        switch(option) {
+            case true:
+                if (!LeafletMap.map.hasLayer(LeafletMap.stateLayer)) {
+                    LeafletMap.stateLayer = L.geoJson(LeafletMap.statesGeojson, 
+                        { onEachFeature: LeafletMap.onEachFeature }, 
+                        { style: { pmIgnore: true } 
+                    }).addTo(LeafletMap.map); }
+                break;
+            case false:
+                if (LeafletMap.map.hasLayer(LeafletMap.stateLayer)) { 
+                    LeafletMap.map.removeLayer(LeafletMap.stateLayer); }
+                break;
+        }
+    },
 
-    enableAllFilters: function() {
-        var filters = $('#filters').find('.dropdown-item');
-        for (var i = 0; i < filters.length; i++) {
-            filters[i].className += " active";
+    enableDistrictLayer: function(option) {
+        switch(option) {
+            case true:
+                if (!LeafletMap.map.hasLayer(LeafletMap.districtLayer)) { 
+                    LeafletMap.districtLayer = L.geoJson(LeafletMap.districtGeojson, 
+                        { onEachFeature: LeafletMap.onEachFeature }, 
+                        { style: { pmIgnore: true } 
+                    }).addTo(LeafletMap.map).bringToFront(); }
+                break;
+            case false:
+                if (LeafletMap.map.hasLayer(LeafletMap.districtLayer)) { 
+                    LeafletMap.map.removeLayer(LeafletMap.districtLayer); }
+                break;
         }
     },
 
@@ -722,10 +607,16 @@ var LeafletMap = {
         switch(option) {
             case true:
                 if (!LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
-                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
+                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, 
+                        { onEachFeature: LeafletMap.onEachFeature }, 
+                        { style: { pmIgnore: false } 
+                    }).addTo(LeafletMap.map);
                     LeafletMap.precinctLayer.bringToFront(); }
                 if (!LeafletMap.map.hasLayer(LeafletMap.tempLayer)) {
-                    LeafletMap.tempLayer = L.geoJson(LeafletMap.tempPrecinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map); }
+                    LeafletMap.tempLayer = L.geoJson(LeafletMap.tempPrecinctGeojson, 
+                        { onEachFeature: LeafletMap.onEachFeature }, 
+                        { style: { pmIgnore: false } 
+                    }).addTo(LeafletMap.map); }
                 break;
                 
             case false:
@@ -736,31 +627,74 @@ var LeafletMap = {
                 break;
         }
     },
+
+    updatePrecinctData: function() {
+        switch(LeafletMap.currentMode) {
+            case LeafletMap.modes.insert: 
+                // Add all the new precincts to the current list of precincts
+                for (var i = 0; i < LeafletMap.tempPrecinctGeojson.length; i++) {
+                    // 
+                    LeafletMap.precinctGeojson.push(LeafletMap.tempPrecinctGeojson[i]);
+                }
+                // Update the GUI
+                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
+                    LeafletMap.map.removeLayer(LeafletMap.precinctLayer); 
+                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
+                }
+                break;
+            case LeafletMap.modes.modify:
+                // Replace precinctCoordinates with the new ones from the precinctLayer layer
+                for (var i in LeafletMap.precinctLayer._layers) {
+                    var precinctName = LeafletMap.precinctLayer._layers[i].feature.properties.name;
+                    for (var j in LeafletMap.precinctGeojson) {
+                        if (precinctName == LeafletMap.precinctGeojson[j].properties.name) {
+                            console.log("Precinct coordinates modified");
+                            var newPrecinctCoordinates = [];
+                            var coordinatesList = LeafletMap.precinctLayer._layers[i]._latlngs[0];
+                            for (var k in coordinatesList) {
+                                newPrecinctCoordinates.push([coordinatesList[k].lng, coordinatesList[k].lat]);
+                            };
+                            LeafletMap.precinctGeojson[j].geometry.type = LeafletMap.precinctLayer._layers[i].feature.geometry.type;
+                            LeafletMap.precinctGeojson[j].geometry.coordinates = [newPrecinctCoordinates];
+                            break;
+                        }
+                    }
+                };
+                break;
+            default:
+                console.log("INVALID CURRENT MODE");
+        }
+    },
+
+    resetMapFunctionalities: function() {
+        // Reset all temp variables and revert back to normal map functionality
+        switch(LeafletMap.currentMode) {
+            case LeafletMap.modes.insert:
+                // Need to remove all tempJson precincts from map and empty tempPrecinctGeojson
+                if (LeafletMap.map.hasLayer(LeafletMap.tempLayer)) { LeafletMap.map.removeLayer(LeafletMap.tempLayer);}
+                LeafletMap.tempPrecinctGeojson = [];
+                LeafletMap.tempLayer = null;
+                // Refresh the precinct layers
+                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
+                    LeafletMap.map.removeLayer(LeafletMap.precinctLayer);
+                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
+                }
+                LeafletMap.map.pm.disableDraw();
+                break;
+            case LeafletMap.modes.modify:
+                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
+                    LeafletMap.map.removeLayer(LeafletMap.precinctLayer);
+                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
+                }
+                break;
+            default:
+                console.log("INVALID CURRENT MODE");
+        }
+        LeafletMap.currentMode = LeafletMap.modes.default;
+        LeafletMap.map.options.minZoom = 5;
+        ToolBar.toggleEditButtons();
+    },
     
-    enableDistrictLayer: function(option) {
-        switch(option) {
-            case true:
-                if (!LeafletMap.map.hasLayer(LeafletMap.districtLayer)) { 
-                    LeafletMap.districtLayer = L.geoJson(coloradoDistricts, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: true } }).addTo(LeafletMap.map).bringToFront(); }
-                break;
-            case false:
-                if (LeafletMap.map.hasLayer(LeafletMap.districtLayer)) { LeafletMap.map.removeLayer(LeafletMap.districtLayer); }
-                break;
-        }
-    },
-
-    enableStateLayer: function(option) {
-        switch(option) {
-            case true:
-                if (!LeafletMap.map.hasLayer(LeafletMap.stateLayer)) {
-                    LeafletMap.stateLayer = L.geoJson(LeafletMap.statesGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: true } }).addTo(LeafletMap.map); }
-                break;
-            case false:
-                if (LeafletMap.map.hasLayer(LeafletMap.stateLayer)) { LeafletMap.map.removeLayer(LeafletMap.stateLayer);}
-                break;
-        }
-    },
-
     getStateData: function() {
         fetch('/state/getAllStates').then(function(response) {
             return response.text();
@@ -779,7 +713,6 @@ var LeafletMap = {
         });
     },
 
-    // TODO
     // Get district geojson from server
     getDistrictData: function(districtList) {
         var postTemplate = {
@@ -794,10 +727,12 @@ var LeafletMap = {
         }).then(function(text) {
             LeafletMap.districtGeojson = JSON.parse(text);
             for (var i = 0; i < LeafletMap.districtGeojson.length; i++) {
+                // Store district objects using canonicalName as key and district object as value
                 LeafletMap.districts[LeafletMap.districtGeojson[i].canonName] = LeafletMap.districtGeojson[i];
+                // Convert district objects into geoJson format and store it.
                 LeafletMap.districtGeojson[i] = jsonHandler.convert(LeafletMap.districtGeojson[i]);
             }
-            // Add the district layer
+            // Add the district layer to the map
             LeafletMap.districtLayer= L.geoJson(LeafletMap.districtGeojson, {
                 onEachFeature: LeafletMap.onEachFeature
             }).addTo(LeafletMap.map);

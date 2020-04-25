@@ -1,5 +1,5 @@
-var ToolBar = {
-    stateCoordinates: {"Colorado": [39.5501, -105.7821], "Florida": [27.6648, -81.5158], "Maryland": [39.0458, -76.6413]},
+const ToolBar = {
+    stateCoordinates: {"colorado": [39.5501, -105.7821], "florida": [27.6648, -81.5158], "maryland": [39.0458, -76.6413]},
 
     init: function() {
         this.initEventHandlers();
@@ -14,31 +14,31 @@ var ToolBar = {
 
     initStateDropdown: function() {
         // Add an event handler to move map to the selected state
-        var states = $('#states').find('.dropdown-item');
-        for (var i = 0; i  < states.length; i++) {
+        const states = $('#states').find('.dropdown-item');
+        for (let i = 0; i  < states.length; i++) {
             states[i].addEventListener("click", function() {
                 // Move map view to the selected state
-                var state = this.text;
+                const state = this.text.toLowerCase();
                 LeafletMap.panMap(ToolBar.stateCoordinates[state][0], ToolBar.stateCoordinates[state][1], 7);
 
                 // Highlight the selected state in the dropdown
-                var currentState = $('#states').find(".active")[0];
+                const currentState = $('#states').find(".active")[0];
                 if (currentState != null) {
                     currentState.className = currentState.className.replace("active", "");
                 }
                 this.className += " active";
-
+                LeafletMap.getDistrictData(LeafletMap.states[state.toLowerCase()].districtCNames);
             })
         }
     },
 
     initElectionDropdown: function() {
         // Add event listeners to election options to handle updating of election data
-        var elections = $('#elections').find('.dropdown-item');
-        for (var i = 0; i  < elections.length; i++) {
+        const elections = $('#elections').find('.dropdown-item');
+        for (let i = 0; i  < elections.length; i++) {
             elections[i].addEventListener("click", function() {
                 // Change highlighted election to the selected one
-                var currentElection = $('#elections').find(".active")[0];
+                let currentElection = $('#elections').find(".active")[0];
                 currentElection.className = currentElection.className.replace("active", "");
                 this.className += " active";
                 // TODO
@@ -48,8 +48,8 @@ var ToolBar = {
     },
 
     initFiltersDropdown: function() {
-        var options = $('#filters').find('.dropdown-item');
-        for (var i = 0; i  < options.length; i++) {
+        const options = $('#filters').find('.dropdown-item');
+        for (let i = 0; i  < options.length; i++) {
             options[i].addEventListener("click", function() {
                 // Highlights filters dropdown menu elements when active
                 if (this.className.includes("active")) {
@@ -95,7 +95,7 @@ var ToolBar = {
                     newPrecinctCoordinates.push([coordinatesList[i].lng, coordinatesList[i].lat])
                 };
                 
-3                // Add new precinct boundaries to a temporary variable
+                // Add new precinct boundaries to a temporary variable
                 LeafletMap.tempPrecinctGeojson.push( 
                 {
                     "type": "Feature",
@@ -129,28 +129,22 @@ var ToolBar = {
 
     mergePrecinctHandler: function() {
         $('#merge').click( function() {
-            LeafletMap.currentMode = LeafletMap.modes.merge;
-            ToolBar.toggleEditButtons();
+            if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
+                LeafletMap.currentMode = LeafletMap.modes.merge;
+                ToolBar.toggleEditButtons();
+            }
         });
     },
 
     modifyPrecinctHanlder: function() {
         $('#modify').click( function() {
-            // Go to precinct level
-            LeafletMap.map.setZoom(8);
-
-            // Zooming recreates the precinct layers so must wait for precinctLayer to be updated first
-            setTimeout (function () {
-                // Allow precinct layer to be edited
+            // Should only work if precincts are showing
+            if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
                 LeafletMap.precinctLayer.pm.enable();
-            }, 300);
-            // Switch map mode
-            LeafletMap.currentMode = LeafletMap.modes.modify;
-            ToolBar.toggleEditButtons();
-
-            // Limit zoom level to precinct level 
-            LeafletMap.map.options.minZoom = 8;
-
+                // Switch map mode
+                LeafletMap.currentMode = LeafletMap.modes.modify;
+                ToolBar.toggleEditButtons();
+            }
         });
     },
 
@@ -171,17 +165,17 @@ var ToolBar = {
     editButtonHandler: function() {
         $('#done-btn').click( function() {
             // Update the PrecinctData on client
-            ToolBar.updatePrecinctData();
+            LeafletMap.updatePrecinctData();
             // TODO
             // Send updated data to server
 
             // Reset map functionalities
-            ToolBar.resetMapFunctionalities();
+            LeafletMap.resetMapFunctionalities();
         });
         $('#cancel-btn').click( function() {
             // TODO
             // Revert all changes made during edit
-            ToolBar.resetMapFunctionalities();
+            LeafletMap.resetMapFunctionalities();
 
         });
     },
@@ -197,73 +191,6 @@ var ToolBar = {
         }
     },
 
-    resetMapFunctionalities: function() {
-        // Reset all temp variables and revert back to normal map functionality
-        switch(LeafletMap.currentMode) {
-            case LeafletMap.modes.insert:
-                // Need to remove all tempJson precincts from map and empty tempPrecinctGeojson
-                if (LeafletMap.map.hasLayer(LeafletMap.tempLayer)) { LeafletMap.map.removeLayer(LeafletMap.tempLayer);}
-                LeafletMap.tempPrecinctGeojson = [];
-                LeafletMap.tempLayer = null;
-                // Refresh the precinct layers
-                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
-                    LeafletMap.map.removeLayer(LeafletMap.precinctLayer);
-                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
-                }
-                LeafletMap.map.pm.disableDraw();
-                break;
-            case LeafletMap.modes.modify:
-                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
-                    LeafletMap.map.removeLayer(LeafletMap.precinctLayer);
-                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
-                }
-                break;
-            default:
-                console.log("INVALID CURRENT MODE");
-        }
-        LeafletMap.currentMode = LeafletMap.modes.default;
-        LeafletMap.map.options.minZoom = 5;
-        ToolBar.toggleEditButtons();
-    },
-
-    updatePrecinctData: function() {
-        switch(LeafletMap.currentMode) {
-            case LeafletMap.modes.insert: 
-                // Add all the new precincts to the current list of precincts
-                for (var i = 0; i < LeafletMap.tempPrecinctGeojson.length; i++) {
-                    // 
-                    LeafletMap.precinctGeojson.push(LeafletMap.tempPrecinctGeojson[i]);
-                }
-                // Update the GUI
-                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
-                    LeafletMap.map.removeLayer(LeafletMap.precinctLayer); 
-                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
-                }
-                break;
-            case LeafletMap.modes.modify:
-                // Replace precinctCoordinates with the new ones from the precinctLayer layer
-                for (var i in LeafletMap.precinctLayer._layers) {
-                    var precinctName = LeafletMap.precinctLayer._layers[i].feature.properties.name;
-                    for (var j in LeafletMap.precinctGeojson) {
-                        if (precinctName == LeafletMap.precinctGeojson[j].properties.name) {
-                            console.log("Precinct coordinates modified");
-                            var newPrecinctCoordinates = [];
-                            var coordinatesList = LeafletMap.precinctLayer._layers[i]._latlngs[0];
-                            for (var k in coordinatesList) {
-                                newPrecinctCoordinates.push([coordinatesList[k].lng, coordinatesList[k].lat]);
-                            };
-                            LeafletMap.precinctGeojson[j].geometry.type = LeafletMap.precinctLayer._layers[i].feature.geometry.type;
-                            LeafletMap.precinctGeojson[j].geometry.coordinates = [newPrecinctCoordinates];
-                            break;
-                        }
-                    }
-                };
-                break;
-            default:
-                console.log("INVALID CURRENT MODE");
-        }
-    },
-
     enableFilter: function(filterid, option) {
         if (filterid == 'district-filter')
             LeafletMap.enableDistrictLayer(!option);
@@ -271,7 +198,32 @@ var ToolBar = {
             LeafletMap.enablePrecinctLayer(!option);
         else if (filterid == 'national-parks-filter')
             console.log('no national park data');
-    }
+    },
+
+    enableAllFilters: function(option) {
+        switch(option) {
+            case true:
+                var filters = $('#filters').find('.dropdown-item');
+                for (var i = 0; i < filters.length; i++) {
+                    filters[i].className += " active";
+                }
+                break;
+            case false:
+                var filters = $('#filters').find('.active');
+                for (var i = 0; i < filters.length; i++) {
+                    filters[i].className = filters[i].className.replace(/active/g, "");
+                }
+                break;
+        }
+    },
+    // Updates GUI element to indicate no state is selected
+    unselectState: function() {
+        const currentState = $('#states').find(".active")[0];
+        if (currentState != null) {
+            // Disable the current highlighted state
+            currentState.className = currentState.className.replace(/active/g, "");
+        }
+    },
 };
 
 ToolBar.init();

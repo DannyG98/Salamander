@@ -9,17 +9,8 @@ var jsonHandler = {
             },
             "properties": {}
         };
+        geoJson["geometry"] = regionJson["geometry"];
 
-        // Deal with boundary first
-        for (var i = 0; i < regionJson["geometry"]["coordinates"].length; i++) {
-            geoJson["geometry"]["coordinates"].push(jsonHandler.convertPolygon(regionJson["geometry"]["coordinates"][i]));
-        }
-        // Determine if multipolygon or polygon
-        if (geoJson["geometry"]["coordinates"].length > 1)
-            geoJson["geometry"]["type"] = "MultiPolygon";
-        else
-            geoJson["geometry"]["type"] = "Polygon";
-        
         // Place each field besides the geometry inside properties
         var keys = Object.keys(regionJson);
         for (var x in keys) {
