@@ -4,11 +4,6 @@ import java.util.Set;
 
 import mil.nga.sf.geojson.Position;
 
-//enum for type of errors
-enum ErrorType{
-    DAT_ELECT_MISMATCH, DAT_DEMO_MISMATCH, PRCT_GAP, PRCT_OVERLAP, PRCT_OPEN, PRCT_ENCLOSE;
-}
-
 public class DataError {
 
     int eid;
