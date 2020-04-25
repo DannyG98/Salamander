@@ -27,7 +27,7 @@ const ToolBar = {
                     currentState.className = currentState.className.replace("active", "");
                 }
                 this.className += " active";
-                LeafletMap.getDistrictData(LeafletMap.states[state.toLowerCase()].districtCNames);
+                DataHandler.getDistrictData(LeafletMap.states[state.toLowerCase()].districtCNames);
             })
         }
     },
@@ -82,16 +82,14 @@ const ToolBar = {
             ToolBar.toggleEditButtons();
 
             LeafletMap.map.pm.enableDraw('Polygon');
-            // Limit zoom level to precinct level 
-            LeafletMap.map.options.minZoom = 8;
 
             // EventHandler for when a precinct is created
             LeafletMap.map.on('pm:create', e => {
                 LeafletMap.map.removeLayer(e.layer);
-                var precinctShape = e.shape;
-                var newPrecinctCoordinates = [];
-                var coordinatesList = e.layer._latlngs[0];
-                for (var i = 0; i < coordinatesList.length; i++) {
+                let precinctShape = e.shape;
+                let newPrecinctCoordinates = [];
+                let coordinatesList = e.layer._latlngs[0];
+                for (let i = 0; i < coordinatesList.length; i++) {
                     newPrecinctCoordinates.push([coordinatesList[i].lng, coordinatesList[i].lat])
                 };
                 
@@ -101,14 +99,24 @@ const ToolBar = {
                     "type": "Feature",
                     "properties": 
                     {
-                        "name": "Ghost Precinct",
-                        "density": 0,
-                        "population": 0,
-                        "Democratic":0,
-                        "Republican":0,
-                        "White":0,
-                        "Hispanic":0,
-                        "AfricanAmerican":0
+                        'district': LeafletMap.currentDistrict,
+                        'canonName': "ghost_" + LeafletMap.ghostCounter,
+                        "displayName": "Ghost Precinct",
+                        "demoData": {
+                            "demographicDataID": 1,
+                            "population": 0,
+                            "whitePop": 0,
+                            "blackPop": 0,
+                            "asianPop": 0,
+                            "otherPop": 0
+                        },
+                        "elecData": {
+                            "democratic": 0,
+                            "republican": 0,
+                            "green": 0,
+                            "libertarian": 0,
+                            "other": 0
+                        },
                     },
                     "geometry": 
                     {
@@ -150,7 +158,6 @@ const ToolBar = {
 
     createCommentHandler: function() {
         $('#create').click( function() {
-            LeafletMap.currentMode = LeafletMap.modes.create;
             ToolBar.toggleEditButtons();
         });
     },
@@ -165,15 +172,11 @@ const ToolBar = {
     editButtonHandler: function() {
         $('#done-btn').click( function() {
             // Update the PrecinctData on client
-            LeafletMap.updatePrecinctData();
-            // TODO
-            // Send updated data to server
-
+            DataHandler.updatePrecinctData();
             // Reset map functionalities
             LeafletMap.resetMapFunctionalities();
         });
         $('#cancel-btn').click( function() {
-            // TODO
             // Revert all changes made during edit
             LeafletMap.resetMapFunctionalities();
 
