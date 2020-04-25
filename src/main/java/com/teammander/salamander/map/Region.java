@@ -2,6 +2,7 @@ package com.teammander.salamander.map;
 
 import com.teammander.salamander.data.DemographicData;
 import com.teammander.salamander.data.Election;
+import com.teammander.salamander.data.ElectionData;
 
 import mil.nga.sf.geojson.Geometry;
 
@@ -11,9 +12,9 @@ public abstract class Region {
     String displayName;
     Geometry geometry;
     DemographicData demoData;
-    Election elecData;
+    ElectionData elecData;
 
-    public Region(String canonName, String displayName, Geometry geometry, DemographicData demoData, Election elecData) {
+    public Region(String canonName, String displayName, Geometry geometry, DemographicData demoData, ElectionData elecData) {
         this.canonName = canonName;
         this.displayName = displayName;
         this.geometry = geometry;
@@ -53,11 +54,11 @@ public abstract class Region {
         this.demoData = demoData;
     }
 
-    public Election getElecData() {
+    public ElectionData getElecData() {
         return elecData;
     }
 
-    public void setElecData(Election elecData) {
+    public void setElecData(ElectionData elecData) {
         this.elecData = elecData;
     }
 }
