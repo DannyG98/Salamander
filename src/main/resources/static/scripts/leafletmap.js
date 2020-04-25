@@ -390,9 +390,8 @@ var floridaPrecincts = [
 
 const LeafletMap = {
     // Used for keeping of track what tool is being used
-    modes: { default: 0, insert: 1, merge: 2, modify: 3, create: 4, reset: 5 },
+    modes: { default: 0, insert: 1, merge: 2, modify: 3},
     currentMode: 0,
-
     stateLayer: null,
     districtLayer: null,
     precinctLayer: null,
@@ -405,6 +404,9 @@ const LeafletMap = {
     states: {},
     districts: {},
     precincts: {},
+    ghostCounter: 0,
+    currentState: null,
+    currentDistrict: null,
 
     usaCoordinates: [39.51073, -96.4247],
     // The iteractive map that is going to be displayed on the webpage
@@ -421,7 +423,7 @@ const LeafletMap = {
     initData: function() {
         // TODO
         // Need to request stateObject from server to populate the map with the state borders 
-        LeafletMap.statesGeojson = LeafletMap.getStateData();
+        LeafletMap.statesGeojson = DataHandler.getAllStateData();
 
         // Create a hashmap that maps precinct canonical names to geojson data
         LeafletMap.precinctGeojson.push(...coloradoPrecincts);
@@ -523,6 +525,7 @@ const LeafletMap = {
 
         // The clicked layer is a state layer
         if (LeafletMap.states[canonicalName] != null) {
+            LeafletMap.currentState = canonicalName;
             // Responsible for updating toolbar GUI and updating districtGeoson
             LeafletMap.stateLayerHandler(canonicalName);
             LeafletMap.enableStateLayer(false)
@@ -534,6 +537,7 @@ const LeafletMap = {
         }
         // The clicked layer is a district
         else if (LeafletMap.districts[canonicalName] != null) {
+            LeafletMap.currentDistrict = canonicalName;
             // Responsible for updating precinctGeoson
             LeafletMap.districtLayerHandler(canonicalName);
             LeafletMap.enableDistrictLayer(false);
@@ -554,7 +558,7 @@ const LeafletMap = {
                 ToolBar.unselectState();
                 statesDropdownElements[i].className += " active";
                 // Get district from server
-                LeafletMap.getDistrictData(LeafletMap.states[stateCanonName].districtCNames);
+                DataHandler.getDistrictData(LeafletMap.states[stateCanonName].districtCNames);
                 break;
             }
         }
@@ -628,41 +632,10 @@ const LeafletMap = {
         }
     },
 
-    updatePrecinctData: function() {
-        switch(LeafletMap.currentMode) {
-            case LeafletMap.modes.insert: 
-                // Add all the new precincts to the current list of precincts
-                for (var i = 0; i < LeafletMap.tempPrecinctGeojson.length; i++) {
-                    // 
-                    LeafletMap.precinctGeojson.push(LeafletMap.tempPrecinctGeojson[i]);
-                }
-                // Update the GUI
-                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
-                    LeafletMap.map.removeLayer(LeafletMap.precinctLayer); 
-                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
-                }
-                break;
-            case LeafletMap.modes.modify:
-                // Replace precinctCoordinates with the new ones from the precinctLayer layer
-                for (var i in LeafletMap.precinctLayer._layers) {
-                    var precinctName = LeafletMap.precinctLayer._layers[i].feature.properties.name;
-                    for (var j in LeafletMap.precinctGeojson) {
-                        if (precinctName == LeafletMap.precinctGeojson[j].properties.name) {
-                            console.log("Precinct coordinates modified");
-                            var newPrecinctCoordinates = [];
-                            var coordinatesList = LeafletMap.precinctLayer._layers[i]._latlngs[0];
-                            for (var k in coordinatesList) {
-                                newPrecinctCoordinates.push([coordinatesList[k].lng, coordinatesList[k].lat]);
-                            };
-                            LeafletMap.precinctGeojson[j].geometry.type = LeafletMap.precinctLayer._layers[i].feature.geometry.type;
-                            LeafletMap.precinctGeojson[j].geometry.coordinates = [newPrecinctCoordinates];
-                            break;
-                        }
-                    }
-                };
-                break;
-            default:
-                console.log("INVALID CURRENT MODE");
+    updatePrecinctLayer: function() {
+        if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
+            LeafletMap.map.removeLayer(LeafletMap.precinctLayer); 
+            LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
         }
     },
 
@@ -691,85 +664,8 @@ const LeafletMap = {
                 console.log("INVALID CURRENT MODE");
         }
         LeafletMap.currentMode = LeafletMap.modes.default;
-        LeafletMap.map.options.minZoom = 5;
         ToolBar.toggleEditButtons();
     },
-    
-    getStateData: function() {
-        fetch('/state/getAllStates').then(function(response) {
-            return response.text();
-        }).then(function(text) {
-            LeafletMap.statesGeojson = JSON.parse(text);
-            // Create a hashmap that maps state canonical names to geojson data
-            for (var i = 0; i < LeafletMap.statesGeojson.length; i++) {
-                LeafletMap.states[LeafletMap.statesGeojson[i].canonName] = LeafletMap.statesGeojson[i];
-                // Need to convert the json from server into geojson
-                LeafletMap.statesGeojson[i] = jsonHandler.convert(LeafletMap.statesGeojson[i]);
-            }
-            // Add the state layer
-            LeafletMap.stateLayer = L.geoJson(LeafletMap.statesGeojson, {
-                onEachFeature: LeafletMap.onEachFeature
-            }).addTo(LeafletMap.map);
-        });
-    },
-
-    // Get district geojson from server
-    getDistrictData: function(districtList) {
-        var postTemplate = {
-            method: 'post',
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-            },
-            body: JSON.stringify(districtList)
-        }
-        fetch('/district/getMultipleDistricts', postTemplate).then(function(response) {
-            return response.text();
-        }).then(function(text) {
-            LeafletMap.districtGeojson = JSON.parse(text);
-            for (var i = 0; i < LeafletMap.districtGeojson.length; i++) {
-                // Store district objects using canonicalName as key and district object as value
-                LeafletMap.districts[LeafletMap.districtGeojson[i].canonName] = LeafletMap.districtGeojson[i];
-                // Convert district objects into geoJson format and store it.
-                LeafletMap.districtGeojson[i] = jsonHandler.convert(LeafletMap.districtGeojson[i]);
-            }
-            // Add the district layer to the map
-            LeafletMap.districtLayer= L.geoJson(LeafletMap.districtGeojson, {
-                onEachFeature: LeafletMap.onEachFeature
-            }).addTo(LeafletMap.map);
-        });
-    },
-    // Get precinct geojson from server
-    getPrecinctData: function(precinctList) {
-        var postTemplate = {
-            method: 'post',
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-            },
-            body: precinctList
-        }
-        fetch('/precinct/getMultiplePrecincts', postTemplate).then(function(response) {
-            return response.text();
-        }).then(function(text) {
-            LeafletMap.precinctGeojson = JSON.parse(text);
-            for (var i = 0; i < LeafletMap.precinctGeojson.length; i++) {
-                this.precincts[LeafletMap.precinctGeojson[i].canonName] = LeafletMap.precinctGeojson[i];
-                LeafletMap.precinctGeojson[i] = jsonHandler.convert(LeftletMap.precinctGeojson[i]);
-            }
-            // Add the district layer
-            LeafletMap.precinctLayer= L.geoJson(LeafletMap.precinctGeojson, {
-                onEachFeature: LeafletMap.onEachFeature
-            }).addTo(LeafletMap.map);
-        });
-    },
-    // Send modified data to the server
-    sendUpdatedData: function() {
-        send('').then(function(response) {
-            return response.text();
-        }).then(function(text) {
-
-        });
-    },
-
     
 }
 LeafletMap.init();
