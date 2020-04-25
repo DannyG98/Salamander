@@ -50,10 +50,9 @@
                               Elections
                             </button>
                             <div id="elections" class="dropdown-menu">
-                              <a class="dropdown-item active" href="#">Election1</a>
-                              <a class="dropdown-item" href="#">Election2</a>
-                              <a class="dropdown-item" href="#">Election3</a>
-                              <a class="dropdown-item" href="#">Election4</a>
+                              <a class="dropdown-item active" href="#">2016 Congressional Election</a>
+                              <a class="dropdown-item" href="#">2016 Presidential Election</a>
+                              <a class="dropdown-item" href="#">2018 Congressional Election</a>
                             </div>
                         </div>
                         <div class="dropdown">
@@ -61,8 +60,8 @@
                               Filters
                             </button>
                             <div id="filters" class="dropdown-menu">
-                              <a id="district-filter" class="dropdown-item active" href="#">District Boundaries</a>
-                              <a id="precinct-filter" class="dropdown-item active" href="#">Precinct Boundaries</a>
+                              <a id="district-filter" class="dropdown-item active" href="#">Districts</a>
+                              <a id="precinct-filter" class="dropdown-item active" href="#">Precincts</a>
                               <a id="national-parks-filter" class="dropdown-item active" href="#">National Parks</a>
                             </div>
                         </div>
@@ -96,117 +95,16 @@
                         </div>
                         <div class="sidebar-contents overflow-auto">
                         <ul class="init-menu">
-                            <h3 id="state-demographic" class="menu-tab-headers sidemenu-items">Demographic Data</h3>
+                            <a href='#' id="state-demographic" data-toggle="collapse" class="menu-tab-headers sidemenu-items">Demographic Data</a>
+                            <a id="state-election" data-toggle="collapse" class="menu-tab-headers sidemenu-items">Election Data</a>
                             <li>
-                                <a href="#" data-toggle="collapse" data-target="#data-1">2000</a>
-                                <div class="info-field collapse data-info" id="data-1">
-                                    Age, median: 24<br />
-                                    Male, %: 48<br />
-                                    unemployed, %: 15<br />
-                                    White, %: 76.5<br />
-                                    African American, %: 13.5<br />
-                                    Hispanic, %: 5<br />
-                                    Other, %: 5
+                                <a href="#" data-toggle="collapse"class="menu-tab-headers sidemenu-items" data-target="#source-data">Sources</a>
+                                <div class="info-field collapse data-info" id="source-data">
+                                        <a href=https://www2.census.gov/census_2010/03-Demographic_Profile_with_SF1geos/0README_DPSFwSF1geos.pdf class="errlist-item" style="color:black" target="_blank">Demographic Data</a>
+                                        <a href= "https://github.com/loganpowell/census-geojson" class="errlist-item" style="color:black" target="_blank">Geographic Data</a>
+                                        <a href= "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NH5S2I" class="errlist-item" style="color:black" target="_blank">Election Data</a>
                                 </div>
                             </li>
-                            <li>
-                                <a href="#" data-toggle="collapse" data-target="#data-2">2005</a>
-                                <div class="info-field collapse data-info" id="data-2">
-                                    Age, median: 25<br />
-                                    Male, %: 50<br />
-                                    unemployed, %: 10<br />
-                                    White, %: 76.5<br />
-                                    African American, %: 13.5<br />
-                                    Hispanic, %: 5<br />
-                                    Other, %: 5
-                                </div>
-                            </li>
-                            <li>
-                                <a href="#" data-toggle="collapse" data-target="#data-3">2010</a>
-                                <div class="info-field collapse data-info" id="data-3">
-                                    Age, median: 25<br />
-                                    Male, %: 50<br />
-                                    unemployed, %: 10<br />
-                                    White, %: 70<br />
-                                    African American, %: 10<br />
-                                    Hispanic, %: 10<br />
-                                    Other, %: 10
-                                </div>
-                            </li>
-                            <li>
-                                <h3 id="state-election" class="menu-tab-headers sidemenu-items">Election Data</h3>
-                                <li>
-                                    <a href="#" data-toggle="collapse" data-target="#data-1">2000</a>
-                                    <div class="info-field collapse data-info" id="data-1">
-                                        Democrats, %: 40<br />
-                                        Republicans, %: 40<br />
-                                        Other, %: 20
-                                    </div>
-                                </li>
-                                <li>
-                                    <a href="#" class="year-label" data-toggle="collapse" data-target="#data-2">2005</a>
-                                    <div class="info-field collapse data-info" id="data-2">
-                                        Democrats, %: 35<br />
-                                        Republicans, %: 45<br />
-                                        Other, %: 20
-                                    </div>
-                                </li>
-                                <li>
-                                    <a href="#" data-toggle="collapse" data-target="#data-3">2010</a>
-                                    <div class="info-field collapse data-info" id="data-3">
-                                        Democrats, %: 50<br />
-                                        Republicans, %: 30<br />
-                                        Other, %: 20
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <a href='#' class="init-menu-item sidemenu-items" id="error-dropdwn" data-toggle="collapse" data-target="#error-tab">Errors</a>
-                                    <div class="info-field collapse data-info" id="error-tab">
-                                        <ul id="error-list"></ul>
-                                    </div>
-                                    </li>
-                                </li>
-                                                        <!-- need to add in: disable buttons unless valid neighbor precincts are chosen-->
-                                <li>
-                                    <a href="#" class="init-menu-item sidemenu-items" id="precinct-dropdown" data-toggle="collapse" data-target="#precinct-merge-tab">Combine Precincts</a>
-                                    <div class="info-field collapse" id="precinct-merge-tab">
-                                        
-                                        <div class="centerize">
-                                            <select id="precinct-select1">
-                                            <option> Precinct</option>
-                                            <option value="Precinct 1">Precinct 1</option>
-                                            <option value="Precinct 2">Precinct 2</option>
-                                            <option value="Precinct 3">Precinct 3</option>
-                                            <option value="Precinct 4">Precinct 4</option>
-                                            <option value="Precinct 5">Precinct 5</option>
-                                            <option value="Precinct 6">Precinct 6</option>
-                                            </select>
-                                            <select id="precinct-select2">
-                                            <option>Precinct</option>
-                                            <option value="Precinct 1">Precinct 1</option>
-                                            <option value="Precinct 2">Precinct 2</option>
-                                            <option value="Precinct 3">Precinct 3</option>
-                                            <option value="Precinct 4">Precinct 4</option>
-                                            <option value="Precinct 5">Precinct 5</option>
-                                            <option value="Precinct 6">Precinct 6</option>
-                                        </select>
-                                            <button type="button" id="precinct-merge-button" onclick="handle_CombinePrecinct_Click()" class="btn btn-secondary btn-sm">Confirm</button>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                        <a href="#" data-toggle="collapse"class="menu-tab-headers sidemenu-items" data-target="#source-data">Sources</a>
-                                        <div class="info-field collapse data-info" id="source-data">
-                                                <a href=https://www2.census.gov/census_2010/03-Demographic_Profile_with_SF1geos/0README_DPSFwSF1geos.pdf class="errlist-item" style="color:black" target="_blank">Demographic Data</a>
-                                                <a href= "https://github.com/loganpowell/census-geojson" class="errlist-item" style="color:black" target="_blank">Geographic Data</a>
-                                                <a href= "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NH5S2I" class="errlist-item" style="color:black" target="_blank">Election Data</a>
-                                        </div>
-                                </li>
-
-                                
-                                
-                                
                         </ul>
                         </div>
                     </div>
@@ -214,7 +112,6 @@
                 </div>
                 <div id="done-edit-btn" style="display:none" class="btn btn-dark">Done</div>
             </div>
-
         </div>
     </body>
     <script src="scripts/toolbar.js"></script>
