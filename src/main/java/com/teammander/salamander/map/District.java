@@ -19,15 +19,9 @@ public class District extends Region{
     String stateCName;
     Set<String> precinctCNames;
 
-    // public District(String canonName, String displayName, Geometry geometry, DemographicData demoData, ElectionData elecData, String aState, Set<String> aPrecinct) {
-    //     super(canonName, displayName, geometry, demoData, elecData);
-    //     this.stateCName = aState;
-    //     this.precinctCNames= aPrecinct;
-    // }
-
     @Column(name = "PARENT")
     public String getStateCName() {
-        return stateCName;
+        return this.stateCName;
     }
 
     public void setStateCName(String state) {

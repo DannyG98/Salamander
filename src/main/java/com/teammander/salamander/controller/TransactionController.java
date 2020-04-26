@@ -18,13 +18,20 @@ public class TransactionController {
         this.ts = ts;
     }
 
+    public TransactionService getTs() {
+        return this.ts;
+    }
+
     @GetMapping
-    public List <Transaction> getTransactions(){
-        return ts.getTransactions();
+    public List<Transaction> getTransactions() {
+        TransactionService ts = getTs();
+        List<Transaction> foundTransactions = ts.getTransactions();
+        return foundTransactions;
     }
 
     @PostMapping()
-    public void addTransaction(@RequestBody Transaction trans){
+    public void addTransaction(@RequestBody Transaction trans) {
+        TransactionService ts = getTs();
         ts.addTransaction(trans);
     }
 }

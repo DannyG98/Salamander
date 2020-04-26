@@ -1,6 +1,7 @@
 package com.teammander.salamander.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.teammander.salamander.data.DemographicData;
 import com.teammander.salamander.data.ElectionData;
@@ -21,31 +22,38 @@ public class PrecinctService {
     }
 
     public PrecinctRepository getPr() {
-        return pr;
+        return this.pr;
     }
 
     public Precinct getPrecinct(String canonName) {
-        return getPr().findById(canonName).orElse(null);
+        PrecinctRepository pr = getPr();
+        Optional<Precinct> queryResult = pr.findById(canonName);
+        Precinct foundPrecint = queryResult.orElse(null);
+        return foundPrecint;
     }
 
     public void rmPrecinct(Precinct precinct) {
-        getPr().delete(precinct);
-        getPr().flush();
+        PrecinctRepository pr = getPr();
+        pr.delete(precinct);
+        pr.flush();
     }
 
     public void addNeighbor(String precinctName1, String precinctName2) {
+        PrecinctRepository pr = getPr();
         Precinct p1 = getPrecinct(precinctName1);
         Precinct p2 = getPrecinct(precinctName2);
         p1.addNeighbor(p2);
         p2.addNeighbor(p1);
+        pr.flush();
     }
 
     public void deleteNeighbor(String precinctName1, String precinctName2) {
+        PrecinctRepository pr = getPr();
         Precinct p1 = getPrecinct(precinctName1);
         Precinct p2 = getPrecinct(precinctName2);
         p1.deleteNeighbor(p2);
         p2.deleteNeighbor(p1);
-        getPr().flush();
+        pr.flush();
     }
 
     // Returns the result of merge to controller
@@ -55,44 +63,53 @@ public class PrecinctService {
 
     public void remove(String precinctCanonName) {
         Precinct target = getPrecinct(precinctCanonName);
-        if (target != null)
+        if (target != null) {
             rmPrecinct(target);
+        }
     }
 
     public Precinct updateDemoData(String pCName, DemographicData demoData) {
-        Precinct targetPrecinct = this.getPrecinct(pCName);
-        if (targetPrecinct == null)
+        PrecinctRepository pr = getPr();
+        Precinct targetPrecinct = getPrecinct(pCName);
+        if (targetPrecinct == null) {
             return null;
+        }
         targetPrecinct.setDemoData(demoData);
-        getPr().flush();
+        pr.flush();
         return targetPrecinct;
     }
 
     public Precinct updateBoundary(String pCName, Geometry geometry) {
-        Precinct targetPrecinct = this.getPrecinct(pCName);
-        if (targetPrecinct == null)
+        PrecinctRepository pr = getPr();
+        Precinct targetPrecinct = getPrecinct(pCName);
+        if (targetPrecinct == null) {
             return null;
+        }
         targetPrecinct.setGeometry(geometry);
-        getPr().flush();
+        pr.flush();
         return targetPrecinct;
     }
 
     public Precinct updateElectionData(String pCName, ElectionData eData) {
+        PrecinctRepository pr = getPr();
         Precinct targetPrecinct = this.getPrecinct(pCName);
-        if (targetPrecinct == null)
+        if (targetPrecinct == null) {
             return null;
+        }
         targetPrecinct.setElecData(eData);
-        getPr().flush();
+        pr.flush();
         return targetPrecinct;
     }
 
     public void insertPrecinct(Precinct precinct) {
-        getPr().save(precinct);
-        getPr().flush();
+        PrecinctRepository pr = getPr();
+        pr.save(precinct);
+        pr.flush();
     }
 
     public void insertMultiplePrecincts(List<Precinct> precincts) {
-        getPr().saveAll(precincts);
-        getPr().flush();
+        PrecinctRepository pr = getPr();
+        pr.saveAll(precincts);
+        pr.flush();
     }
 }

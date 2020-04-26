@@ -20,10 +20,6 @@ public class ElectionData {
     int electionDataId;
     List<Election> elections;
 
-    // public ElectionData() {
-    //     this.elections = new List<>();
-    // }
-
     @Id
     @GeneratedValue
     public int getElectionDataId() {
@@ -45,8 +41,9 @@ public class ElectionData {
 
     public Election findElection(ElectionType type, Year year) {
         for (Election e : getElections()) {
-            if (e.getYear() == year && e.getType() == type)
+            if (e.getYear() == year && e.getType() == type) {
                 return e;
+            }
         }
         return null;
     } 

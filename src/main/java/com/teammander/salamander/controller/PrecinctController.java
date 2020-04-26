@@ -32,85 +32,113 @@ public class PrecinctController {
     }
 
     public PrecinctService getPs() {
-        return ps;
+        return this.ps;
     }
 
     @GetMapping("/getPrecinct/{precinctCanonName}")
     public Precinct getPrecinct(@PathVariable String canonName) {
-        return getPs().getPrecinct(canonName);
+        PrecinctService ps = getPs();
+        Precinct foundPrecinct = ps.getPrecinct(canonName);
+        return foundPrecinct;
     }
 
     @GetMapping("/modifyNeighbor")
-    public ResponseEntity<String> addNeighbor(@RequestParam String p1, @RequestParam String p2, @RequestParam String op) {
+    public ResponseEntity<String> addNeighbor(@RequestParam String p1, 
+            @RequestParam String p2, @RequestParam String op) {
+        PrecinctService ps = getPs();
         if (op.equals("add")) {
-            getPs().addNeighbor(p1, p2);
-            return new ResponseEntity<>(HttpStatus.OK);
+            ResponseEntity<String> re = ResponseEntity.ok(null);
+            ps.addNeighbor(p1, p2);
+            return re;
         }
         else if (op.equals("delete")) {
-            getPs().deleteNeighbor(p1, p2);
-            return new ResponseEntity<>(HttpStatus.OK);
+            ResponseEntity<String> re = ResponseEntity.ok(null);
+            ps.deleteNeighbor(p1, p2);
+            return re;
         }
-        else
-            return new ResponseEntity<>(ControllerErrors.badQueryMsg("op", op), HttpStatus.BAD_REQUEST);
-
+        else {
+            String errMsg = ControllerErrors.badQueryMsg("op", op);
+            ResponseEntity<String> re = new ResponseEntity<>(errMsg,
+                HttpStatus.BAD_REQUEST);
+            return re;
+        }
     }
 
     @GetMapping("/mergePrecinct")
     public Precinct mergePrecinct(@RequestParam String p1, @RequestParam String p2) {
-        return getPs().mergePrecincts(p1, p2);
+        PrecinctService ps = getPs();
+        Precinct mergedPrecinct = ps.mergePrecincts(p1, p2);
+        return mergedPrecinct;
     }
 
     @GetMapping("/removePrecinct/{precinct1}")
     public void remove(String precinct1) {
-        getPs().remove(precinct1);
+        PrecinctService ps = getPs();
+        ps.remove(precinct1);
     }
 
     @PostMapping("/getMultiplePrecincts")
     public List<Precinct> getMultiplePrecincts(@RequestBody List<String> query) {
+        PrecinctService ps = getPs();
         List<Precinct> queryResponse = new ArrayList<>();
         for (String s : query) {
-            queryResponse.add(getPs().getPrecinct(s));
+            Precinct foundPrecinct = ps.getPrecinct(s); 
+            queryResponse.add(foundPrecinct);
         }
         return queryResponse;
     }
 
     @PostMapping("/updateDemoData")
-    public ResponseEntity<?> updateDemoData(@RequestParam String pCName, @RequestBody DemographicData demoData) {
-        Precinct targetPrecinct = getPs().updateDemoData(pCName, demoData);
-        if (targetPrecinct == null)
-            return new ResponseEntity<>(ControllerErrors.unableToFindMsg(pCName), HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(targetPrecinct, HttpStatus.OK);
+    public ResponseEntity<?> updateDemoData(@RequestParam String pCName, 
+            @RequestBody DemographicData demoData) {
+        PrecinctService ps = getPs();
+        Precinct targetPrecinct = ps.updateDemoData(pCName, demoData);
+        if (targetPrecinct == null) {
+            String errMsg = ControllerErrors.unableToFindMsg(pCName);
+            ResponseEntity<String> re = new ResponseEntity<>(errMsg, HttpStatus.NOT_FOUND);
+            return re;
+        }
+        ResponseEntity<Precinct> re = ResponseEntity.ok(targetPrecinct);
+        return re;
     }
 
     @PostMapping("/updateBoundary")
     public ResponseEntity<?> updateBoundary(@RequestParam String pCName, @RequestBody Geometry geometry) {
         Precinct targetPrecinct = getPs().updateBoundary(pCName, geometry);
-        if (targetPrecinct == null)
-            return new ResponseEntity<>(ControllerErrors.unableToFindMsg(pCName), HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(targetPrecinct, HttpStatus.OK);
+        if (targetPrecinct == null) {
+            String errMsg = ControllerErrors.unableToFindMsg(pCName);
+            ResponseEntity<String> re = new ResponseEntity<>(errMsg, HttpStatus.NOT_FOUND);
+            return re;
+        }
+        ResponseEntity<Precinct> re = ResponseEntity.ok(targetPrecinct);
+        return re;
     }
 
     @PostMapping("/updateElecData")
     public ResponseEntity<?> updateElecData(@RequestParam String pCName, @RequestBody ElectionData elecData) {
         Precinct targetPrecinct = getPs().updateElectionData(pCName, elecData);
-        if (targetPrecinct == null)
-            return new ResponseEntity<>(ControllerErrors.unableToFindMsg(pCName), HttpStatus.NOT_FOUND);
+        if (targetPrecinct == null) {
+            String errMsg = ControllerErrors.unableToFindMsg(pCName);
+            ResponseEntity<String> re = new ResponseEntity<>(errMsg, HttpStatus.NOT_FOUND);
+            return re;
+        }
         return new ResponseEntity<>(targetPrecinct, HttpStatus.OK);
     }
 
-    // Below are post requests for uploading to server. Should not be used except for dev purposes.
-    // An idea can be to place a 'key' within the post body to verify authenticity and rely upon
-    // HTTPS encrypting and get a HTTPS certificate from a CA...
+    /* ONLY FOR DEV USE REMOVE FOR FINAL BUILD **/
 
     @PostMapping("/uploadPrecinct")
     public void uploadPrecinct(@RequestBody Precinct precinct) {
-        getPs().insertPrecinct(precinct);
+        PrecinctService ps = getPs();
+        ps.insertPrecinct(precinct);
     }
     
     @PostMapping("/multiUploadPrecincts")
     public void multiUploadPrecincts(@RequestBody List<Precinct> precincts) {
-        for (Precinct p : precincts)
-            getPs().insertPrecinct(p);
+        PrecinctService ps = getPs();
+        for (Precinct p : precincts) {
+            ps.insertPrecinct(p);
+        }
     }
 
 }

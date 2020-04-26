@@ -15,7 +15,7 @@ public class ErrorService {
     }
 
     public ErrorRepository getEr() {
-        return er;
+        return this.er;
     }
 
     public DataError getError(int id){

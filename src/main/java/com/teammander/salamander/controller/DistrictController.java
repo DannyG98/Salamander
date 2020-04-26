@@ -24,30 +24,38 @@ public class DistrictController {
     }
 
     public DistrictService getDs() {
-        return ds;
+        return this.ds;
     }
 
     @PostMapping("/getMultipleDistricts")
     public List<District> getMultipleDistricts(@RequestBody List<String> query) {
+        DistrictService ds = getDs();
         List<District> queryResponse = new ArrayList<>();
         for (String s : query) {
-            queryResponse.add(getDs().getDistrict(s));
+            District d = ds.getDistrict(s);
+            queryResponse.add(d);
         }
         return queryResponse;
     } 
 
     @GetMapping("/getDistrict/{districtCanonName}")
     public District getDistrict(@PathVariable String districtCanonName) {
-        return getDs().getDistrict(districtCanonName);
+        DistrictService ds = getDs();
+        District foundDistrict = ds.getDistrict(districtCanonName);
+        return foundDistrict;
     }
+
+    /* ONLY FOR DEV USE REMOVE FOR FINAL BUILD **/
 
     @PostMapping("/uploadDistrict")
     public void uploadDistrict(@RequestBody District district) {
-        getDs().insertDistrict(district);
+        DistrictService ds = getDs();
+        ds.insertDistrict(district);
     }
 
     @PostMapping("/multiUploadDistricts")
     public void multiUploadDistricts(@RequestBody List<District> districts) {
-        getDs().insertMultipleDistricts(districts);
+        DistrictService ds = getDs();
+        ds.insertMultipleDistricts(districts);
     }
 }

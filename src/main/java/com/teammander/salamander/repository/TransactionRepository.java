@@ -9,7 +9,7 @@ import java.util.List;
 public class TransactionRepository {
     //EntityManager em;
 
-    public void addTransaction(Transaction trans){
+    public void addTransaction(Transaction trans) {
         //add transaction here
     }
 

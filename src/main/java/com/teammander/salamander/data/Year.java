@@ -15,6 +15,7 @@ public enum Year {
 
     @Override
     public String toString() {
-        return Integer.toString(this.value);
+        String enumStr = Integer.toString(this.value);
+        return enumStr;
     }
 }

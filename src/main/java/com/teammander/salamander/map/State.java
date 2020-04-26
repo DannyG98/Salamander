@@ -32,7 +32,7 @@ public class State extends Region {
     @ElementCollection
     @Column(name = "CHILDREN")
     public Set<String> getDistrictCNames() {
-        return districtCNames;
+        return this.districtCNames;
     }
 
     public void setDistrictCNames(Set<String> district) {

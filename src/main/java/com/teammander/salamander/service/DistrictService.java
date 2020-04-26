@@ -18,7 +18,7 @@ public class DistrictService {
     }
 
     public DistrictRepository getDr() {
-        return dr;
+        return this.dr;
     }
 
     public District getDistrict(String canonName) {
@@ -26,12 +26,14 @@ public class DistrictService {
     }
 
     public void insertDistrict(District district) {
-        getDr().save(district);
-        getDr().flush();
+        DistrictRepository dr = getDr();
+        dr.save(district);
+        dr.flush();
     }
 
     public void insertMultipleDistricts(List<District> districts) {
-        getDr().saveAll(districts);
-        getDr().flush();
+        DistrictRepository dr = getDr();
+        dr.saveAll(districts);
+        dr.flush();
     }
 }
