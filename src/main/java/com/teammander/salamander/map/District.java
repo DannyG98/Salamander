@@ -37,4 +37,14 @@ public class District extends Region{
     public void setPrecinctCNames(Set<String> precinct) {
         this.precinctCNames = precinct;
     }
+
+    public void addPrecinctChild(String childName) {
+        Set<String> children = getPrecinctCNames();
+        children.add(childName);
+    }
+
+    public void removePrecinctChild(String childName) {
+        Set<String> children = getPrecinctCNames();
+        children.remove(childName);
+    }
 }

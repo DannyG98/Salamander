@@ -130,15 +130,13 @@ public class PrecinctController {
     @PostMapping("/uploadPrecinct")
     public void uploadPrecinct(@RequestBody Precinct precinct) {
         PrecinctService ps = getPs();
-        ps.insertPrecinct(precinct);
+        ps.insertPrecinct(precinct, true);
     }
     
     @PostMapping("/multiUploadPrecincts")
     public void multiUploadPrecincts(@RequestBody List<Precinct> precincts) {
         PrecinctService ps = getPs();
-        for (Precinct p : precincts) {
-            ps.insertPrecinct(p);
-        }
+        ps.insertMultiplePrecincts(precincts);
     }
 
 }
