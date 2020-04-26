@@ -103,8 +103,7 @@ public class PrecinctService {
 
     public void insertPrecinct(Precinct precinct) {
         PrecinctRepository pr = getPr();
-        pr.save(precinct);
-        pr.flush();
+        pr.saveAndFlush(precinct);
     }
 
     public void insertMultiplePrecincts(List<Precinct> precincts) {

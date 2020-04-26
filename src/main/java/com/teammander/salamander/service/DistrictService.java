@@ -27,8 +27,7 @@ public class DistrictService {
 
     public void insertDistrict(District district) {
         DistrictRepository dr = getDr();
-        dr.save(district);
-        dr.flush();
+        dr.saveAndFlush(district);
     }
 
     public void insertMultipleDistricts(List<District> districts) {

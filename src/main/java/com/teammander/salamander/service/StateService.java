@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StateService {
@@ -21,20 +22,25 @@ public class StateService {
     }
 
     public List<State> getAllStates() {
-        return sr.findAll();
+        List<State> allStates = sr.findAll();
+        return allStates;
     }
 
     public State getState(String stateCanonName) {
-        return getSr().findById(stateCanonName).orElse(null);
+        StateRepository sr = getSr();
+        Optional<State> queryResult = sr.findById(stateCanonName);
+        State foundState = queryResult.orElse(null);
+        return foundState;
     }
 
     public void insertState(State state) {
-        getSr().save(state);
-        getSr().flush();
+        StateRepository sr = getSr();
+        sr.saveAndFlush(state);
     }
 
     public void insertMultipleStates(List<State> states) {
-        getSr().saveAll(states);
-        getSr().flush();
+        StateRepository sr = getSr();
+        sr.saveAll(states);
+        sr.flush();
     }
 }
