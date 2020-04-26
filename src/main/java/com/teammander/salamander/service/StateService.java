@@ -21,16 +21,20 @@ public class StateService {
     }
 
     public List<State> getAllStates() {
-        List<State> states = sr.getAllStates();
-        return states;
+        return sr.findAll();
     }
 
     public State getState(String stateCanonName) {
-        return getSr().findState(stateCanonName);
+        return getSr().findById(stateCanonName).orElse(null);
     }
 
     public void insertState(State state) {
-        getSr().insertState(state);
+        getSr().save(state);
+        getSr().flush();
     }
 
+    public void insertMultipleStates(List<State> states) {
+        getSr().saveAll(states);
+        getSr().flush();
+    }
 }

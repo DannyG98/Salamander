@@ -1,5 +1,7 @@
 package com.teammander.salamander.service;
 
+import java.util.List;
+
 import com.teammander.salamander.data.DemographicData;
 import com.teammander.salamander.data.ElectionData;
 import com.teammander.salamander.map.Precinct;
@@ -23,11 +25,12 @@ public class PrecinctService {
     }
 
     public Precinct getPrecinct(String canonName) {
-        return getPr().findPrecinct(canonName);
+        return getPr().findById(canonName).orElse(null);
     }
 
     public void rmPrecinct(Precinct precinct) {
-        getPr().rmPrecinct(precinct);
+        getPr().delete(precinct);
+        getPr().flush();
     }
 
     public void addNeighbor(String precinctName1, String precinctName2) {
@@ -42,6 +45,7 @@ public class PrecinctService {
         Precinct p2 = getPrecinct(precinctName2);
         p1.deleteNeighbor(p2);
         p2.deleteNeighbor(p1);
+        getPr().flush();
     }
 
     // Returns the result of merge to controller
@@ -51,18 +55,16 @@ public class PrecinctService {
 
     public void remove(String precinctCanonName) {
         Precinct target = getPrecinct(precinctCanonName);
-        getPr().rmPrecinct(target);
-    }
-
-    public void insertPrecinct(Precinct precinct) {
-        getPr().insertPrecinct(precinct);
+        if (target != null)
+            rmPrecinct(target);
     }
 
     public Precinct updateDemoData(String pCName, DemographicData demoData) {
         Precinct targetPrecinct = this.getPrecinct(pCName);
         if (targetPrecinct == null)
             return null;
-        targetPrecinct.updateDemoData(demoData);
+        targetPrecinct.setDemoData(demoData);
+        getPr().flush();
         return targetPrecinct;
     }
 
@@ -70,7 +72,8 @@ public class PrecinctService {
         Precinct targetPrecinct = this.getPrecinct(pCName);
         if (targetPrecinct == null)
             return null;
-        targetPrecinct.updateGeoemtry(geometry);
+        targetPrecinct.setGeometry(geometry);
+        getPr().flush();
         return targetPrecinct;
     }
 
@@ -78,7 +81,18 @@ public class PrecinctService {
         Precinct targetPrecinct = this.getPrecinct(pCName);
         if (targetPrecinct == null)
             return null;
-        targetPrecinct.updateElecData(eData);
+        targetPrecinct.setElecData(eData);
+        getPr().flush();
         return targetPrecinct;
+    }
+
+    public void insertPrecinct(Precinct precinct) {
+        getPr().save(precinct);
+        getPr().flush();
+    }
+
+    public void insertMultiplePrecincts(List<Precinct> precincts) {
+        getPr().saveAll(precincts);
+        getPr().flush();
     }
 }
