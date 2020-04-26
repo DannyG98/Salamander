@@ -11,9 +11,8 @@ import javax.persistence.Table;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-@Entity
+@Entity(name = "ELECTION_TABLE")
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "ELECTION_TABLE")
 public abstract class Election {
 
     int electionId;

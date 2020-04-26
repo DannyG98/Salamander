@@ -12,9 +12,8 @@ import javax.persistence.Table;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-@Entity
+@Entity(name = "DISTRICT_TABLE")
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "DISTRICT_TABLE")
 public class District extends Region{
 
     String stateCName;

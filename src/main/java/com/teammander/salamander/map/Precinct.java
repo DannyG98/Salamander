@@ -19,9 +19,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-@Entity
+@Entity(name = "PRECINCT_TABLE")
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "PRECINCT_TABLE")
 public class Precinct extends Region{
 
     String parentDistrictCName;
