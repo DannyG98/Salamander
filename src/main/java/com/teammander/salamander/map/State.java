@@ -18,8 +18,7 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-@Entity
-@Table(name = "STATE_TABLE")
+@Entity(name = "STATE_TABLE")
 @EntityListeners(AuditingEntityListener.class)
 public class State extends Region {
 

@@ -10,9 +10,8 @@ import javax.persistence.Table;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-@Entity
+@Entity(name = "DEMO_TABLE")
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "DEMO_TABLE")
 public class DemographicData {
     int demographicDataID;
     int whitePop;

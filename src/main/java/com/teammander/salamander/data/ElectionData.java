@@ -13,9 +13,8 @@ import javax.persistence.Table;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-@Entity
+@Entity(name = "ELECTION_DATA_TABLE")
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "ELECTION_DATA_TABLE")
 public class ElectionData {
 
     int electionDataId;
