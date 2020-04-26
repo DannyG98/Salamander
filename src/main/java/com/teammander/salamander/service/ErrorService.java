@@ -15,13 +15,13 @@ public class ErrorService {
     }
 
     public ErrorRepository getEr() {
-        return er;
+        return this.er;
     }
 
-    public DataError getError(int id){
+    public DataError getError(int id) {
         return null;
     }
 
-    public void deleteError(DataError err){
+    public void deleteError(DataError err) {
     }
 }

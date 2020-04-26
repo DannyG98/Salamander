@@ -27,29 +27,37 @@ public class StateController {
     }
 
     public StateService getSs() {
-        return ss;
+        return this.ss;
     }
 
     //when page loads and we get all states to display
     @GetMapping("/getAllStates")
-    public List<State> getAllStates(){
-        return ss.getAllStates();
+    public List<State> getAllStates() {
+        StateService ss = getSs();
+        List<State> allStates = ss.getAllStates();
+        return allStates;
     }
 
     //get specific state data for clicking on state on map/dropdown
     @GetMapping("/getState/{stateCanonName}")
-    public State getState(@PathVariable String stateCanonName){
-        return getSs().getState(stateCanonName);
+    public State getState(@PathVariable String stateCanonName) {
+        StateService ss = getSs();
+        State foundState = ss.getState(stateCanonName);
+        return foundState;
     }
+
+    /* ONLY FOR DEV USE REMOVE FOR FINAL BUILD*/
 
     @PostMapping("/uploadState")
     public void uploadState(@RequestBody State state) {
-        getSs().insertState(state);
+        StateService ss = getSs();
+        ss.insertState(state);
     }
 
     @PostMapping("/multiUploadStates")
     public void multiUploadState(@RequestBody List<State> states) {
-        getSs().insertMultipleStates(states);
+        StateService ss = getSs();
+        ss.insertMultipleStates(states);
     }
     
 }

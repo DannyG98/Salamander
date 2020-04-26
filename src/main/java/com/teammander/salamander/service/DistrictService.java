@@ -18,20 +18,24 @@ public class DistrictService {
     }
 
     public DistrictRepository getDr() {
-        return dr;
+        return this.dr;
     }
 
     public District getDistrict(String canonName) {
-        return getDr().findById(canonName).orElse(null);
+        DistrictRepository sr = getDr();
+        Optional<District> queryResult = sr.findById(canonName);
+        District foundDistrict = queryResult.orElse(null);
+        return foundDistrict;
     }
 
     public void insertDistrict(District district) {
-        getDr().save(district);
-        getDr().flush();
+        DistrictRepository dr = getDr();
+        dr.saveAndFlush(district);
     }
 
     public void insertMultipleDistricts(List<District> districts) {
-        getDr().saveAll(districts);
-        getDr().flush();
+        DistrictRepository dr = getDr();
+        dr.saveAll(districts);
+        dr.flush();
     }
 }

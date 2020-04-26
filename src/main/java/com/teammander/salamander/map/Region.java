@@ -19,18 +19,10 @@ public abstract class Region {
     DemographicData demoData;
     ElectionData elecData;
 
-    // public Region(String canonName, String displayName, Geometry geometry, DemographicData demoData, ElectionData elecData) {
-    //     this.canonName = canonName;
-    //     this.displayName = displayName;
-    //     this.geometry = geometry;
-    //     this.demoData = demoData;
-    //     this.elecData = elecData;
-    // }
-
     @Id
     @Column(name = "CANON_NAME")
     public String getCanonName() {
-        return canonName;
+        return this.canonName;
     }
 
     public void setCanonName(String canonName) {
@@ -39,7 +31,7 @@ public abstract class Region {
 
     @Column(name = "DISPLAY_NAME")
     public String getDisplayName() {
-        return displayName;
+        return this.displayName;
     }
 
     public void setDisplayName(String displayName) {
@@ -57,7 +49,7 @@ public abstract class Region {
 
     @OneToOne
     public DemographicData getDemoData() {
-        return demoData;
+        return this.demoData;
     }
 
     public void setDemoData(DemographicData demoData) {
@@ -66,7 +58,7 @@ public abstract class Region {
 
     @OneToOne
     public ElectionData getElecData() {
-        return elecData;
+        return this.elecData;
     }
 
     public void setElecData(ElectionData elecData) {

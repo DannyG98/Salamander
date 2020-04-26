@@ -1,11 +1,6 @@
 package com.teammander.salamander.map;
 
-import com.teammander.salamander.data.DemographicData;
-import com.teammander.salamander.data.ElectionData;
-
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import mil.nga.sf.geojson.Geometry;
 
 import java.util.Set;
 
@@ -15,9 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+
 
 @Entity(name = "PRECINCT_TABLE")
 @EntityListeners(AuditingEntityListener.class)
@@ -28,34 +21,30 @@ public class Precinct extends Region{
     Set<String> neighborCNames;
     PrecinctType type;
 
-    // public Precinct(String canonName, String displayName, Geometry geometry, DemographicData demoData, ElectionData elecData, 
-    //                     String dis, String aState, Set<String> neigh, PrecinctType pType) {
-    //     super(canonName, displayName, geometry, demoData, elecData);
-    //     this.parentDistrictCName = dis;
-    //     this.parentStateCName = aState;
-    //     this.neighborCNames = neigh;
-    //     this.type = pType;
-    // }
-
-    public boolean isNeighbor(Precinct neighbor){
-        return neighborCNames.contains(neighbor.getCanonName());
+    public boolean isNeighbor(Precinct neighbor) {
+        String neighCName = neighbor.getCanonName();
+        Boolean ret = neighborCNames.contains(neighCName);
+        return ret;
     }
 
-    public void addNeighbor(Precinct neighbor){
-        neighborCNames.add(neighbor.getCanonName());
+    public void addNeighbor(Precinct neighbor) {
+        String neighCName = neighbor.getCanonName();
+        neighborCNames.add(neighCName);
     }
 
     public void deleteNeighbor(Precinct neighbor){
-        neighborCNames.remove(neighbor.getCanonName());
+        String neighCName = neighbor.getCanonName();
+        neighborCNames.remove(neighCName);
     }
 
+    // TODO
     public Precinct merge(Precinct p1){
         return null;
     }
 
     @Column(name = "PARENT_DISTRICT")
     public String getParentDistrictCName() {
-        return parentDistrictCName;
+        return this.parentDistrictCName;
     }
 
     public void setParentDistrictCName(String district) {
@@ -64,7 +53,7 @@ public class Precinct extends Region{
 
     @Column(name = "PARENT_STATE")
     public String getParentStateCName() {
-        return parentStateCName;
+        return this.parentStateCName;
     }
 
     public void setParentStateCName(String state) {
@@ -83,7 +72,7 @@ public class Precinct extends Region{
 
     @Enumerated(EnumType.STRING)
     public PrecinctType getType() {
-        return type;
+        return this.type;
     }
 
     public void setType(PrecinctType type) {

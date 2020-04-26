@@ -8,10 +8,10 @@ import java.util.List;
 public class ErrorRepository {
     List<Error> errorList;
 
-    public DataError findErrorById (int eid){
+    public DataError findErrorById (int eid) {
         return null;
     }
 
-    public void updateChanged(){
+    public void updateChanged() {
     }
 }
