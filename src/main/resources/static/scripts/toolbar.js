@@ -1,5 +1,5 @@
 const ToolBar = {
-    stateCoordinates: {"colorado": [39.5501, -105.7821], "florida": [27.6648, -81.5158], "maryland": [39.0458, -76.6413]},
+    stateCoordinates: {"colorado": [39.5501, -105.7821], "florida": [27.6648, -81.5158], "west virginia": [38.5976, -80.4549]},
 
     init: function() {
         this.initEventHandlers();
@@ -75,90 +75,94 @@ const ToolBar = {
 
     insertPrecinctHandler: function() {
         $('#insert').click( function() {
-            // Go to precinct level
-            LeafletMap.map.setZoom(8);
-            // Change mode to enable different map functionality
-            LeafletMap.currentMode = LeafletMap.modes.insert;
-            ToolBar.toggleEditButtons();
+            if (LeafletMap.currentMode == LeafletMap.modes.default) {
+                // Change mode to enable different map functionality
+                LeafletMap.currentMode = LeafletMap.modes.insert;
+                ToolBar.toggleEditButtons();
 
-            LeafletMap.map.pm.enableDraw('Polygon');
-
-            // EventHandler for when a precinct is created
-            LeafletMap.map.on('pm:create', e => {
-                LeafletMap.map.removeLayer(e.layer);
-                let precinctShape = e.shape;
-                let newPrecinctCoordinates = [];
-                let coordinatesList = e.layer._latlngs[0];
-                for (let i = 0; i < coordinatesList.length; i++) {
-                    newPrecinctCoordinates.push([coordinatesList[i].lng, coordinatesList[i].lat])
-                };
-                
-                // Add new precinct boundaries to a temporary variable
-                LeafletMap.tempPrecinctGeojson.push( 
-                {
-                    "type": "Feature",
-                    "properties": 
-                    {
-                        'district': LeafletMap.currentDistrict,
-                        'canonName': "ghost_" + LeafletMap.ghostCounter,
-                        "displayName": "Ghost Precinct",
-                        "demoData": {
-                            "demographicDataID": 1,
-                            "population": 0,
-                            "whitePop": 0,
-                            "blackPop": 0,
-                            "asianPop": 0,
-                            "otherPop": 0
-                        },
-                        "elecData": {
-                            "democratic": 0,
-                            "republican": 0,
-                            "green": 0,
-                            "libertarian": 0,
-                            "other": 0
-                        },
-                    },
-                    "geometry": 
-                    {
-                        "type": precinctShape,
-                        "coordinates": [newPrecinctCoordinates]
-                    }
-                });
-                // Remove current temp geojson if it exists
-                if (LeafletMap.map.hasLayer(LeafletMap.tempLayer)) { LeafletMap.map.removeLayer(LeafletMap.tempLayer);}
-                // Add the new updated temp geojson
-                LeafletMap.tempLayer = L.geoJson(LeafletMap.tempPrecinctGeojson,{ onEachFeature: LeafletMap.onEachFeature }).addTo(LeafletMap.map);
-
-                // Allow user to draw more than one precinct
                 LeafletMap.map.pm.enableDraw('Polygon');
-            });
+
+                // EventHandler for when a precinct is created
+                LeafletMap.map.on('pm:create', e => {
+                    LeafletMap.map.removeLayer(e.layer);
+                    let precinctShape = e.shape;
+                    let newPrecinctCoordinates = [];
+                    let coordinatesList = e.layer._latlngs[0];
+                    for (let i = 0; i < coordinatesList.length; i++) {
+                        newPrecinctCoordinates.push([coordinatesList[i].lng, coordinatesList[i].lat])
+                    };
+                    
+                    // Add new precinct boundaries to a temporary variable
+                    LeafletMap.tempPrecinctGeojson.push( 
+                    {
+                        "type": "Feature",
+                        "properties": 
+                        {
+                            'district': LeafletMap.currentDistrict,
+                            'canonName': "ghost_" + LeafletMap.ghostCounter,
+                            "displayName": "Ghost Precinct",
+                            "demoData": {
+                                "demographicDataID": 1,
+                                "population": 0,
+                                "whitePop": 0,
+                                "blackPop": 0,
+                                "asianPop": 0,
+                                "otherPop": 0
+                            },
+                            "elecData": {
+                                "democratic": 0,
+                                "republican": 0,
+                                "green": 0,
+                                "libertarian": 0,
+                                "other": 0
+                            },
+                        },
+                        "geometry": 
+                        {
+                            "type": precinctShape,
+                            "coordinates": [newPrecinctCoordinates]
+                        }
+                    });
+                    // Remove current temp geojson if it exists
+                    if (LeafletMap.map.hasLayer(LeafletMap.tempLayer)) { LeafletMap.map.removeLayer(LeafletMap.tempLayer);}
+                    // Add the new updated temp geojson
+                    LeafletMap.tempLayer = L.geoJson(LeafletMap.tempPrecinctGeojson,{ onEachFeature: LeafletMap.onEachFeature }).addTo(LeafletMap.map);
+
+                    // Allow user to draw more than one precinct
+                    LeafletMap.map.pm.enableDraw('Polygon');
+                });
+            }
         });
     },
 
     mergePrecinctHandler: function() {
         $('#merge').click( function() {
-            if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
-                LeafletMap.currentMode = LeafletMap.modes.merge;
-                ToolBar.toggleEditButtons();
+            if (LeafletMap.currentMode == LeafletMap.modes.default) {
+                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
+                    LeafletMap.currentMode = LeafletMap.modes.merge;
+
+                    ToolBar.toggleEditButtons();
+                }
             }
         });
     },
 
     modifyPrecinctHanlder: function() {
         $('#modify').click( function() {
-            // Should only work if precincts are showing
-            if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
-                LeafletMap.precinctLayer.pm.enable();
-                // Switch map mode
-                LeafletMap.currentMode = LeafletMap.modes.modify;
-                ToolBar.toggleEditButtons();
+            if (LeafletMap.currentMode == LeafletMap.modes.default) {
+                // Should only work if precincts are showing
+                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
+                    LeafletMap.precinctLayer.pm.enable();
+                    // Switch map mode
+                    LeafletMap.currentMode = LeafletMap.modes.modify;
+                    ToolBar.toggleEditButtons();
+                }
             }
         });
     },
 
     createCommentHandler: function() {
         $('#create').click( function() {
-            ToolBar.toggleEditButtons();
         });
     },
 

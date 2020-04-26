@@ -17,10 +17,11 @@ const LeafletMap = {
     ghostCounter: 0,
     currentState: null,
     currentDistrict: null,
+    selectedPrecincts: [],
 
     usaCoordinates: [39.51073, -96.4247],
     // The iteractive map that is going to be displayed on the webpage
-    map: L.map('mapid', { minZoom: 5, maxZoom: 15, maxBounds: [[20.396308, -135.848974], [49.384358, -55.885444]] }),
+    map: L.map('mapid', { minZoom: 5, maxZoom: 18, maxBounds: [[20.396308, -135.848974], [49.384358, -55.885444]] }),
 
     init: function () {
         LeafletMap.map.setView(this.usaCoordinates, 5);
@@ -54,7 +55,15 @@ const LeafletMap = {
                 LeafletMap.enablePrecinctLayer(false);
                 ToolBar.enableAllFilters(true);
                 ToolBar.unselectState();
-            }     
+            }    
+            else if (zoomLevel == 7 && LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
+                LeafletMap.enableStateLayer(false);
+                LeafletMap.enableDistrictLayer(true);
+                LeafletMap.enablePrecinctLayer(false);
+                ToolBar.enableAllFilters(true);
+                let filter = $('#district-filter')[0];
+                filter.className = filter.className.replace(/active/g, "");
+            }  
             console.log("Current Zoom Level =" + zoomLevel)
          });
     },
@@ -93,7 +102,7 @@ const LeafletMap = {
     },
 
     highlightFeature: function (e) {
-        var layer = e.target;
+        let layer = e.target;
 
         layer.setStyle({
             weight: 4,
@@ -144,11 +153,14 @@ const LeafletMap = {
             // Responsible for updating precinctGeoson
             LeafletMap.districtLayerHandler(canonicalName);
             LeafletMap.enableDistrictLayer(false);
-            LeafletMap.enablePrecinctLayer(true);
             ToolBar.enableAllFilters(true);
             // Disable precinct filter 
             let filter = $('#precinct-filter')[0];
             filter.className = filter.className.replace(/active/g, "");
+        }
+          // The clicked layer is a precinct
+        else if (LeafletMap.precincts[canonicalName] != null) {
+            LeafletMap.precinctLayerHandler(canonicalName, e);
         }
         LeafletMap.zoomToFeature(e);
         stateChangeHandler(e.target.feature.properties.canonName);
@@ -167,8 +179,17 @@ const LeafletMap = {
             }
         }
     },
-    districtLayerHandler: function(districtCanonName) {
 
+    districtLayerHandler: function(districtCanonName) {
+        DataHandler.getPrecinctData(LeafletMap.districts[districtCanonName].precinctCNames);
+    },
+
+    precinctLayerHandler: function(precinctCanonName, event) {
+        if (LeafletMap.currentMode == LeafletMap.modes.merge) {
+            if (selectedPrecincts.length == 2) {
+                selectedPrecincts.shift();
+            }
+        }
     },
 
     zoomToFeature: function (e) {
