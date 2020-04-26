@@ -1,5 +1,8 @@
 package com.teammander.salamander.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import com.teammander.salamander.map.District;
 import com.teammander.salamander.repository.DistrictRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +22,16 @@ public class DistrictService {
     }
 
     public District getDistrict(String canonName) {
-        return getDr().findDistrict(canonName);
+        return getDr().findById(canonName).orElse(null);
     }
 
     public void insertDistrict(District district) {
-        getDr().insertDistrict(district);
+        getDr().save(district);
+        getDr().flush();
+    }
+
+    public void insertMultipleDistricts(List<District> districts) {
+        getDr().saveAll(districts);
+        getDr().flush();
     }
 }

@@ -6,7 +6,6 @@ import java.util.List;
 import com.teammander.salamander.map.District;
 import com.teammander.salamander.service.DistrictService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,7 +48,6 @@ public class DistrictController {
 
     @PostMapping("/multiUploadDistricts")
     public void multiUploadDistricts(@RequestBody List<District> districts) {
-        for (District s : districts)
-            getDs().insertDistrict(s);
+        getDs().insertMultipleDistricts(districts);
     }
 }
