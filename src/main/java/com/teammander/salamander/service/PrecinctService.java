@@ -63,7 +63,7 @@ public class PrecinctService {
         Precinct targetPrecinct = this.getPrecinct(pCName);
         if (targetPrecinct == null)
             return null;
-        targetPrecinct.updateDemoData(demoData);
+        targetPrecinct.setDemoData(demoData);
         getPr().flush();
         return targetPrecinct;
     }
@@ -72,7 +72,7 @@ public class PrecinctService {
         Precinct targetPrecinct = this.getPrecinct(pCName);
         if (targetPrecinct == null)
             return null;
-        targetPrecinct.updateGeoemtry(geometry);
+        targetPrecinct.setGeometry(geometry);
         getPr().flush();
         return targetPrecinct;
     }
@@ -81,7 +81,7 @@ public class PrecinctService {
         Precinct targetPrecinct = this.getPrecinct(pCName);
         if (targetPrecinct == null)
             return null;
-        targetPrecinct.updateElecData(eData);
+        targetPrecinct.setElecData(eData);
         getPr().flush();
         return targetPrecinct;
     }

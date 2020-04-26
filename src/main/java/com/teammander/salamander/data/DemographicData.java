@@ -1,5 +1,18 @@
 package com.teammander.salamander.data;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "DEMO_TABLE")
 public class DemographicData {
     int demographicDataID;
     int whitePop;
@@ -7,14 +20,16 @@ public class DemographicData {
     int asianPop;
     int otherPop;
 
-    public DemographicData(int demographicDataID, int whitePop, int blackPop, int hispanicPop, int asianPop, int otherPop) {
-        this.demographicDataID = demographicDataID;
-        this.whitePop = whitePop;
-        this.blackPop = blackPop;
-        this.asianPop = asianPop;
-        this.otherPop = otherPop;
-    }
+    // public DemographicData(int demographicDataID, int whitePop, int blackPop, int hispanicPop, int asianPop, int otherPop) {
+    //     this.demographicDataID = demographicDataID;
+    //     this.whitePop = whitePop;
+    //     this.blackPop = blackPop;
+    //     this.asianPop = asianPop;
+    //     this.otherPop = otherPop;
+    // }
 
+    @Id
+    @GeneratedValue
     public int getDemographicDataID() {
         return demographicDataID;
     }
@@ -23,6 +38,7 @@ public class DemographicData {
         this.demographicDataID = demographicDataID;
     }
 
+    @Column(name = "WHITE_POP")
     public int getWhitePop() {
         return whitePop;
     }
@@ -31,6 +47,7 @@ public class DemographicData {
         this.whitePop = whitePop;
     }
 
+    @Column(name = "BLACK_POP")
     public int getBlackPop() {
         return blackPop;
     }
@@ -39,6 +56,7 @@ public class DemographicData {
         this.blackPop = blackPop;
     }
 
+    @Column(name = "ASIAN_POP")
     public int getAsianPop() {
         return asianPop;
     }
@@ -47,6 +65,7 @@ public class DemographicData {
         this.asianPop = asianPop;
     }
 
+    @Column(name = "OTHER_POP")
     public int getOtherPop() {
         return otherPop;
     }

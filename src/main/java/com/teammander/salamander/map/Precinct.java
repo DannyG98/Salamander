@@ -1,19 +1,27 @@
 package com.teammander.salamander.map;
 
 import com.teammander.salamander.data.DemographicData;
-import com.teammander.salamander.data.Election;
 import com.teammander.salamander.data.ElectionData;
+
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import mil.nga.sf.geojson.Geometry;
 
 import java.util.Set;
 
-//enum for type of errors
-enum PrecinctType{
-    GHOST, NORMAL, GAP;
-}
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "PRECINCT_TABLE")
 public class Precinct extends Region{
 
     String parentDistrictCName;
@@ -21,14 +29,14 @@ public class Precinct extends Region{
     Set<String> neighborCNames;
     PrecinctType type;
 
-    public Precinct(String canonName, String displayName, Geometry geometry, DemographicData demoData, ElectionData elecData, 
-                        String dis, String aState, Set<String> neigh, PrecinctType pType) {
-        super(canonName, displayName, geometry, demoData, elecData);
-        this.parentDistrictCName = dis;
-        this.parentStateCName = aState;
-        this.neighborCNames = neigh;
-        this.type = pType;
-    }
+    // public Precinct(String canonName, String displayName, Geometry geometry, DemographicData demoData, ElectionData elecData, 
+    //                     String dis, String aState, Set<String> neigh, PrecinctType pType) {
+    //     super(canonName, displayName, geometry, demoData, elecData);
+    //     this.parentDistrictCName = dis;
+    //     this.parentStateCName = aState;
+    //     this.neighborCNames = neigh;
+    //     this.type = pType;
+    // }
 
     public boolean isNeighbor(Precinct neighbor){
         return neighborCNames.contains(neighbor.getCanonName());
@@ -46,42 +54,35 @@ public class Precinct extends Region{
         return null;
     }
 
-    public void updateDemoData(DemographicData demoData) {
-        this.demoData = demoData;
-    }
-
-    public void updateElecData(ElectionData elecData) {
-        this.elecData = elecData;
-    }
-
-    public void updateGeoemtry(Geometry geometry) {
-        this.geometry = geometry;
-    }
-
-    public String getDistrictCName() {
+    @Column(name = "PARENT_DISTRICT")
+    public String getParentDistrictCName() {
         return parentDistrictCName;
     }
 
-    public void setDistrictCName(String district) {
+    public void setParentDistrictCName(String district) {
         this.parentDistrictCName = district;
     }
 
-    public String getStateCName() {
+    @Column(name = "PARENT_STATE")
+    public String getParentStateCName() {
         return parentStateCName;
     }
 
-    public void setStateCName(String state) {
+    public void setParentStateCName(String state) {
         this.parentStateCName = state;
     }
 
+    @ElementCollection
+    @Column(name = "NEIGHBORS")
     public Set<String> getNeighborCNames() {
         return this.neighborCNames;
     }
 
-    public void setNeighbors(Set<String> neighbors) {
+    public void setNeighborCNames(Set<String> neighbors) {
         this.neighborCNames = neighbors;
     }
 
+    @Enumerated(EnumType.STRING)
     public PrecinctType getType() {
         return type;
     }
