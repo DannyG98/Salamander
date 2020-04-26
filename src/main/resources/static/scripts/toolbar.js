@@ -2,14 +2,14 @@ const ToolBar = {
     stateCoordinates: {"colorado": [39.5501, -105.7821], "florida": [27.6648, -81.5158], "west virginia": [38.5976, -80.4549]},
 
     init: () => {
-        this.initEventHandlers();
+        ToolBar.initEventHandlers();
     },
     // Initiate event handlers for the elements of each dropdown
-    initEventHandlers: function() {
-        this.initStateDropdown();
-        this.initElectionDropdown();
-        this.initFiltersDropdown();
-        this.initToolsDropDown();
+    initEventHandlers: () => {
+        ToolBar.initStateDropdown();
+        ToolBar.initElectionDropdown();
+        ToolBar.initFiltersDropdown();
+        ToolBar.initToolsDropDown();
     },
 
     initStateDropdown: () => {
@@ -65,12 +65,12 @@ const ToolBar = {
     },
 
     initToolsDropDown: () => {
-        this.insertPrecinctHandler();
-        this.mergePrecinctHandler();
-        this.modifyPrecinctHanlder();
-        this.createCommentHandler();
-        this.resetMapHandler();
-        this.editButtonHandler();
+        ToolBar.insertPrecinctHandler();
+        ToolBar.mergePrecinctHandler();
+        ToolBar.modifyPrecinctHanlder();
+        ToolBar.createCommentHandler();
+        ToolBar.resetMapHandler();
+        ToolBar.editButtonHandler();
     },
 
     insertPrecinctHandler: () => {

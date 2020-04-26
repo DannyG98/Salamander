@@ -23,7 +23,7 @@ const LeafletMap = {
     map: L.map('mapid', { minZoom: 5, maxZoom: 18, maxBounds: [[20.396308, -135.848974], [49.384358, -55.885444]] }),
 
     init: () => {
-        LeafletMap.map.setView(this.usaCoordinates, 5);
+        LeafletMap.map.setView(LeafletMap.usaCoordinates, 5);
         LeafletMap.initData();
         LeafletMap.initLeafletLayers();
         LeafletMap.initZoomHandlers();
