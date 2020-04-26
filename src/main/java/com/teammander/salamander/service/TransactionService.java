@@ -16,7 +16,7 @@ public class TransactionService {
         this.tr = tr;
     }
 
-    public void addTransaction(Transaction trans){
+    public void addTransaction(Transaction trans) {
         tr.addTransaction(trans);
     }
 

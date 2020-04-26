@@ -22,7 +22,10 @@ public class DistrictService {
     }
 
     public District getDistrict(String canonName) {
-        return getDr().findById(canonName).orElse(null);
+        DistrictRepository sr = getDr();
+        Optional<District> queryResult = sr.findById(canonName);
+        District foundDistrict = queryResult.orElse(null);
+        return foundDistrict;
     }
 
     public void insertDistrict(District district) {
