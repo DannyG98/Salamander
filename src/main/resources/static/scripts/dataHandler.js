@@ -38,7 +38,7 @@ const DataHandler = {
                 LeafletMap.districtGeojson[i] = jsonHandler.convertToGeojson(LeafletMap.districtGeojson[i]);
             }
             // Add the district layer to the map
-            LeafletMap.districtLayer= L.geoJson(LeafletMap.districtGeojson, {
+            LeafletMap.districtLayer = L.geoJson(LeafletMap.districtGeojson, {
                 onEachFeature: LeafletMap.onEachFeature
             }).addTo(LeafletMap.map);
         });
@@ -50,18 +50,17 @@ const DataHandler = {
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
             },
-            body: precinctList
+            body: JSON.stringify(precinctList)
         }
         fetch('/precinct/getMultiplePrecincts', postTemplate).then(function(response) {
             return response.text();
         }).then(function(text) {
             LeafletMap.precinctGeojson = JSON.parse(text);
-            for (var i = 0; i < LeafletMap.precinctGeojson.length; i++) {
-                this.precincts[LeafletMap.precinctGeojson[i].canonName] = LeafletMap.precinctGeojson[i];
-                LeafletMap.precinctGeojson[i] = jsonHandler.convertToGeojson(LeftletMap.precinctGeojson[i]);
+            for (let i = 0; i < LeafletMap.precinctGeojson.length; i++) {
+                LeafletMap.precincts[LeafletMap.precinctGeojson[i].canonName] = LeafletMap.precinctGeojson[i];
+                LeafletMap.precinctGeojson[i] = jsonHandler.convertToGeojson(LeafletMap.precinctGeojson[i]);
             }
-            // Add the district layer
-            LeafletMap.precinctLayer= L.geoJson(LeafletMap.precinctGeojson, {
+            LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, {
                 onEachFeature: LeafletMap.onEachFeature
             }).addTo(LeafletMap.map);
         });
