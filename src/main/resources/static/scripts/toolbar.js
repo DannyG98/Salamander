@@ -1,7 +1,7 @@
 const ToolBar = {
     stateCoordinates: {"colorado": [39.5501, -105.7821], "florida": [27.6648, -81.5158], "west virginia": [38.5976, -80.4549]},
 
-    init: function() {
+    init: () => {
         this.initEventHandlers();
     },
     // Initiate event handlers for the elements of each dropdown
@@ -12,7 +12,7 @@ const ToolBar = {
         this.initToolsDropDown();
     },
 
-    initStateDropdown: function() {
+    initStateDropdown: () => {
         // Add an event handler to move map to the selected state
         const states = $('#states').find('.dropdown-item');
         for (let i = 0; i  < states.length; i++) {
@@ -32,7 +32,7 @@ const ToolBar = {
         }
     },
 
-    initElectionDropdown: function() {
+    initElectionDropdown: () => {
         // Add event listeners to election options to handle updating of election data
         const elections = $('#elections').find('.dropdown-item');
         for (let i = 0; i  < elections.length; i++) {
@@ -47,7 +47,7 @@ const ToolBar = {
         }
     },
 
-    initFiltersDropdown: function() {
+    initFiltersDropdown: () => {
         const options = $('#filters').find('.dropdown-item');
         for (let i = 0; i  < options.length; i++) {
             options[i].addEventListener("click", function() {
@@ -64,7 +64,7 @@ const ToolBar = {
         }
     },
 
-    initToolsDropDown: function() {
+    initToolsDropDown: () => {
         this.insertPrecinctHandler();
         this.mergePrecinctHandler();
         this.modifyPrecinctHanlder();
@@ -73,7 +73,7 @@ const ToolBar = {
         this.editButtonHandler();
     },
 
-    insertPrecinctHandler: function() {
+    insertPrecinctHandler: () => {
         $('#insert').click( function() {
             if (LeafletMap.currentMode == LeafletMap.modes.default) {
                 // Change mode to enable different map functionality
@@ -135,8 +135,8 @@ const ToolBar = {
         });
     },
 
-    mergePrecinctHandler: function() {
-        $('#merge').click( function() {
+    mergePrecinctHandler: () => {
+        $('#merge').click(() => {
             if (LeafletMap.currentMode == LeafletMap.modes.default) {
                 if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
                     LeafletMap.currentMode = LeafletMap.modes.merge;
@@ -147,8 +147,8 @@ const ToolBar = {
         });
     },
 
-    modifyPrecinctHanlder: function() {
-        $('#modify').click( function() {
+    modifyPrecinctHanlder: () => {
+        $('#modify').click(() => {
             if (LeafletMap.currentMode == LeafletMap.modes.default) {
                 // Should only work if precincts are showing
                 if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
@@ -161,33 +161,32 @@ const ToolBar = {
         });
     },
 
-    createCommentHandler: function() {
-        $('#create').click( function() {
+    createCommentHandler: () => {
+        $('#create').click(() => {
         });
     },
 
-    resetMapHandler: function() {
-        $('#reset').click( function() 
-        {
+    resetMapHandler: () => {
+        $('#reset').click(() => {
             LeafletMap.map.setView(LeafletMap.usaCoordinates, 5);
         });
     },
 
-    editButtonHandler: function() {
-        $('#done-btn').click( function() {
+    editButtonHandler: () => {
+        $('#done-btn').click(() => {
             // Update the PrecinctData on client
             DataHandler.updatePrecinctData();
             // Reset map functionalities
             LeafletMap.resetMapFunctionalities();
         });
-        $('#cancel-btn').click( function() {
+        $('#cancel-btn').click(() => {
             // Revert all changes made during edit
             LeafletMap.resetMapFunctionalities();
 
         });
     },
 
-    toggleEditButtons: function() {
+    toggleEditButtons: () => {
         if (LeafletMap.currentMode == LeafletMap.modes.default) {
             $('#done-btn').hide();
             $('#cancel-btn').hide();
@@ -198,7 +197,7 @@ const ToolBar = {
         }
     },
 
-    enableFilter: function(filterid, option) {
+    enableFilter: (filterid, option) => {
         if (filterid == 'district-filter')
             LeafletMap.enableDistrictLayer(!option);
         else if (filterid == 'precinct-filter') 
@@ -207,7 +206,7 @@ const ToolBar = {
             console.log('no national park data');
     },
 
-    enableAllFilters: function(option) {
+    enableAllFilters: (option) => {
         switch(option) {
             case true:
                 var filters = $('#filters').find('.dropdown-item');
@@ -224,7 +223,7 @@ const ToolBar = {
         }
     },
     // Updates GUI element to indicate no state is selected
-    unselectState: function() {
+    unselectState: () => {
         const currentState = $('#states').find(".active")[0];
         if (currentState != null) {
             // Disable the current highlighted state

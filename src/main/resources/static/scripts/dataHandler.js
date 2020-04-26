@@ -1,6 +1,6 @@
 const DataHandler = {
 
-    getAllStateData: function() {
+    getAllStateData: () => {
         fetch('/state/getAllStates').then(function(response) {
             return response.text();
         }).then(function(text) {
@@ -19,7 +19,7 @@ const DataHandler = {
     },
 
     // Get district geojson from server
-    getDistrictData: function(districtList) {
+    getDistrictData: (districtList) => {
         let postTemplate = {
             method: 'post',
             headers: {
@@ -31,7 +31,7 @@ const DataHandler = {
             return response.text();
         }).then(function(text) {
             LeafletMap.districtGeojson = JSON.parse(text);
-            for (var i = 0; i < LeafletMap.districtGeojson.length; i++) {
+            for (let i = 0; i < LeafletMap.districtGeojson.length; i++) {
                 // Store district objects using canonicalName as key and district object as value
                 LeafletMap.districts[LeafletMap.districtGeojson[i].canonName] = LeafletMap.districtGeojson[i];
                 // Convert district objects into geoJson format and store it.
@@ -44,7 +44,7 @@ const DataHandler = {
         });
     },
     // Get precinct geojson from server
-    getPrecinctData: function(precinctList) {
+    getPrecinctData: (precinctList) => {
         let postTemplate = {
             method: 'post',
             headers: {
@@ -66,11 +66,11 @@ const DataHandler = {
         });
     },
 
-    addOrDeletePrecinctNeighbor: function (precinctName) {
+    addOrDeletePrecinctNeighbor: (precinctName) => {
 
     },
 
-    getMergedPrecinct: function(precinctName1, precinctName2) {
+    getMergedPrecinct: (precinctName1, precinctName2) => {
         fetch('/precinct/mergePrecinct?p1={' + precinctName1 + '}&p2={' + precinctName2 +'}').then(function(response) {
             return response.text();
         }).then(function(text) {
@@ -79,7 +79,7 @@ const DataHandler = {
         });
     },
     // Send modified data to the server
-    uploadPrecinctData: function(precinctList) {
+    uploadPrecinctData: (precinctList) => {
         let postTemplate = {
             method: 'post',
             headers: {
@@ -94,7 +94,7 @@ const DataHandler = {
         });
     },
 
-    updatePrecinctData: function() {
+    updatePrecinctData: () => {
         switch(LeafletMap.currentMode) {
             case LeafletMap.modes.insert: 
                 // Add all the new precincts to the current list of precincts

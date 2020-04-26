@@ -1,6 +1,6 @@
 const LeafletMap = {
-    // Used for keeping of track what tool is being used
-    modes: { default: 0, insert: 1, merge: 2, modify: 3},
+    
+    modes: {default: 0, insert: 1, merge: 2, modify: 3},
     currentMode: 0,
     stateLayer: null,
     districtLayer: null,
@@ -18,12 +18,11 @@ const LeafletMap = {
     currentState: null,
     currentDistrict: null,
     selectedPrecincts: [],
-
     usaCoordinates: [39.51073, -96.4247],
     // The iteractive map that is going to be displayed on the webpage
     map: L.map('mapid', { minZoom: 5, maxZoom: 18, maxBounds: [[20.396308, -135.848974], [49.384358, -55.885444]] }),
 
-    init: function () {
+    init: () => {
         LeafletMap.map.setView(this.usaCoordinates, 5);
         LeafletMap.initData();
         LeafletMap.initLeafletLayers();
@@ -31,9 +30,7 @@ const LeafletMap = {
         LeafletMap.initInfoBox();
     },
 
-    initData: function() {
-        // TODO
-        // Need to request stateObject from server to populate the map with the state borders 
+    initData: () => {
         LeafletMap.statesGeojson = DataHandler.getAllStateData();
     },
 
@@ -45,7 +42,7 @@ const LeafletMap = {
         }).addTo(this.map);
     },
 
-    initZoomHandlers: function () {
+    initZoomHandlers: () => {
         LeafletMap.map.on('zoomend', function (e) {
             // Display only the state borders when zoomed out too far
             let zoomLevel = LeafletMap.map.getZoom();
@@ -68,7 +65,7 @@ const LeafletMap = {
          });
     },
 
-    initInfoBox: function () {
+    initInfoBox: () => {
         // Create an function that creates a information box in the top right corner and populates it with the given props
         LeafletMap.infoBox.update = function (props) {
             // TODO
@@ -93,7 +90,7 @@ const LeafletMap = {
 
     },
 
-    onEachFeature: function (feature, layer) {
+    onEachFeature: (feature, layer) => {
         layer.on({
             mouseover: LeafletMap.highlightFeature,
             mouseout: LeafletMap.resetHighlight,
@@ -101,7 +98,7 @@ const LeafletMap = {
         });
     },
 
-    highlightFeature: function (e) {
+    highlightFeature: (e) => {
         let layer = e.target;
 
         layer.setStyle({
@@ -117,7 +114,7 @@ const LeafletMap = {
         LeafletMap.infoBox.update(layer.feature.properties);
     },
 
-    resetHighlight: function (e) {
+    resetHighlight: (e) => {
         if (LeafletMap.map.hasLayer(LeafletMap.stateLayer)) {
             LeafletMap.stateLayer.resetStyle(e.target);
             LeafletMap.infoBox.update();
@@ -132,7 +129,7 @@ const LeafletMap = {
         }
     },
 
-    onClickHandler: function (e) {
+    onClickHandler: (e) => {
         const canonicalName = e.target.feature.properties.canonName;
 
         // The clicked layer is a state layer
@@ -166,7 +163,7 @@ const LeafletMap = {
         stateChangeHandler(e.target.feature.properties.canonName);
     },
 
-    stateLayerHandler: function(stateCanonName) {
+    stateLayerHandler: (stateCanonName) => {
         // Update the states dropdown menu UI
         const statesDropdownElements = $('#states').find(".dropdown-item");
         for (let i = 0; i < statesDropdownElements.length; i++) {
@@ -180,11 +177,11 @@ const LeafletMap = {
         }
     },
 
-    districtLayerHandler: function(districtCanonName) {
+    districtLayerHandler: (districtCanonName) => {
         DataHandler.getPrecinctData(LeafletMap.districts[districtCanonName].precinctCNames);
     },
 
-    precinctLayerHandler: function(precinctCanonName, event) {
+    precinctLayerHandler: (precinctCanonName, event) => {
         if (LeafletMap.currentMode == LeafletMap.modes.merge) {
             if (selectedPrecincts.length == 2) {
                 selectedPrecincts.shift();
@@ -192,15 +189,15 @@ const LeafletMap = {
         }
     },
 
-    zoomToFeature: function (e) {
+    zoomToFeature: (e) => {
         LeafletMap.map.fitBounds(e.target.getBounds());
     },
 
-    panMap: function (lat, long, zoom) {
+    panMap: (lat, long, zoom) => {
         LeafletMap.map.setView([lat, long], zoom);
     },
     
-    enableStateLayer: function(option) {
+    enableStateLayer: (option) => {
         switch(option) {
             case true:
                 if (!LeafletMap.map.hasLayer(LeafletMap.stateLayer)) {
@@ -216,7 +213,7 @@ const LeafletMap = {
         }
     },
 
-    enableDistrictLayer: function(option) {
+    enableDistrictLayer: (option) => {
         switch(option) {
             case true:
                 if (!LeafletMap.map.hasLayer(LeafletMap.districtLayer)) { 
@@ -232,7 +229,7 @@ const LeafletMap = {
         }
     },
 
-    enablePrecinctLayer: function(option) {
+    enablePrecinctLayer: (option) => {
         switch(option) {
             case true:
                 if (!LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
@@ -257,14 +254,14 @@ const LeafletMap = {
         }
     },
 
-    updatePrecinctLayer: function() {
+    updatePrecinctLayer: () => {
         if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
             LeafletMap.map.removeLayer(LeafletMap.precinctLayer); 
             LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
         }
     },
 
-    resetMapFunctionalities: function() {
+    resetMapFunctionalities: () => {
         // Reset all temp variables and revert back to normal map functionality
         switch(LeafletMap.currentMode) {
             case LeafletMap.modes.insert:
