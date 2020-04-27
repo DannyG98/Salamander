@@ -106,11 +106,11 @@ const DataHandler = {
                 break;
             case LeafletMap.modes.modify:
                 // Replace precinctCoordinates with the new ones from the precinctLayer 
+                // Replace only the precincts that were changed
                 for (let i in LeafletMap.precinctLayer._layers) {
                     let precinctName = LeafletMap.precinctLayer._layers[i].feature.properties.name;
                     for (let j in LeafletMap.precinctGeojson) {
                         if (precinctName == LeafletMap.precinctGeojson[j].properties.name) {
-                            console.log("Precinct coordinates modified");
                             var newPrecinctCoordinates = [];
                             var coordinatesList = LeafletMap.precinctLayer._layers[i]._latlngs[0];
                             for (var k in coordinatesList) {
@@ -118,6 +118,7 @@ const DataHandler = {
                             };
                             LeafletMap.precinctGeojson[j].geometry.type = LeafletMap.precinctLayer._layers[i].feature.geometry.type;
                             LeafletMap.precinctGeojson[j].geometry.coordinates = [newPrecinctCoordinates];
+
                             break;
                         }
                     }

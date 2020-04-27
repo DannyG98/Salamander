@@ -18,6 +18,7 @@ const LeafletMap = {
     currentState: null,
     currentDistrict: null,
     selectedPrecincts: [],
+    modifiedPrecincts: [],
     usaCoordinates: [39.51073, -96.4247],
     // The iteractive map that is going to be displayed on the webpage
     map: L.map('mapid', { minZoom: 5, maxZoom: 18, maxBounds: [[20.396308, -135.848974], [49.384358, -55.885444]] }),
@@ -34,12 +35,12 @@ const LeafletMap = {
         LeafletMap.statesGeojson = DataHandler.getAllStateData();
     },
 
-    initLeafletLayers: function () {
+    initLeafletLayers: () => {
         L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
             attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
             id: 'mapbox/streets-v11',
             accessToken: 'pk.eyJ1IjoiZGFuZzk4IiwiYSI6ImNrNmlsbGZqNTAyYzgzZHFtcjczMmI2Z3EifQ.N6aBfLfiwLfyTn_Iz0TvIw'
-        }).addTo(this.map);
+        }).addTo(LeafletMap.map);
     },
 
     initZoomHandlers: () => {
@@ -67,20 +68,20 @@ const LeafletMap = {
 
     initInfoBox: () => {
         // Create an function that creates a information box in the top right corner and populates it with the given props
-        LeafletMap.infoBox.update = function (props) {
+        LeafletMap.infoBox.update = (props) => {
             // TODO
             // Need to update properties to their correct name in the geojson from server
             Window._div.innerHTML = '<h4>U.S State Data</h4>' + (props ?
-                '<b>' + props.displayName + '</b><br />' + 'Democratic: ' + props.elecData.democraticVotes + '%' +
-                '</b><br>Republican: ' + props.elecData.republicanVotes + '%' + '</b><br />White: ' + props.demoData.whitePop + '%' +
-                '</b><br />Other: ' + props.demoData.otherPop + '%' + '</b><br />African American: '
-                + props.demoData.blackPop + '%' + '</b><br />Population:' + props.population
+                '<b>' + props.displayName + '</b><br />' + 'Democratic: ' +  + '%' +
+                '</b><br>Republican: ' +  + '%' + '</b><br />White: ' +  + '%' +
+                '</b><br />Other: ' +  + '%' + '</b><br />African American: '
+                +  + '%' + '</b><br />Population:'
                 : 'Hover for more detail');
 
             //  '<b>' + props.name + '</b><br />' + props.density + ' people / mi<sup>2</sup>'
             //  : 'Hover states for more details');
         };
-        LeafletMap.infoBox.onAdd = function (mymap) {
+        LeafletMap.infoBox.onAdd = () => {
             Window._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
             LeafletMap.infoBox.update();
             return Window._div;
@@ -182,10 +183,19 @@ const LeafletMap = {
     },
 
     precinctLayerHandler: (precinctCanonName, event) => {
-        if (LeafletMap.currentMode == LeafletMap.modes.merge) {
-            if (selectedPrecincts.length == 2) {
-                selectedPrecincts.shift();
-            }
+        switch(LeafletMap.currentMode) {
+            case LeafletMap.modes.merge:
+                if (selectedPrecincts.length == 2) {
+                    selectedPrecincts.shift();
+                }
+                break;
+            case LeafletMap.modes.modify:
+                    ToolBar.toggleEditButtons();
+                    event.target.pm.enable();
+                    LeafletMap.precinctLayer.on('pm:edit', e => {
+                        console.log(e);
+                    });
+                break;
         }
     },
 
