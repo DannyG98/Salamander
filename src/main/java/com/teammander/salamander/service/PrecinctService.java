@@ -8,14 +8,12 @@ import com.teammander.salamander.data.DemographicData;
 import com.teammander.salamander.data.ElectionData;
 import com.teammander.salamander.map.District;
 import com.teammander.salamander.map.Precinct;
-import com.teammander.salamander.repository.DistrictRepository;
 import com.teammander.salamander.repository.PrecinctRepository;
-import com.teammander.salamander.repository.StateRepository;
 
+import org.locationtech.jts.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import mil.nga.sf.geojson.Geometry;
+import org.wololo.jts2geojson.GeoJSONReader;
 
 @Service
 public class PrecinctService {
@@ -89,7 +87,25 @@ public class PrecinctService {
 
     // Returns the result of merge to controller
     public Precinct mergePrecincts(String canonName1, String canonName2) {
-        return null;
+        GeoJSONReader reader = new GeoJSONReader();
+        Precinct p1 = getPrecinct(canonName1);
+        Precinct p2 = getPrecinct(canonName2);
+        String p1GeoString = p1.getGeometry();
+        String p2GeoString = p2.getGeometry();
+        Geometry p1Geo = reader.read(p1GeoString);
+        Geometry p2Geo = reader.read(p2GeoString);
+
+        if (p1Geo.covers(p2Geo)) {
+            p1.merge(p2);
+            return p1;
+        }
+        else if (p2Geo.covers(p1Geo)) {
+            p2.merge(p2);
+            return p2;
+        }
+        else {
+            return null;
+        }
     }
 
     public void remove(String precinctCanonName) {
@@ -111,7 +127,7 @@ public class PrecinctService {
         return targetPrecinct;
     }
 
-    public Precinct updateBoundary(String pCName, Geometry geometry) {
+    public Precinct updateBoundary(String pCName, String geometry) {
         PrecinctRepository pr = getPr();
         Precinct targetPrecinct = getPrecinct(pCName);
 

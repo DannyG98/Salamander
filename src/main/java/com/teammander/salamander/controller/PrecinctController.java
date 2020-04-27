@@ -7,6 +7,7 @@ import com.teammander.salamander.data.DemographicData;
 import com.teammander.salamander.data.ElectionData;
 import com.teammander.salamander.map.Precinct;
 import com.teammander.salamander.service.PrecinctService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import mil.nga.sf.geojson.Geometry;
-
 
 @RestController
 @RequestMapping("/precinct")
@@ -103,7 +101,7 @@ public class PrecinctController {
     }
 
     @PostMapping("/updateBoundary")
-    public ResponseEntity<?> updateBoundary(@RequestParam String pCName, @RequestBody Geometry geometry) {
+    public ResponseEntity<?> updateBoundary(@RequestParam String pCName, @RequestBody String geometry) {
         Precinct targetPrecinct = getPs().updateBoundary(pCName, geometry);
         if (targetPrecinct == null) {
             String errMsg = ControllerErrors.unableToFindMsg(pCName);
