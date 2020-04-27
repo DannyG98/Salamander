@@ -143,8 +143,9 @@ public class PrecinctService {
         for (String neighbor : neighbors) {
             addNeighbor(neighbor, targetCName);
         }
+        pr.save(precinct);
         if (flush) {
-            pr.saveAndFlush(precinct);
+            pr.flush();
         }
     }
 
