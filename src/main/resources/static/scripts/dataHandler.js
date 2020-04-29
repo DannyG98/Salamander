@@ -123,11 +123,20 @@ const DataHandler = {
         }
     },
 
+    updatePrecincts: (precinctList) => {
+        LeafletMap.precinctGeojson = [];
+        for (let i = 0; i < precinctList.length; i++) {
+            let canonName = precinctList[i];
+            let geojson = jsonHandler.convertToGeojson(LeafletMap.precincts[canonName]);
+            LeafletMap.precinctGeojson.push(geojson);
+        }
+    },
+
     updateDistricts: (districtList) => {
         LeafletMap.districtGeojson = [];
         for (let i = 0; i < districtList.length; i++) {
             let canonName = districtList[i];
-            let geojson = LeafletMap.districts[canonName];
+            let geojson = jsonHandler.convertToGeojson(LeafletMap.districts[canonName]);
             LeafletMap.districtGeojson.push(geojson);
         }
         LeafletMap.updateDistrictLayer();

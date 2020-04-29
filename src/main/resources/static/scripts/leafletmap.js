@@ -55,7 +55,6 @@ const LeafletMap = {
                 LeafletMap.enableDistrictLayer(false);
                 LeafletMap.enablePrecinctLayer(false);
                 ToolBar.enableAllFilters(true);
-                ToolBar.unselectState();
             }    
             else if (zoomLevel == 8 && LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
                 LeafletMap.enableStateLayer(false);
@@ -250,9 +249,8 @@ const LeafletMap = {
         switch(option) {
             case true:
                 if (!LeafletMap.map.hasLayer(LeafletMap.stateLayer)) {
-                    LeafletMap.stateLayer = L.geoJson(LeafletMap.statesGeojson, 
-                        { onEachFeature: LeafletMap.onEachFeature }, 
-                        { style: { pmIgnore: true } 
+                    LeafletMap.stateLayer = L.geoJson(LeafletMap.statesGeojson, { 
+                        onEachFeature: LeafletMap.onEachFeature 
                     }).addTo(LeafletMap.map); }
                 break;
             case false:
@@ -266,14 +264,14 @@ const LeafletMap = {
         switch(option) {
             case true:
                 if (!LeafletMap.map.hasLayer(LeafletMap.districtLayer)) { 
-                    LeafletMap.districtLayer = L.geoJson(LeafletMap.districtGeojson, 
-                        { onEachFeature: LeafletMap.onEachFeature }, 
-                        { style: { pmIgnore: true } 
+                    LeafletMap.districtLayer = L.geoJson(LeafletMap.districtGeojson, {
+                        onEachFeature: LeafletMap.onEachFeature 
                     }).addTo(LeafletMap.map).bringToFront(); }
                 break;
             case false:
                 if (LeafletMap.map.hasLayer(LeafletMap.districtLayer)) { 
-                    LeafletMap.map.removeLayer(LeafletMap.districtLayer); }
+                    LeafletMap.map.removeLayer(LeafletMap.districtLayer); 
+                }
                 break;
         }
     },
@@ -282,15 +280,13 @@ const LeafletMap = {
         switch(option) {
             case true:
                 if (!LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
-                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, 
-                        { onEachFeature: LeafletMap.onEachFeature }, 
-                        { style: { pmIgnore: false } 
+                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, {
+                         onEachFeature: LeafletMap.onEachFeature 
                     }).addTo(LeafletMap.map);
                     LeafletMap.precinctLayer.bringToFront(); }
                 if (!LeafletMap.map.hasLayer(LeafletMap.tempLayer)) {
-                    LeafletMap.tempLayer = L.geoJson(LeafletMap.tempPrecinctGeojson, 
-                        { onEachFeature: LeafletMap.onEachFeature }, 
-                        { style: { pmIgnore: false } 
+                    LeafletMap.tempLayer = L.geoJson(LeafletMap.tempPrecinctGeojson, {
+                        onEachFeature: LeafletMap.onEachFeature 
                     }).addTo(LeafletMap.map); }
                 break;
                 
@@ -306,19 +302,19 @@ const LeafletMap = {
     updatePrecinctLayer: () => {
         if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
             LeafletMap.map.removeLayer(LeafletMap.precinctLayer); 
-            LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, {
-                onEachFeature: LeafletMap.onEachFeature 
-            }).addTo(LeafletMap.map);
         }
+        LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, {
+            onEachFeature: LeafletMap.onEachFeature 
+        }).addTo(LeafletMap.map);
     },
 
     updateDistrictLayer: () => {
         if (LeafletMap.map.hasLayer(LeafletMap.districtLayer)) { 
             LeafletMap.map.removeLayer(LeafletMap.districtLayer); 
-            LeafletMap.districtLayer = L.geoJson(LeafletMap.districtGeojson, {
-                onEachFeature: LeafletMap.onEachFeature
-            }).addTo(LeafletMap.map);
         }
+        LeafletMap.districtLayer = L.geoJson(LeafletMap.districtGeojson, {
+            onEachFeature: LeafletMap.onEachFeature
+        }).addTo(LeafletMap.map);
     },
 
     resetMapFunctionalities: () => {
@@ -326,21 +322,16 @@ const LeafletMap = {
         switch(LeafletMap.currentMode) {
             case LeafletMap.modes.insert:
                 // Need to remove all tempJson precincts from map and empty tempPrecinctGeojson
-                if (LeafletMap.map.hasLayer(LeafletMap.tempLayer)) { LeafletMap.map.removeLayer(LeafletMap.tempLayer);}
+                if (LeafletMap.map.hasLayer(LeafletMap.tempLayer)) { 
+                    LeafletMap.map.removeLayer(LeafletMap.tempLayer);
+                }
                 LeafletMap.tempPrecinctGeojson = [];
                 LeafletMap.tempLayer = null;
-                // Refresh the precinct layers
-                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
-                    LeafletMap.map.removeLayer(LeafletMap.precinctLayer);
-                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
-                }
+                LeafletMap.updatePrecinctLayer();
                 LeafletMap.map.pm.disableDraw();
                 break;
             case LeafletMap.modes.modify:
-                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
-                    LeafletMap.map.removeLayer(LeafletMap.precinctLayer);
-                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
-                }
+                LeafletMap.updatePrecinctLayer();
                 break;
             default:
                 console.log("INVALID CURRENT MODE");
