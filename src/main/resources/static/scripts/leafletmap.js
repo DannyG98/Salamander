@@ -1,6 +1,6 @@
 const LeafletMap = {
     
-    modes: {default: 0, insert: 1, merge: 2, modify: 3},
+    modes: {default: 0, insert: 1, merge: 2, modify: 3, add: 4, remove: 5},
     currentMode: 0,
     stateLayer: null,
     districtLayer: null,
@@ -302,6 +302,15 @@ const LeafletMap = {
                     LeafletMap.map.removeLayer(LeafletMap.tempLayer); }
                 break;
         }
+    },
+
+    updateTempLayer: () => {
+        if (LeafletMap.map.hasLayer(LeafletMap.tempLayer)) { 
+            LeafletMap.map.removeLayer(LeafletMap.tempLayer);
+        }
+        LeafletMap.tempLayer = L.geoJson(LeafletMap.tempPrecinctGeojson,{ 
+            onEachFeature: LeafletMap.onEachFeature 
+        }).addTo(LeafletMap.map);
     },
 
     updatePrecinctLayer: () => {

@@ -4,7 +4,7 @@ const ToolBar = {
     init: () => {
         ToolBar.initEventHandlers();
     },
-    // Initiate event handlers for the elements of each dropdown
+
     initEventHandlers: () => {
         ToolBar.initStateDropdown();
         ToolBar.initElectionDropdown();
@@ -16,9 +16,9 @@ const ToolBar = {
         // Add an event handler to move map to the selected state
         const states = $('#states').find('.dropdown-item');
         for (let i = 0; i  < states.length; i++) {
-            states[i].addEventListener("click", function() {
+            states[i].addEventListener("click", () => {
                 // Move map view to the selected state
-                const state = this.text.toLowerCase();
+                const state = states[i].text.toLowerCase();
                 LeafletMap.panMap(ToolBar.stateCoordinates[state][0], ToolBar.stateCoordinates[state][1], 7);
 
                 // Highlight the selected state in the dropdown
@@ -51,7 +51,7 @@ const ToolBar = {
         const options = $('#filters').find('.dropdown-item');
         for (let i = 0; i  < options.length; i++) {
             options[i].addEventListener("click", () => {
-                // Highlights filters dropdown menu elements when active
+                // Highlights filters dropdown menu elements when selected
                 if (options[i].className.includes("active")) {
                     options[i].className = options[i].className.replace(/active/g, "");
                     ToolBar.enableFilter(options[i].id, false);
@@ -65,6 +65,8 @@ const ToolBar = {
     },
 
     initToolsDropDown: () => {
+        ToolBar.addNeighborHandler();
+        ToolBar.removeNeighborHandler();
         ToolBar.insertPrecinctHandler();
         ToolBar.mergePrecinctHandler();
         ToolBar.modifyPrecinctHanlder();
@@ -73,17 +75,35 @@ const ToolBar = {
         ToolBar.editButtonHandler();
     },
 
-    insertPrecinctHandler: () => {
-        $('#insert').click( function() {
+    addNeighborHandler: () => {
+        $('#add').click(() => {
             if (LeafletMap.currentMode == LeafletMap.modes.default) {
                 if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
-                    // Change mode to enable different map functionality
+                    LeafletMap.currentMode = LeafletMap.modes.add;
+                    ToolBar.toggleEditButtons();
+                }
+            }
+        });
+    },
+
+    removeNeighborHandler: () => {
+        $('#remove').click(() => {
+            if (LeafletMap.currentMode == LeafletMap.modes.default) {
+                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
+                    LeafletMap.currentMode = LeafletMap.modes.remove;
+                    ToolBar.toggleEditButtons();
+                }
+            }
+        });
+    },
+
+    insertPrecinctHandler: () => {
+        $('#insert').click(() => {
+            if (LeafletMap.currentMode == LeafletMap.modes.default) {
+                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
                     LeafletMap.currentMode = LeafletMap.modes.insert;
                     ToolBar.toggleEditButtons();
-
                     LeafletMap.map.pm.enableDraw('Polygon');
-
-                    // EventHandler for when a precinct is created
                     LeafletMap.map.on('pm:create', e => {
                         LeafletMap.map.removeLayer(e.layer);
                         let precinctShape = e.shape;
@@ -92,8 +112,6 @@ const ToolBar = {
                         for (let i = 0; i < coordinatesList.length; i++) {
                             newPrecinctCoordinates.push([coordinatesList[i].lng, coordinatesList[i].lat])
                         };
-                        
-                        // Add new precinct boundaries to a temporary variable
                         LeafletMap.tempPrecinctGeojson.push( 
                         {
                             "type": "Feature",
@@ -124,12 +142,7 @@ const ToolBar = {
                                 "coordinates": [newPrecinctCoordinates]
                             }
                         });
-                        // Remove current temp geojson if it exists
-                        if (LeafletMap.map.hasLayer(LeafletMap.tempLayer)) { LeafletMap.map.removeLayer(LeafletMap.tempLayer);}
-                        // Add the new updated temp geojson
-                        LeafletMap.tempLayer = L.geoJson(LeafletMap.tempPrecinctGeojson,{ onEachFeature: LeafletMap.onEachFeature }).addTo(LeafletMap.map);
-
-                        // Allow user to draw more than one precinct
+                        LeafletMap.updateTempLayer();
                         LeafletMap.map.pm.enableDraw('Polygon');
                     });
                 }
@@ -190,9 +203,7 @@ const ToolBar = {
 
     editButtonHandler: () => {
         $('#done-btn').click(() => {
-            // Update the PrecinctData on client
             DataHandler.updatePrecinctData();
-            // Reset map functionalities
             LeafletMap.resetMapFunctionalities();
         });
         $('#cancel-btn').click(() => {

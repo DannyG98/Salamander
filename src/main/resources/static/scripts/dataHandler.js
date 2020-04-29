@@ -60,7 +60,7 @@ const DataHandler = {
             LeafletMap.updateDistrictLayer();
         });
     },
-    // Get precinct geojson from server
+   
     getPrecinctData: (precinctList) => {
         let postTemplate = {
             method: 'post',
@@ -93,7 +93,7 @@ const DataHandler = {
 
         });
     },
-    // Send modified data to the server
+
     uploadPrecinctData: (precinctList) => {
         let postTemplate = {
             method: 'post',
