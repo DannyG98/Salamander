@@ -16,6 +16,30 @@ const DataHandler = {
         });
     },
 
+    getAllDistrictData: () => {
+        fetch('/district/getAllDistricts').then(function(response) {
+            return response.text();
+        }).then(function(text) {
+            let serverData = JSON.parse(text);
+            for (let i = 0; i < serverData.length; i++) {
+                let canonName = serverData[i].canonName;
+                LeafletMap.districts[canonName] = serverData[i];
+            }
+        });
+    },
+
+    getAllPrecinctData: () => {
+        fetch('/precinct/getAllPrecincts').then(function(response) {
+            return response.text();
+        }).then(function(text) {
+            let serverData = JSON.parse(text);
+            for (let i = 0; i < serverData.length; i++) {
+                let canonName = serverData[i].canonName;
+                LeafletMap.precincts[canonName] = serverData[i];
+            }
+        });
+    },
+
     getDistrictData: (districtList) => {
         let postTemplate = {
             method: 'post',
@@ -130,6 +154,7 @@ const DataHandler = {
             let geojson = jsonHandler.convertToGeojson(LeafletMap.precincts[canonName]);
             LeafletMap.precinctGeojson.push(geojson);
         }
+        LeafletMap.updatePrecinctLayer();
     },
 
     updateDistricts: (districtList) => {
