@@ -16,6 +16,30 @@ const DataHandler = {
         });
     },
 
+    getAllDistrictData: () => {
+        fetch('/district/getAllDistricts').then(function(response) {
+            return response.text();
+        }).then(function(text) {
+            let serverData = JSON.parse(text);
+            for (let i = 0; i < serverData.length; i++) {
+                let canonName = serverData[i].canonName;
+                LeafletMap.districts[canonName] = serverData[i];
+            }
+        });
+    },
+
+    getAllPrecinctData: () => {
+        fetch('/precinct/getAllPrecincts').then(function(response) {
+            return response.text();
+        }).then(function(text) {
+            let serverData = JSON.parse(text);
+            for (let i = 0; i < serverData.length; i++) {
+                let canonName = serverData[i].canonName;
+                LeafletMap.precincts[canonName] = serverData[i];
+            }
+        });
+    },
+
     getDistrictData: (districtList) => {
         let postTemplate = {
             method: 'post',
@@ -123,11 +147,21 @@ const DataHandler = {
         }
     },
 
+    updatePrecincts: (precinctList) => {
+        LeafletMap.precinctGeojson = [];
+        for (let i = 0; i < precinctList.length; i++) {
+            let canonName = precinctList[i];
+            let geojson = jsonHandler.convertToGeojson(LeafletMap.precincts[canonName]);
+            LeafletMap.precinctGeojson.push(geojson);
+        }
+        LeafletMap.updatePrecinctLayer();
+    },
+
     updateDistricts: (districtList) => {
         LeafletMap.districtGeojson = [];
         for (let i = 0; i < districtList.length; i++) {
             let canonName = districtList[i];
-            let geojson = LeafletMap.districts[canonName];
+            let geojson = jsonHandler.convertToGeojson(LeafletMap.districts[canonName]);
             LeafletMap.districtGeojson.push(geojson);
         }
         LeafletMap.updateDistrictLayer();

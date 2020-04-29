@@ -34,8 +34,8 @@ const LeafletMap = {
 
     initData: () => {
         DataHandler.getAllStateData();
-        //LeafletMap.districtGeojson = DataHandler.getAllDistrictData();
-        //LeafletMap.precinctGeojson = DataHandler.getAllPrecinctData();
+        DataHandler.getAllDistrictData();
+        DataHandler.getAllPrecinctData();
     },
 
     initLeafletLayers: () => {
@@ -55,7 +55,6 @@ const LeafletMap = {
                 LeafletMap.enableDistrictLayer(false);
                 LeafletMap.enablePrecinctLayer(false);
                 ToolBar.enableAllFilters(true);
-                ToolBar.unselectState();
             }    
             else if (zoomLevel == 8 && LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
                 LeafletMap.enableStateLayer(false);
@@ -96,25 +95,21 @@ const LeafletMap = {
 
     onEachFeature: (feature, layer) => {
         layer.on({
-            mouseover: LeafletMap.highlightFeature,
-            mouseout: LeafletMap.resetHighlight,
+            //mouseover: LeafletMap.highlightFeature,
+            //mouseout: LeafletMap.resetHighlight,
             click: LeafletMap.onClickHandler
         });
     },
 
     highlightFeature: (e) => {
         let layer = e.target;
-
         layer.setStyle({
             weight: 4,
             color: '#1a0aff',
             dashArray: '',
             fillOpacity: 0.2
         });
-
-        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-            //layer.bringToFront();
-        }
+        layer.bringToFront();  
         LeafletMap.infoBox.update(layer.feature.properties);
     },
 
@@ -134,19 +129,19 @@ const LeafletMap = {
     },
 
     onClickHandler: (e) => {
+        LeafletMap.infoBox.update(e.target.feature.properties);
         const canonicalName = e.target.feature.properties.canonName;
-
         // The clicked layer is a state layer
         if (LeafletMap.states[canonicalName] != null) {
             LeafletMap.currentState = canonicalName;
             // Responsible for updating toolbar GUI and updating districtGeoson
             LeafletMap.stateLayerHandler(canonicalName);
             LeafletMap.enableStateLayer(false)
-             // Enable all the options in filter dropdown menu
             ToolBar.enableAllFilters(true);
             // Disable district filter 
             let filter = $('#district-filter')[0];
             filter.className = filter.className.replace(/active/g, "");
+            LeafletMap.zoomToFeature(e);
         }
         // The clicked layer is a district
         else if (LeafletMap.districts[canonicalName] != null) {
@@ -159,12 +154,13 @@ const LeafletMap = {
             // Disable precinct filter 
             let filter = $('#precinct-filter')[0];
             filter.className = filter.className.replace(/active/g, "");
+            LeafletMap.zoomToFeature(e);
         }
           // The clicked layer is a precinct
         else if (LeafletMap.precincts[canonicalName] != null) {
+            LeafletMap.currentPrecinct = canonicalName;
             LeafletMap.precinctLayerHandler(canonicalName, e);
         }
-        LeafletMap.zoomToFeature(e);
         stateChangeHandler(e.target.feature.properties.canonName);
     },
 
@@ -201,19 +197,27 @@ const LeafletMap = {
         // Only request the precincts that are not stored on the client
         let precinctCNames = LeafletMap.districts[districtCanonName].precinctCNames;
         let requestList = [];
+        let currentList = [];
         for (let i = 0; i < precinctCNames.length; i++) {
-            let cName = precinctCNames[i];
-            if (LeafletMap.precincts[cName] == null) {
-                requestList.push(cName);
+            if (LeafletMap.precincts[precinctCNames[i]] == null) {
+                requestList.push(precinctCNames[i]);
+            }
+            else {
+                currentList.push(precinctCNames[i]);
             }
         }
         if (requestList.length != 0) {
             DataHandler.getPrecinctData(requestList);
         }
+        DataHandler.updatePrecincts(currentList);
     },
 
     precinctLayerHandler: (precinctCanonName, event) => {
         switch(LeafletMap.currentMode) {
+            case LeafletMap.modes.default:
+                LeafletMap.highlightNeighbors(precinctCanonName);
+                LeafletMap.highlightFeature(event);
+                break;
             case LeafletMap.modes.merge:
                 if (selectedPrecincts.length == 2) {
                     selectedPrecincts.shift();
@@ -250,9 +254,8 @@ const LeafletMap = {
         switch(option) {
             case true:
                 if (!LeafletMap.map.hasLayer(LeafletMap.stateLayer)) {
-                    LeafletMap.stateLayer = L.geoJson(LeafletMap.statesGeojson, 
-                        { onEachFeature: LeafletMap.onEachFeature }, 
-                        { style: { pmIgnore: true } 
+                    LeafletMap.stateLayer = L.geoJson(LeafletMap.statesGeojson, { 
+                        onEachFeature: LeafletMap.onEachFeature 
                     }).addTo(LeafletMap.map); }
                 break;
             case false:
@@ -266,14 +269,14 @@ const LeafletMap = {
         switch(option) {
             case true:
                 if (!LeafletMap.map.hasLayer(LeafletMap.districtLayer)) { 
-                    LeafletMap.districtLayer = L.geoJson(LeafletMap.districtGeojson, 
-                        { onEachFeature: LeafletMap.onEachFeature }, 
-                        { style: { pmIgnore: true } 
+                    LeafletMap.districtLayer = L.geoJson(LeafletMap.districtGeojson, {
+                        onEachFeature: LeafletMap.onEachFeature 
                     }).addTo(LeafletMap.map).bringToFront(); }
                 break;
             case false:
                 if (LeafletMap.map.hasLayer(LeafletMap.districtLayer)) { 
-                    LeafletMap.map.removeLayer(LeafletMap.districtLayer); }
+                    LeafletMap.map.removeLayer(LeafletMap.districtLayer); 
+                }
                 break;
         }
     },
@@ -282,15 +285,13 @@ const LeafletMap = {
         switch(option) {
             case true:
                 if (!LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
-                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, 
-                        { onEachFeature: LeafletMap.onEachFeature }, 
-                        { style: { pmIgnore: false } 
+                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, {
+                         onEachFeature: LeafletMap.onEachFeature 
                     }).addTo(LeafletMap.map);
                     LeafletMap.precinctLayer.bringToFront(); }
                 if (!LeafletMap.map.hasLayer(LeafletMap.tempLayer)) {
-                    LeafletMap.tempLayer = L.geoJson(LeafletMap.tempPrecinctGeojson, 
-                        { onEachFeature: LeafletMap.onEachFeature }, 
-                        { style: { pmIgnore: false } 
+                    LeafletMap.tempLayer = L.geoJson(LeafletMap.tempPrecinctGeojson, {
+                        onEachFeature: LeafletMap.onEachFeature 
                     }).addTo(LeafletMap.map); }
                 break;
                 
@@ -310,12 +311,11 @@ const LeafletMap = {
         LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, {
             onEachFeature: LeafletMap.onEachFeature 
         }).addTo(LeafletMap.map);
-        
     },
 
     updateDistrictLayer: () => {
         if (LeafletMap.map.hasLayer(LeafletMap.districtLayer)) { 
-            LeafletMap.map.removeLayer(LeafletMap.districtLayer);
+            LeafletMap.map.removeLayer(LeafletMap.districtLayer); 
         }
         LeafletMap.districtLayer = L.geoJson(LeafletMap.districtGeojson, {
             onEachFeature: LeafletMap.onEachFeature
@@ -327,21 +327,16 @@ const LeafletMap = {
         switch(LeafletMap.currentMode) {
             case LeafletMap.modes.insert:
                 // Need to remove all tempJson precincts from map and empty tempPrecinctGeojson
-                if (LeafletMap.map.hasLayer(LeafletMap.tempLayer)) { LeafletMap.map.removeLayer(LeafletMap.tempLayer);}
+                if (LeafletMap.map.hasLayer(LeafletMap.tempLayer)) { 
+                    LeafletMap.map.removeLayer(LeafletMap.tempLayer);
+                }
                 LeafletMap.tempPrecinctGeojson = [];
                 LeafletMap.tempLayer = null;
-                // Refresh the precinct layers
-                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
-                    LeafletMap.map.removeLayer(LeafletMap.precinctLayer);
-                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
-                }
+                LeafletMap.updatePrecinctLayer();
                 LeafletMap.map.pm.disableDraw();
                 break;
             case LeafletMap.modes.modify:
-                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
-                    LeafletMap.map.removeLayer(LeafletMap.precinctLayer);
-                    LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
-                }
+                LeafletMap.updatePrecinctLayer();
                 break;
             default:
                 console.log("INVALID CURRENT MODE");
@@ -349,6 +344,22 @@ const LeafletMap = {
         LeafletMap.currentMode = LeafletMap.modes.default;
         ToolBar.toggleEditButtons();
     },
-    
+
+    highlightNeighbors: (precinctCName) => {
+        LeafletMap.precinctLayer.resetStyle();
+        let neighborCNames = LeafletMap.precincts[precinctCName].neighborCNames;
+        let layers = LeafletMap.precinctLayer._layers;
+        Object.entries(layers).forEach(([, value]) => {
+            let cName = value.feature.properties.canonName;
+            if (neighborCNames.indexOf(cName) != -1) {
+                value.setStyle({
+                    weight: 4,
+                    color: '#FF0000',
+                    dashArray: '',
+                    fillOpacity: 0.2
+                });
+            }
+        });
+    }
 }
 LeafletMap.init();
