@@ -306,19 +306,20 @@ const LeafletMap = {
     updatePrecinctLayer: () => {
         if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
             LeafletMap.map.removeLayer(LeafletMap.precinctLayer); 
-            LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, {
-                onEachFeature: LeafletMap.onEachFeature 
-            }).addTo(LeafletMap.map);
         }
+        LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, {
+            onEachFeature: LeafletMap.onEachFeature 
+        }).addTo(LeafletMap.map);
+        
     },
 
     updateDistrictLayer: () => {
         if (LeafletMap.map.hasLayer(LeafletMap.districtLayer)) { 
-            LeafletMap.map.removeLayer(LeafletMap.districtLayer); 
-            LeafletMap.districtLayer = L.geoJson(LeafletMap.districtGeojson, {
-                onEachFeature: LeafletMap.onEachFeature
-            }).addTo(LeafletMap.map);
+            LeafletMap.map.removeLayer(LeafletMap.districtLayer);
         }
+        LeafletMap.districtLayer = L.geoJson(LeafletMap.districtGeojson, {
+            onEachFeature: LeafletMap.onEachFeature
+        }).addTo(LeafletMap.map);
     },
 
     resetMapFunctionalities: () => {
