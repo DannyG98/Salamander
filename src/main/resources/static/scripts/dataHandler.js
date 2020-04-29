@@ -5,10 +5,10 @@ const DataHandler = {
             return response.text();
         }).then(function(text) {
             let serverData = JSON.parse(text);
-            for (var i = 0; i < serverData.length; i++) {
+            for (let i = 0; i < serverData.length; i++) {
                 let canonName = serverData[i].canonName;
                 LeafletMap.states[canonName] = serverData[i];
-                LeafletMap.statesGeojson[i] = jsonHandler.convertToGeojson(serverData[i]);
+                LeafletMap.statesGeojson.push(jsonHandler.convertToGeojson(serverData[i]));
             }
             LeafletMap.stateLayer = L.geoJson(LeafletMap.statesGeojson, {
                 onEachFeature: LeafletMap.onEachFeature
@@ -31,7 +31,7 @@ const DataHandler = {
             for (let i = 0; i < serverData.length; i++) {
                 let canonName = serverData[i].canonName;
                 LeafletMap.districts[canonName] = serverData[i];
-                LeafletMap.districtGeojson[i] = jsonHandler.convertToGeojson(serverData[i]);
+                LeafletMap.districtGeojson.push(jsonHandler.convertToGeojson(serverData[i]));
             }
             LeafletMap.updateDistrictLayer();
         });
@@ -52,7 +52,7 @@ const DataHandler = {
             for (let i = 0; i < serverData.length; i++) {
                 let canonName = serverData[i].canonName;
                 LeafletMap.precincts[canonName] = serverData[i];
-                LeafletMap.precinctGeojson[i] = jsonHandler.convertToGeojson(serverData[i]);
+                LeafletMap.precinctGeojson.push(jsonHandler.convertToGeojson(serverData[i]));
             }
             LeafletMap.updatePrecinctLayer();
         });

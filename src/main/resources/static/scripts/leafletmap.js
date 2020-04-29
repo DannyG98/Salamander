@@ -33,7 +33,7 @@ const LeafletMap = {
     },
 
     initData: () => {
-        LeafletMap.statesGeojson = DataHandler.getAllStateData();
+        DataHandler.getAllStateData();
         //LeafletMap.districtGeojson = DataHandler.getAllDistrictData();
         //LeafletMap.precinctGeojson = DataHandler.getAllPrecinctData();
     },
