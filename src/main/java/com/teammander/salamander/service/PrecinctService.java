@@ -50,6 +50,12 @@ public class PrecinctService {
         return foundPrecint;
     }
 
+    public List<Precinct> getAllPrecincts() {
+        PrecinctRepository pr = getPr();
+        List<Precinct> allPrecincts = pr.findAll();
+        return allPrecincts;
+    }
+
     public void rmPrecinct(Precinct precinct) {
         PrecinctRepository pr = getPr();
         String targetCName = precinct.getCanonName();
@@ -143,8 +149,9 @@ public class PrecinctService {
         for (String neighbor : neighbors) {
             addNeighbor(neighbor, targetCName);
         }
+        pr.save(precinct);
         if (flush) {
-            pr.saveAndFlush(precinct);
+            pr.flush();
         }
     }
 
