@@ -1,5 +1,6 @@
 package com.teammander.salamander.map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Lob;
@@ -47,7 +48,7 @@ public abstract class Region {
         this.geometry = geoemtry;
     }
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     public DemographicData getDemoData() {
         return this.demoData;
     }
@@ -56,7 +57,7 @@ public abstract class Region {
         this.demoData = demoData;
     }
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     public ElectionData getElecData() {
         return this.elecData;
     }

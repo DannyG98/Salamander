@@ -42,6 +42,13 @@ public class PrecinctController {
         return foundPrecinct;
     }
 
+    @GetMapping("/getAllPrecincts")
+    public List<Precinct> getAllPrecincts() {
+        PrecinctService ps = getPs();
+        List<Precinct> foundPrecincts = ps.getAllPrecincts();
+        return foundPrecincts;
+    }
+
     @GetMapping("/modifyNeighbor")
     public ResponseEntity<String> addNeighbor(@RequestParam String p1, 
             @RequestParam String p2, @RequestParam String op) {

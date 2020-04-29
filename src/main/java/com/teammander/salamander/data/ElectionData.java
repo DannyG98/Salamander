@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
@@ -30,7 +31,7 @@ public class ElectionData {
         this.electionDataId = electionDataId;
     }
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     public List<Election> getElections() {
         return this.elections;
     }
