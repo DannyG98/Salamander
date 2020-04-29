@@ -27,6 +27,13 @@ public class DistrictController {
         return this.ds;
     }
 
+    @GetMapping("/getAllDistricts")
+    public List<District> getAllDistricts() {
+        DistrictService ds = getDs();
+        List<District> allDistricts = ds.getAllDistricts();
+        return allDistricts;
+    }
+
     @PostMapping("/getMultipleDistricts")
     public List<District> getMultipleDistricts(@RequestBody List<String> query) {
         DistrictService ds = getDs();
