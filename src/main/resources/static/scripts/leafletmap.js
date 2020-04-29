@@ -17,6 +17,7 @@ const LeafletMap = {
     ghostCounter: 0,
     currentState: null,
     currentDistrict: null,
+    currentPrecinct: null,
     selectedPrecincts: [],
     modifiedPrecincts: [],
     usaCoordinates: [39.51073, -96.4247],
@@ -33,6 +34,8 @@ const LeafletMap = {
 
     initData: () => {
         LeafletMap.statesGeojson = DataHandler.getAllStateData();
+        //LeafletMap.districtGeojson = DataHandler.getAllDistrictData();
+        //LeafletMap.precinctGeojson = DataHandler.getAllPrecinctData();
     },
 
     initLeafletLayers: () => {
@@ -54,7 +57,7 @@ const LeafletMap = {
                 ToolBar.enableAllFilters(true);
                 ToolBar.unselectState();
             }    
-            else if (zoomLevel == 7 && LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
+            else if (zoomLevel == 8 && LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
                 LeafletMap.enableStateLayer(false);
                 LeafletMap.enableDistrictLayer(true);
                 LeafletMap.enablePrecinctLayer(false);
@@ -151,6 +154,7 @@ const LeafletMap = {
             // Responsible for updating precinctGeoson
             LeafletMap.districtLayerHandler(canonicalName);
             LeafletMap.enableDistrictLayer(false);
+            LeafletMap.enablePrecinctLayer(true);
             ToolBar.enableAllFilters(true);
             // Disable precinct filter 
             let filter = $('#precinct-filter')[0];
@@ -171,15 +175,41 @@ const LeafletMap = {
             if (statesDropdownElements[i].text.toLowerCase() == stateCanonName) {
                 ToolBar.unselectState();
                 statesDropdownElements[i].className += " active";
-                // Get district from server
-                DataHandler.getDistrictData(LeafletMap.states[stateCanonName].districtCNames);
+                // Only request district data that has not been request before
+                let districtCNames = LeafletMap.states[stateCanonName].districtCNames;
+                let requestList = [];
+                let currentList = [];
+                for (let j = 0; j < districtCNames.length; j++) {
+                    if (LeafletMap.districts[districtCNames[j]] == null) {
+                        requestList.push(districtCNames[j]);
+                    }
+                    else {
+                        currentList.push(districtCNames[j]);
+                    }
+                }
+                if (requestList.length != 0) {
+                    DataHandler.getDistrictData(requestList);
+                }
+                // Display the districts that are already on the client
+                DataHandler.updateDistricts(currentList);
                 break;
             }
         }
     },
 
     districtLayerHandler: (districtCanonName) => {
-        DataHandler.getPrecinctData(LeafletMap.districts[districtCanonName].precinctCNames);
+        // Only request the precincts that are not stored on the client
+        let precinctCNames = LeafletMap.districts[districtCanonName].precinctCNames;
+        let requestList = [];
+        for (let i = 0; i < precinctCNames.length; i++) {
+            let cName = precinctCNames[i];
+            if (LeafletMap.precincts[cName] == null) {
+                requestList.push(cName);
+            }
+        }
+        if (requestList.length != 0) {
+            DataHandler.getPrecinctData(requestList);
+        }
     },
 
     precinctLayerHandler: (precinctCanonName, event) => {
@@ -190,10 +220,19 @@ const LeafletMap = {
                 }
                 break;
             case LeafletMap.modes.modify:
-                    ToolBar.toggleEditButtons();
-                    event.target.pm.enable();
+                    // Only want one precinct to be modified at a time
+                    if (LeafletMap.currentPrecinct != event.target.feature.properties.canonName) {
+                        LeafletMap.precinctLayer.pm.disable();
+                        event.target.pm.enable();
+                    }
                     LeafletMap.precinctLayer.on('pm:edit', e => {
-                        console.log(e);
+                        let canonName = e.sourceTarget.feature.properties.canonName;
+                        let index = LeafletMap.modifiedPrecincts.indexOf(canonName);
+                        // indexOf() returns -1 if the element is not found
+                        if (index === -1) {
+                            LeafletMap.modifiedPrecincts.push(canonName);
+                        }
+                        console.log(LeafletMap.modifiedPrecincts);
                     });
                 break;
         }
@@ -267,7 +306,18 @@ const LeafletMap = {
     updatePrecinctLayer: () => {
         if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) { 
             LeafletMap.map.removeLayer(LeafletMap.precinctLayer); 
-            LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, { onEachFeature: LeafletMap.onEachFeature }, { style: { pmIgnore: false } }).addTo(LeafletMap.map);
+            LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, {
+                onEachFeature: LeafletMap.onEachFeature 
+            }).addTo(LeafletMap.map);
+        }
+    },
+
+    updateDistrictLayer: () => {
+        if (LeafletMap.map.hasLayer(LeafletMap.districtLayer)) { 
+            LeafletMap.map.removeLayer(LeafletMap.districtLayer); 
+            LeafletMap.districtLayer = L.geoJson(LeafletMap.districtGeojson, {
+                onEachFeature: LeafletMap.onEachFeature
+            }).addTo(LeafletMap.map);
         }
     },
 

@@ -162,6 +162,7 @@ const ToolBar = {
                     let element = $('#modify')[0];
                     if (element.className.includes("active")) {
                         element.className = element.className.replace(/active/g, "");
+                        LeafletMap.precinctLayer.pm.disable();
                         LeafletMap.currentMode = LeafletMap.modes.default;
                     }
                     else {
@@ -189,16 +190,10 @@ const ToolBar = {
 
     editButtonHandler: () => {
         $('#done-btn').click(() => {
-            if (LeafletMap.currentMode == LeafletMap.modes.modify) {
-                // Disable edit for all 
-                LeafletMap.map.precinctLayer.pm.disable();
-            }
-            else {
-                // Update the PrecinctData on client
-                DataHandler.updatePrecinctData();
-                // Reset map functionalities
-                LeafletMap.resetMapFunctionalities();
-            }
+            // Update the PrecinctData on client
+            DataHandler.updatePrecinctData();
+            // Reset map functionalities
+            LeafletMap.resetMapFunctionalities();
         });
         $('#cancel-btn').click(() => {
             // Revert all changes made during edit

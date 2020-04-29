@@ -4,21 +4,18 @@ const DataHandler = {
         fetch('/state/getAllStates').then(function(response) {
             return response.text();
         }).then(function(text) {
-            LeafletMap.statesGeojson = JSON.parse(text);
-            // Create a hashmap that maps state canonical names to geojson data
-            for (var i = 0; i < LeafletMap.statesGeojson.length; i++) {
-                LeafletMap.states[LeafletMap.statesGeojson[i].canonName] = LeafletMap.statesGeojson[i];
-                // Need to convert the json from server into geojson
-                LeafletMap.statesGeojson[i] = jsonHandler.convertToGeojson(LeafletMap.statesGeojson[i]);
+            let serverData = JSON.parse(text);
+            for (var i = 0; i < serverData.length; i++) {
+                let canonName = serverData[i].canonName;
+                LeafletMap.states[canonName] = serverData[i];
+                LeafletMap.statesGeojson[i] = jsonHandler.convertToGeojson(serverData[i]);
             }
-            // Add the state layer
             LeafletMap.stateLayer = L.geoJson(LeafletMap.statesGeojson, {
                 onEachFeature: LeafletMap.onEachFeature
             }).addTo(LeafletMap.map);
         });
     },
 
-    // Get district geojson from server
     getDistrictData: (districtList) => {
         let postTemplate = {
             method: 'post',
@@ -30,17 +27,13 @@ const DataHandler = {
         fetch('/district/getMultipleDistricts', postTemplate).then(function(response) {
             return response.text();
         }).then(function(text) {
-            LeafletMap.districtGeojson = JSON.parse(text);
-            for (let i = 0; i < LeafletMap.districtGeojson.length; i++) {
-                // Store district objects using canonicalName as key and district object as value
-                LeafletMap.districts[LeafletMap.districtGeojson[i].canonName] = LeafletMap.districtGeojson[i];
-                // Convert district objects into geoJson format and store it.
-                LeafletMap.districtGeojson[i] = jsonHandler.convertToGeojson(LeafletMap.districtGeojson[i]);
+            let serverData  = JSON.parse(text);
+            for (let i = 0; i < serverData.length; i++) {
+                let canonName = serverData[i].canonName;
+                LeafletMap.districts[canonName] = serverData[i];
+                LeafletMap.districtGeojson[i] = jsonHandler.convertToGeojson(serverData[i]);
             }
-            // Add the district layer to the map
-            LeafletMap.districtLayer = L.geoJson(LeafletMap.districtGeojson, {
-                onEachFeature: LeafletMap.onEachFeature
-            }).addTo(LeafletMap.map);
+            LeafletMap.updateDistrictLayer();
         });
     },
     // Get precinct geojson from server
@@ -55,19 +48,17 @@ const DataHandler = {
         fetch('/precinct/getMultiplePrecincts', postTemplate).then(function(response) {
             return response.text();
         }).then(function(text) {
-            LeafletMap.precinctGeojson = JSON.parse(text);
-            for (let i = 0; i < LeafletMap.precinctGeojson.length; i++) {
-                LeafletMap.precincts[LeafletMap.precinctGeojson[i].canonName] = LeafletMap.precinctGeojson[i];
-                LeafletMap.precinctGeojson[i] = jsonHandler.convertToGeojson(LeafletMap.precinctGeojson[i]);
+            let serverData = JSON.parse(text);
+            for (let i = 0; i < serverData.length; i++) {
+                let canonName = serverData[i].canonName;
+                LeafletMap.precincts[canonName] = serverData[i];
+                LeafletMap.precinctGeojson[i] = jsonHandler.convertToGeojson(serverData[i]);
             }
-            LeafletMap.precinctLayer = L.geoJson(LeafletMap.precinctGeojson, {
-                onEachFeature: LeafletMap.onEachFeature
-            }).addTo(LeafletMap.map);
+            LeafletMap.updatePrecinctLayer();
         });
     },
 
     addOrDeletePrecinctNeighbor: (precinctName) => {
-
     },
 
     getMergedPrecinct: (precinctName1, precinctName2) => {
@@ -131,4 +122,14 @@ const DataHandler = {
                 console.log("INVALID CURRENT MODE");
         }
     },
+
+    updateDistricts: (districtList) => {
+        LeafletMap.districtGeojson = [];
+        for (let i = 0; i < districtList.length; i++) {
+            let canonName = districtList[i];
+            let geojson = LeafletMap.districts[canonName];
+            LeafletMap.districtGeojson.push(geojson);
+        }
+        LeafletMap.updateDistrictLayer();
+    }
 }
