@@ -72,30 +72,23 @@ public class PrecinctController {
      */
     @PostMapping("/modifyNeighbor")
     public ResponseEntity<String> modifyNeighbors(@RequestParam String p, 
-            @RequestParam String op, @RequestBody List<String> newNeighbors) {
+    @RequestParam String op, @RequestBody List<String> neighbors) {
         PrecinctService ps = getPs();
         ResponseEntity<String> ret = null;
-        boolean status = true;
+        String badQuery;
         String errMsg = null;
 
         if (op.equals("add")) {
-            for (String neighbor : newNeighbors) {
-                status = ps.addNeighbor(p, neighbor);
-                if (status == false) {
-                    errMsg = ControllerErrors.unableToFindMsg(neighbor);
-                    break;
-                }
+            badQuery = ps.addMultiNeighbors(p, neighbors);
+            if (badQuery != null) {
+                errMsg = ControllerErrors.unableToFindMsg(badQuery);
             }
         } else if (op.equals("delete")) {
-            for (String neighbor : newNeighbors) {
-                status = ps.deleteNeighbor(p, neighbor);
-                if (status == false) {
-                    errMsg = ControllerErrors.unableToFindMsg(neighbor);
-                    break;
-                }
+            badQuery = ps.deleteMultiNeighbors(p, neighbors);
+            if (badQuery != null) {
+                errMsg = ControllerErrors.unableToFindMsg(badQuery);
             }
         } else {
-            status = false;
             errMsg = ControllerErrors.badQueryMsg("op", op);
         }
          
@@ -121,7 +114,7 @@ public class PrecinctController {
 
     @PostMapping("/updateDemoData")
     public ResponseEntity<?> updateDemoData(@RequestParam String pCName, 
-            @RequestBody DemographicData demoData) {
+    @RequestBody DemographicData demoData) {
         PrecinctService ps = getPs();
         Precinct targetPrecinct = ps.updateDemoData(pCName, demoData);
         if (targetPrecinct == null) {
