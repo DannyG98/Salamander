@@ -1,4 +1,5 @@
 const DataHandler = {
+    options: {addNeighbor: 'add', removeNeighbor: 'delete'},
 
     getAllStateData: () => {
         fetch('/state/getAllStates').then(function(response) {
@@ -60,7 +61,7 @@ const DataHandler = {
             LeafletMap.updateDistrictLayer();
         });
     },
-    // Get precinct geojson from server
+   
     getPrecinctData: (precinctList) => {
         let postTemplate = {
             method: 'post',
@@ -82,7 +83,20 @@ const DataHandler = {
         });
     },
 
-    addOrDeletePrecinctNeighbor: (precinctName) => {
+    changePrecinctNeighbor: (precinctName, precinctNeighbors, option) => {
+        // TODO need to modify end points to accept list of neighbors to be added
+        let postTemplate = {
+            method: 'post',
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            },
+            body: JSON.stringify(precinctNeighbors)
+        }
+        fetch('/precinct/getMultiplePrecincts', postTemplate).then(function(response) {
+            return response.text();
+        }).then(function(text) {
+            // Check for updateSuccess?
+        });
     },
 
     getMergedPrecinct: (precinctName1, precinctName2) => {
@@ -93,7 +107,7 @@ const DataHandler = {
 
         });
     },
-    // Send modified data to the server
+
     uploadPrecinctData: (precinctList) => {
         let postTemplate = {
             method: 'post',
@@ -111,37 +125,45 @@ const DataHandler = {
 
     updatePrecinctData: () => {
         switch(LeafletMap.currentMode) {
-            case LeafletMap.modes.insert: 
+            case LeafletMap.modes.insert: {
                 // Add all the new precincts to the current list of precincts
-                for (var i = 0; i < LeafletMap.tempPrecinctGeojson.length; i++) {
+                for (let i = 0; i < LeafletMap.tempPrecinctGeojson.length; i++) {
                     LeafletMap.precinctGeojson.push(LeafletMap.tempPrecinctGeojson[i]);
                     LeafletMap.precincts[LeafletMap.tempPrecinctGeojson[i].properties.canonName] = LeafletMap.tempPrecinctGeojson[i]
                 }
-            
                 break;
-            case LeafletMap.modes.modify:
+            }
+            case LeafletMap.modes.modify: {
                 // Replace precinctCoordinates with the new ones from the precinctLayer 
                 // Replace only the precincts that were changed
                 for (let i in LeafletMap.precinctLayer._layers) {
                     let precinctName = LeafletMap.precinctLayer._layers[i].feature.properties.name;
                     for (let j in LeafletMap.precinctGeojson) {
                         if (precinctName == LeafletMap.precinctGeojson[j].properties.name) {
-                            var newPrecinctCoordinates = [];
-                            var coordinatesList = LeafletMap.precinctLayer._layers[i]._latlngs[0];
-                            for (var k in coordinatesList) {
+                            let newPrecinctCoordinates = [];
+                            let coordinatesList = LeafletMap.precinctLayer._layers[i]._latlngs[0];
+                            for (let k in coordinatesList) {
                                 newPrecinctCoordinates.push([coordinatesList[k].lng, coordinatesList[k].lat]);
                             };
                             LeafletMap.precinctGeojson[j].geometry.type = LeafletMap.precinctLayer._layers[i].feature.geometry.type;
                             LeafletMap.precinctGeojson[j].geometry.coordinates = [newPrecinctCoordinates];
-
                             break;
                         }
                     }
                 };
                 break;
-            case LeafletMap.modes.merge:
+            }
+            case LeafletMap.modes.merge: {
                 LeafletMap.updatePrecinctLayer();
                 break;
+            }
+            case LeafletMap.modes.add: {
+                DataHandler.updateNeighbors(DataHandler.options.addNeighbor);
+                break;        
+            }
+            case LeafletMap.modes.remove: {
+                DataHandler.updateNeighbors(DataHandler.options.removeNeighbor);
+            }
             default:
                 console.log("INVALID CURRENT MODE");
         }
@@ -165,5 +187,24 @@ const DataHandler = {
             LeafletMap.districtGeojson.push(geojson);
         }
         LeafletMap.updateDistrictLayer();
+    },
+
+    updateNeighbors: (option) => {
+        let precinctNeighbors = LeafletMap.precincts[LeafletMap.precinctBeingChanged].neighborCNames;
+        switch (option) {
+            case DataHandler.options.addNeighbor: {
+                LeafletMap.precincts[LeafletMap.precinctBeingChanged].neighborCNames = precinctNeighbors.concat(LeafletMap.selectedPrecincts);
+                DataHandler.changePrecinctNeighbor(LeafletMap.precinctBeingChanged, LeafletMap.selectedPrecincts, DataHandler.options.addNeighbor);
+                break;
+            }
+            case DataHandler.options.removeNeighbor: {
+                // Get the difference between the precinctNeighbors list and selectedPrecincts
+                LeafletMap.precincts[LeafletMap.precinctBeingChanged].neighborCNames = precinctNeighbors.filter(cName => !LeafletMap.selectedPrecincts.includes(cName));
+                DataHandler.changePrecinctNeighbor(LeafletMap.precinctBeingChanged, LeafletMap.selectedPrecincts, DataHandler.options.removeNeighbor);
+                break;
+            }
+            default:
+                console.log("Error updating neighbors");
+        }
     }
 }
