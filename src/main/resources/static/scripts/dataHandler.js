@@ -82,7 +82,20 @@ const DataHandler = {
         });
     },
 
-    addOrDeletePrecinctNeighbor: (precinctName) => {
+    addOrDeletePrecinctNeighbor: (precinctName, precinctNeighbors) => {
+        // TODO need to modify end points to accept list of neighbors to be added
+        let postTemplate = {
+            method: 'post',
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            },
+            body: JSON.stringify(precinctNeighbors)
+        }
+        fetch('/precinct/getMultiplePrecincts', postTemplate).then(function(response) {
+            return response.text();
+        }).then(function(text) {
+            // Check for updateSuccess?
+        });
     },
 
     getMergedPrecinct: (precinctName1, precinctName2) => {
@@ -133,7 +146,6 @@ const DataHandler = {
                             };
                             LeafletMap.precinctGeojson[j].geometry.type = LeafletMap.precinctLayer._layers[i].feature.geometry.type;
                             LeafletMap.precinctGeojson[j].geometry.coordinates = [newPrecinctCoordinates];
-
                             break;
                         }
                     }
@@ -141,6 +153,11 @@ const DataHandler = {
                 break;
             case LeafletMap.modes.merge:
                 LeafletMap.updatePrecinctLayer();
+                break;
+            case LeafletMap.modes.add:
+                let precinctNeighbors = LeafletMap.precincts[LeafletMap.precinctBeingChanged].neighborCNames;
+                LeafletMap.precincts[LeafletMap.precinctBeingChanged].neighborCNames = precinctNeighbors.concat(LeafletMap.selectedPrecincts);
+                DataHandler.addOrDeletePrecinctNeighbor(LeafletMap.precinctBeingChanged, LeafletMap.selectedPrecincts);
                 break;
             default:
                 console.log("INVALID CURRENT MODE");

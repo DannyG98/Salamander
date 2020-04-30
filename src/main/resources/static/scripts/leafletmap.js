@@ -18,9 +18,12 @@ const LeafletMap = {
     currentState: null,
     currentDistrict: null,
     currentPrecinct: null,
+    precinctBeingChanged: null,
     selectedPrecincts: [],
     modifiedPrecincts: [],
     usaCoordinates: [39.51073, -96.4247],
+
+    highlightColors: {red: '#FF0000', blue: '#1a0aff', green: '#32CD32'},
     // The iteractive map that is going to be displayed on the webpage
     map: L.map('mapid', { minZoom: 5, maxZoom: 18, maxBounds: [[20.396308, -135.848974], [49.384358, -55.885444]] }),
 
@@ -48,7 +51,7 @@ const LeafletMap = {
 
     initZoomHandlers: () => {
         LeafletMap.map.on('zoomend', function (e) {
-            // Display only the state borders when zoomed out too far
+            // Display only the state borders when zoomed out too far from the districts
             let zoomLevel = LeafletMap.map.getZoom();
             if (zoomLevel <= 6) {
                 LeafletMap.enableStateLayer(true);
@@ -56,6 +59,7 @@ const LeafletMap = {
                 LeafletMap.enablePrecinctLayer(false);
                 ToolBar.enableAllFilters(true);
             }    
+            // Display only the district borders when zoomed out too far from the precincts
             else if (zoomLevel == 8 && LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
                 LeafletMap.enableStateLayer(false);
                 LeafletMap.enableDistrictLayer(true);
@@ -84,11 +88,10 @@ const LeafletMap = {
             //  : 'Hover states for more details');
         };
         LeafletMap.infoBox.onAdd = () => {
-            Window._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+            Window._div = L.DomUtil.create('div', 'info');
             LeafletMap.infoBox.update();
             return Window._div;
         };
-        // Add to the leaflet map
         LeafletMap.infoBox.addTo(LeafletMap.map);
 
     },
@@ -100,17 +103,39 @@ const LeafletMap = {
             click: LeafletMap.onClickHandler
         });
     },
-
-    highlightFeature: (e) => {
+  
+    highlightFeature: (e, hexColor, bringToFront) => {
         let layer = e.target;
         layer.setStyle({
             weight: 4,
-            color: '#1a0aff',
+            color: hexColor,
             dashArray: '',
             fillOpacity: 0.2
         });
-        layer.bringToFront();  
+        if (bringToFront) {
+            layer.bringToFront();  
+        }
+        else {
+            layer.bringToBack();
+        }
         LeafletMap.infoBox.update(layer.feature.properties);
+    },
+
+    highlightNeighbors: (precinctCName) => {
+        LeafletMap.precinctLayer.resetStyle();
+        let neighborCNames = LeafletMap.precincts[precinctCName].neighborCNames;
+        let layers = LeafletMap.precinctLayer._layers;
+        Object.entries(layers).forEach(([, value]) => {
+            let cName = value.feature.properties.canonName;
+            if (neighborCNames.indexOf(cName) != -1) {
+                value.setStyle({
+                    weight: 4,
+                    color: LeafletMap.highlightColors.red,
+                    dashArray: '',
+                    fillOpacity: 0.2
+                });
+            }
+        });
     },
 
     resetHighlight: (e) => {
@@ -216,7 +241,7 @@ const LeafletMap = {
         switch(LeafletMap.currentMode) {
             case LeafletMap.modes.default:
                 LeafletMap.highlightNeighbors(precinctCanonName);
-                LeafletMap.highlightFeature(event);
+                LeafletMap.highlightFeature(event, LeafletMap.highlightColors.blue, true);
                 break;
             case LeafletMap.modes.merge:
                 if (selectedPrecincts.length == 2) {
@@ -238,6 +263,22 @@ const LeafletMap = {
                         }
                         console.log(LeafletMap.modifiedPrecincts);
                     });
+                break;
+            case LeafletMap.modes.add:
+                let neighborCNames = LeafletMap.precincts[LeafletMap.precinctBeingChanged].neighborCNames;
+                // Only allow the precinct to be selected if it is not a neighbor already and it is not the precinct being changed
+                if (neighborCNames.indexOf(LeafletMap.currentPrecinct) === -1 && LeafletMap.currentPrecinct != LeafletMap.precinctBeingChanged) {
+                    // If it is already selected, allow the user to deselect it
+                    if (LeafletMap.selectedPrecincts.indexOf(LeafletMap.currentPrecinct) === -1) {
+                        LeafletMap.highlightFeature(event, LeafletMap.highlightColors.green, false);
+                        LeafletMap.selectedPrecincts.push(LeafletMap.currentPrecinct);
+                    }
+                    else {
+                        LeafletMap.precinctLayer.resetStyle(event.target);
+                        let index = LeafletMap.selectedPrecincts.indexOf(LeafletMap.currentPrecinct);
+                        LeafletMap.selectedPrecincts.splice(index, 1);
+                    }
+                }
                 break;
         }
     },
@@ -345,6 +386,16 @@ const LeafletMap = {
                 LeafletMap.map.pm.disableDraw();
                 break;
             case LeafletMap.modes.modify:
+                LeafletMap.modifiedPrecincts = [];
+                LeafletMap.updatePrecinctLayer();
+                break;
+            case LeafletMap.modes.merge:
+                LeafletMap.selectedPrecincts = [];
+                LeafletMap.updatePrecinctLayer();
+                break;
+            case LeafletMap.modes.add:
+                LeafletMap.selectedPrecincts = [];
+                LeafletMap.precinctBeingChanged = null;
                 LeafletMap.updatePrecinctLayer();
                 break;
             default:
@@ -353,22 +404,5 @@ const LeafletMap = {
         LeafletMap.currentMode = LeafletMap.modes.default;
         ToolBar.toggleEditButtons();
     },
-
-    highlightNeighbors: (precinctCName) => {
-        LeafletMap.precinctLayer.resetStyle();
-        let neighborCNames = LeafletMap.precincts[precinctCName].neighborCNames;
-        let layers = LeafletMap.precinctLayer._layers;
-        Object.entries(layers).forEach(([, value]) => {
-            let cName = value.feature.properties.canonName;
-            if (neighborCNames.indexOf(cName) != -1) {
-                value.setStyle({
-                    weight: 4,
-                    color: '#FF0000',
-                    dashArray: '',
-                    fillOpacity: 0.2
-                });
-            }
-        });
-    }
 }
 LeafletMap.init();

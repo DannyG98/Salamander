@@ -78,9 +78,14 @@ const ToolBar = {
     addNeighborHandler: () => {
         $('#add').click(() => {
             if (LeafletMap.currentMode == LeafletMap.modes.default) {
-                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
+                if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer) && LeafletMap.currentPrecinct != null) {
                     LeafletMap.currentMode = LeafletMap.modes.add;
+                    LeafletMap.selectedPrecincts = [];
+                    LeafletMap.precinctBeingChanged = LeafletMap.currentPrecinct;
                     ToolBar.toggleEditButtons();
+                }
+                else {
+                    alert("Please select a precinct first.")
                 }
             }
         });
