@@ -99,12 +99,30 @@ const DataHandler = {
         });
     },
 
-    getMergedPrecinct: (precinctName1, precinctName2) => {
-        fetch('/precinct/mergePrecinct?p1={' + precinctName1 + '}&p2={' + precinctName2 +'}').then(function(response) {
+    mergePrecincts: (precinctList) => {
+        let postTemplate = {
+            method: 'post',
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            },
+            body: JSON.stringify(precinctList)
+        }
+        // TODO waiting for endpoint to be completed
+        fetch('').then(function(response) {
             return response.text();
         }).then(function(text) {
-            // Remove old precincts and store the merged precinct
-
+            let serverData = JSON.parse(text);
+            // Should only receive one precinct from server
+            if (serverData.length != 1) {
+                console.log("Error merging precincts");
+            }
+            else {
+                /*  Since the precincts are merged, the neighbors of the new precinct need their
+                    neighbors list to be updated too. So request those precincts from server
+                */
+                let neighborCNames = serverData[0].neighborCNames;
+                DataHandler.getPrecinctData(neighborCNames);
+            }
         });
     },
 
@@ -133,6 +151,10 @@ const DataHandler = {
                 }
                 break;
             }
+            case LeafletMap.modes.merge: {
+                DataHandler.mergePrecincts();
+                break;
+            }
             case LeafletMap.modes.modify: {
                 // Replace precinctCoordinates with the new ones from the precinctLayer 
                 // Replace only the precincts that were changed
@@ -151,10 +173,6 @@ const DataHandler = {
                         }
                     }
                 };
-                break;
-            }
-            case LeafletMap.modes.merge: {
-                LeafletMap.updatePrecinctLayer();
                 break;
             }
             case LeafletMap.modes.add: {

@@ -165,6 +165,8 @@ const ToolBar = {
             if (LeafletMap.currentMode == LeafletMap.modes.default) {
                 if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
                     LeafletMap.currentMode = LeafletMap.modes.merge;
+                    LeafletMap.selectedPrecincts = [];
+                    LeafletMap.precinctBeingChanged = LeafletMap.currentPrecinct;
                     ToolBar.toggleEditButtons();
                 }
                 else {

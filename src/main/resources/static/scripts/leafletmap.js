@@ -257,9 +257,7 @@ const LeafletMap = {
                 break;
             }
             case LeafletMap.modes.merge: {
-                if (selectedPrecincts.length == 2) {
-                    selectedPrecincts.shift();
-                }
+                LeafletMap.togglePrecinctSelection(event);
                 break;
             }
             case LeafletMap.modes.modify: {
