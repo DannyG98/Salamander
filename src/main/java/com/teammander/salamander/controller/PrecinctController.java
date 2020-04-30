@@ -49,28 +49,6 @@ public class PrecinctController {
         return foundPrecincts;
     }
 
-    @GetMapping("/modifyNeighbor")
-    public ResponseEntity<String> addNeighbor(@RequestParam String p1, 
-            @RequestParam String p2, @RequestParam String op) {
-        PrecinctService ps = getPs();
-        if (op.equals("add")) {
-            ResponseEntity<String> re = ResponseEntity.ok(null);
-            ps.addNeighbor(p1, p2);
-            return re;
-        }
-        else if (op.equals("delete")) {
-            ResponseEntity<String> re = ResponseEntity.ok(null);
-            ps.deleteNeighbor(p1, p2);
-            return re;
-        }
-        else {
-            String errMsg = ControllerErrors.badQueryMsg("op", op);
-            ResponseEntity<String> re = new ResponseEntity<>(errMsg,
-                HttpStatus.BAD_REQUEST);
-            return re;
-        }
-    }
-
     @GetMapping("/mergePrecinct")
     public Precinct mergePrecinct(@RequestParam String p1, @RequestParam String p2) {
         PrecinctService ps = getPs();
@@ -82,6 +60,52 @@ public class PrecinctController {
     public void remove(String precinct1) {
         PrecinctService ps = getPs();
         ps.remove(precinct1);
+    }
+
+    /**
+     * Inserts/Deletes neighbors from a specified precinct. Will propogate changes
+     * to the neighbors to maintain proper state.
+     * @param p the precinct to modify
+     * @param op the operation as a string, add/delete
+     * @param newNeighbors the list of new neighbors
+     * @return a ResponseEntity to the user signifying success/failure
+     */
+    @PostMapping("/modifyNeighbor")
+    public ResponseEntity<String> modifyNeighbors(@RequestParam String p, 
+            @RequestParam String op, @RequestBody List<String> newNeighbors) {
+        PrecinctService ps = getPs();
+        ResponseEntity<String> ret = null;
+        boolean status = true;
+        String errMsg = null;
+
+        if (op.equals("add")) {
+            for (String neighbor : newNeighbors) {
+                status = ps.addNeighbor(p, neighbor);
+                if (status == false) {
+                    errMsg = ControllerErrors.unableToFindMsg(neighbor);
+                    break;
+                }
+            }
+        } else if (op.equals("delete")) {
+            for (String neighbor : newNeighbors) {
+                status = ps.deleteNeighbor(p, neighbor);
+                if (status == false) {
+                    errMsg = ControllerErrors.unableToFindMsg(neighbor);
+                    break;
+                }
+            }
+        } else {
+            status = false;
+            errMsg = ControllerErrors.badQueryMsg("op", op);
+        }
+         
+        // Check if operation was successful and handle accordingly
+        if (errMsg != null) {
+            ret = new ResponseEntity<>(errMsg, HttpStatus.BAD_REQUEST);
+        } else {
+            ret = ResponseEntity.ok(null);
+        }
+        return ret;
     }
 
     @PostMapping("/getMultiplePrecincts")
