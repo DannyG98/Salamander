@@ -70,27 +70,32 @@ public class PrecinctService {
         pr.flush();
     }
 
-    public void addNeighbor(String precinctName1, String precinctName2) {
+    public boolean addNeighbor(String precinctName1, String precinctName2) {
         PrecinctRepository pr = getPr();
         Precinct p1 = getPrecinct(precinctName1);
         Precinct p2 = getPrecinct(precinctName2);
 
         if (p1 == null || p2 == null) {
-            return;
+            return false;
         }
         p1.addNeighbor(p2);
         p2.addNeighbor(p1);
         pr.flush();
+        return true;
     }
 
-    public void deleteNeighbor(String precinctName1, String precinctName2) {
+    public boolean deleteNeighbor(String precinctName1, String precinctName2) {
         PrecinctRepository pr = getPr();
         Precinct p1 = getPrecinct(precinctName1);
         Precinct p2 = getPrecinct(precinctName2);
 
+        if (p1 == null || p2 == null) {
+            return false;
+        }
         p1.deleteNeighbor(p2);
         p2.deleteNeighbor(p1);
         pr.flush();
+        return true;
     }
 
     // Returns the result of merge to controller
