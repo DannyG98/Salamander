@@ -21,7 +21,7 @@ public abstract class Region {
     ElectionData elecData;
 
     @Id
-    @Column(name = "CANON_NAME")
+    @Column(name = "canon_name")
     public String getCanonName() {
         return this.canonName;
     }
@@ -30,7 +30,7 @@ public abstract class Region {
         this.canonName = canonName;
     }
 
-    @Column(name = "DISPLAY_NAME")
+    @Column(name = "display_name")
     public String getDisplayName() {
         return this.displayName;
     }
@@ -48,7 +48,7 @@ public abstract class Region {
         this.geometry = geoemtry;
     }
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     public DemographicData getDemoData() {
         return this.demoData;
     }
@@ -57,7 +57,7 @@ public abstract class Region {
         this.demoData = demoData;
     }
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     public ElectionData getElecData() {
         return this.elecData;
     }

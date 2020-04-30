@@ -2,17 +2,12 @@ package com.teammander.salamander.data;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-@Entity(name = "ELECTION_TABLE")
-@EntityListeners(AuditingEntityListener.class)
+@Entity(name = "ELECTIONS")
 public abstract class Election {
 
     int electionId;
@@ -23,16 +18,6 @@ public abstract class Election {
     int libertarianVotes;
     int greenVotes;
     int otherVotes;
-
-    // public Election(Year year, ElectionType type, int democraticVotes, int republicanVotes, int libertarianVotes, int greenVotes, int otherVotes) {
-    //     this.year = year;
-    //     this.type = type;
-    //     this.democraticVotes = democraticVotes;
-    //     this.republicanVotes = republicanVotes;
-    //     this.libertarianVotes = libertarianVotes;
-    //     this.greenVotes = greenVotes;
-    //     this.otherVotes = otherVotes;
-    // }
 
     @Id
     @GeneratedValue
@@ -62,7 +47,7 @@ public abstract class Election {
         this.type = type;
     }
 
-    @Column(name = "DEMO_VOTES")
+    @Column(name = "demo_vote")
     public int getDemocraticVotes() {
         return democraticVotes;
     }
@@ -71,7 +56,7 @@ public abstract class Election {
         this.democraticVotes = democraticVotes;
     }
 
-    @Column(name = "REPUB_VOTES")
+    @Column(name = "repub_vote")
     public int getRepublicanVotes() {
         return republicanVotes;
     }
@@ -80,7 +65,7 @@ public abstract class Election {
         this.republicanVotes = republicanVotes;
     }
 
-    @Column(name = "LIB_VOTES")
+    @Column(name = "lib_vote")
     public int getLibertarianVotes() {
         return libertarianVotes;
     }
@@ -89,7 +74,7 @@ public abstract class Election {
         this.libertarianVotes = libertarianVotes;
     }
 
-    @Column(name = "GREEN_VOTES")
+    @Column(name = "green_vote")
     public int getGreenVotes() {
         return greenVotes;
     }
@@ -98,7 +83,7 @@ public abstract class Election {
         this.greenVotes = greenVotes;
     }
 
-    @Column(name = "OTHER_VOTES")
+    @Column(name = "other_vote")
     public int getOtherVotes() {
         return otherVotes;
     }

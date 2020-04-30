@@ -2,30 +2,16 @@ package com.teammander.salamander.data;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-@Entity(name = "DEMO_TABLE")
-@EntityListeners(AuditingEntityListener.class)
+@Entity(name = "DEMOGRAPHIC_DATA")
 public class DemographicData {
     int demographicDataID;
     int whitePop;
     int blackPop;
     int asianPop;
     int otherPop;
-
-    // public DemographicData(int demographicDataID, int whitePop, int blackPop, int hispanicPop, int asianPop, int otherPop) {
-    //     this.demographicDataID = demographicDataID;
-    //     this.whitePop = whitePop;
-    //     this.blackPop = blackPop;
-    //     this.asianPop = asianPop;
-    //     this.otherPop = otherPop;
-    // }
 
     @Id
     @GeneratedValue
@@ -37,7 +23,7 @@ public class DemographicData {
         this.demographicDataID = demographicDataID;
     }
 
-    @Column(name = "WHITE_POP")
+    @Column(name = "white_pop")
     public int getWhitePop() {
         return whitePop;
     }
@@ -46,7 +32,7 @@ public class DemographicData {
         this.whitePop = whitePop;
     }
 
-    @Column(name = "BLACK_POP")
+    @Column(name = "black_pop")
     public int getBlackPop() {
         return blackPop;
     }
@@ -55,7 +41,7 @@ public class DemographicData {
         this.blackPop = blackPop;
     }
 
-    @Column(name = "ASIAN_POP")
+    @Column(name = "asian_pop")
     public int getAsianPop() {
         return asianPop;
     }
@@ -64,7 +50,7 @@ public class DemographicData {
         this.asianPop = asianPop;
     }
 
-    @Column(name = "OTHER_POP")
+    @Column(name = "other_pop")
     public int getOtherPop() {
         return otherPop;
     }

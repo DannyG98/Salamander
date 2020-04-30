@@ -1,21 +1,14 @@
 package com.teammander.salamander.data;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-@Entity(name = "ELECTION_DATA_TABLE")
-@EntityListeners(AuditingEntityListener.class)
+@Entity(name = "ELECTION_DATA")
 public class ElectionData {
 
     int electionDataId;
@@ -31,7 +24,7 @@ public class ElectionData {
         this.electionDataId = electionDataId;
     }
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Election> getElections() {
         return this.elections;
     }
