@@ -104,8 +104,8 @@ const LeafletMap = {
         });
     },
   
-    highlightFeature: (e, hexColor, bringToFront) => {
-        let layer = e.target;
+    highlightFeature: (event, hexColor, bringToFront) => {
+        let layer = event.target;
         layer.setStyle({
             weight: 4,
             color: hexColor,
@@ -138,24 +138,36 @@ const LeafletMap = {
         });
     },
 
-    resetHighlight: (e) => {
+    resetHighlight: (event) => {
         if (LeafletMap.map.hasLayer(LeafletMap.stateLayer)) {
-            LeafletMap.stateLayer.resetStyle(e.target);
+            LeafletMap.stateLayer.resetStyle(event.target);
             LeafletMap.infoBox.update();
         }
         else if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
-            LeafletMap.precinctLayer.resetStyle(e.target);
+            LeafletMap.precinctLayer.resetStyle(event.target);
             LeafletMap.infoBox.update();
         }
         else if (LeafletMap.map.hasLayer(LeafletMap.districtLayer)) {
-            LeafletMap.districtLayer.resetStyle(e.target);
+            LeafletMap.districtLayer.resetStyle(event.target);
             LeafletMap.infoBox.update();
         }
     },
 
-    onClickHandler: (e) => {
-        LeafletMap.infoBox.update(e.target.feature.properties);
-        const canonicalName = e.target.feature.properties.canonName;
+    togglePrecinctSelection: (event) => {
+        if (LeafletMap.selectedPrecincts.indexOf(LeafletMap.currentPrecinct) === -1) {
+            LeafletMap.highlightFeature(event, LeafletMap.highlightColors.green, false);
+            LeafletMap.selectedPrecincts.push(LeafletMap.currentPrecinct);
+        }
+        else {
+            LeafletMap.precinctLayer.resetStyle(event.target);
+            let index = LeafletMap.selectedPrecincts.indexOf(LeafletMap.currentPrecinct);
+            LeafletMap.selectedPrecincts.splice(index, 1);
+        }
+    },
+
+    onClickHandler: (event) => {
+        LeafletMap.infoBox.update(event.target.feature.properties);
+        const canonicalName = event.target.feature.properties.canonName;
         // The clicked layer is a state layer
         if (LeafletMap.states[canonicalName] != null) {
             LeafletMap.currentState = canonicalName;
@@ -166,7 +178,7 @@ const LeafletMap = {
             // Disable district filter 
             let filter = $('#district-filter')[0];
             filter.className = filter.className.replace(/active/g, "");
-            LeafletMap.zoomToFeature(e);
+            LeafletMap.zoomToFeature(event);
         }
         // The clicked layer is a district
         else if (LeafletMap.districts[canonicalName] != null) {
@@ -179,14 +191,14 @@ const LeafletMap = {
             // Disable precinct filter 
             let filter = $('#precinct-filter')[0];
             filter.className = filter.className.replace(/active/g, "");
-            LeafletMap.zoomToFeature(e);
+            LeafletMap.zoomToFeature(event);
         }
           // The clicked layer is a precinct
         else if (LeafletMap.precincts[canonicalName] != null) {
             LeafletMap.currentPrecinct = canonicalName;
-            LeafletMap.precinctLayerHandler(canonicalName, e);
+            LeafletMap.precinctLayerHandler(canonicalName, event);
         }
-        stateChangeHandler(e.target.feature.properties.canonName);
+        stateChangeHandler(event.target.feature.properties.canonName);
     },
 
     stateLayerHandler: (stateCanonName) => {
@@ -239,16 +251,18 @@ const LeafletMap = {
 
     precinctLayerHandler: (precinctCanonName, event) => {
         switch(LeafletMap.currentMode) {
-            case LeafletMap.modes.default:
+            case LeafletMap.modes.default: {
                 LeafletMap.highlightNeighbors(precinctCanonName);
                 LeafletMap.highlightFeature(event, LeafletMap.highlightColors.blue, true);
                 break;
-            case LeafletMap.modes.merge:
+            }
+            case LeafletMap.modes.merge: {
                 if (selectedPrecincts.length == 2) {
                     selectedPrecincts.shift();
                 }
                 break;
-            case LeafletMap.modes.modify:
+            }
+            case LeafletMap.modes.modify: {
                     // Only want one precinct to be modified at a time
                     if (LeafletMap.currentPrecinct != event.target.feature.properties.canonName) {
                         LeafletMap.precinctLayer.pm.disable();
@@ -264,22 +278,21 @@ const LeafletMap = {
                         console.log(LeafletMap.modifiedPrecincts);
                     });
                 break;
-            case LeafletMap.modes.add:
+            }
+            case LeafletMap.modes.add: {
                 let neighborCNames = LeafletMap.precincts[LeafletMap.precinctBeingChanged].neighborCNames;
                 // Only allow the precinct to be selected if it is not a neighbor already and it is not the precinct being changed
                 if (neighborCNames.indexOf(LeafletMap.currentPrecinct) === -1 && LeafletMap.currentPrecinct != LeafletMap.precinctBeingChanged) {
-                    // If it is already selected, allow the user to deselect it
-                    if (LeafletMap.selectedPrecincts.indexOf(LeafletMap.currentPrecinct) === -1) {
-                        LeafletMap.highlightFeature(event, LeafletMap.highlightColors.green, false);
-                        LeafletMap.selectedPrecincts.push(LeafletMap.currentPrecinct);
-                    }
-                    else {
-                        LeafletMap.precinctLayer.resetStyle(event.target);
-                        let index = LeafletMap.selectedPrecincts.indexOf(LeafletMap.currentPrecinct);
-                        LeafletMap.selectedPrecincts.splice(index, 1);
-                    }
+                    LeafletMap.togglePrecinctSelection(event);
                 }
                 break;
+            }
+            case LeafletMap.modes.remove: {
+                let neighborCNames = LeafletMap.precincts[LeafletMap.precinctBeingChanged].neighborCNames;
+                if(neighborCNames.indexOf(LeafletMap.currentPrecinct != -1) && LeafletMap.currentPrecinct != LeafletMap.precinctBeingChanged) {
+                    LeafletMap.togglePrecinctSelection(event);
+                }
+            }
         }
     },
 
@@ -398,6 +411,10 @@ const LeafletMap = {
                 LeafletMap.precinctBeingChanged = null;
                 LeafletMap.updatePrecinctLayer();
                 break;
+            case LeafletMap.modes.remove:
+                LeafletMap.selectedPrecincts = [];
+                LeafletMap.precinctBeingChanged = null;
+                LeafletMap.updatePrecinctLayer();
             default:
                 console.log("INVALID CURRENT MODE");
         }
