@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 
 @Entity(name = "STATES")
-@EntityListeners(AuditingEntityListener.class)
 public class State extends Region {
 
     Set<String> districtCNames;

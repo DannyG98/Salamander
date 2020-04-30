@@ -21,6 +21,7 @@ public abstract class Election {
 
     @Id
     @GeneratedValue
+    @Column(name = "ID")
     public int getElectionId() {
         return electionId;
     }

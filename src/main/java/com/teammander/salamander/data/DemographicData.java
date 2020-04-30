@@ -15,6 +15,7 @@ public class DemographicData {
 
     @Id
     @GeneratedValue
+    @Column(name = "ID")
     public int getDemographicDataID() {
         return demographicDataID;
     }

@@ -3,6 +3,7 @@ package com.teammander.salamander.data;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -16,6 +17,7 @@ public class ElectionData {
 
     @Id
     @GeneratedValue
+    @Column(name = "ID")
     public int getElectionDataId() {
         return electionDataId;
     }
