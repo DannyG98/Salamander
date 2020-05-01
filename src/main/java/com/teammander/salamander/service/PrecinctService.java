@@ -135,7 +135,7 @@ public class PrecinctService {
 
         // Add all neighbors, at this point we know that the neighbors exist
         for (String neighbor : neighbors) {
-            deleteNeighbor(precinctName, neighbor);
+            addNeighbor(precinctName, neighbor);
         }
         return null;
     }
@@ -163,7 +163,7 @@ public class PrecinctService {
 
         // Delete all neighbors, at this point we know that the neighbors exist
         for (String neighbor : neighbors) {
-            addNeighbor(precinctName, neighbor);
+            deleteNeighbor(precinctName, neighbor);
         }
         return null;
     }
@@ -193,7 +193,7 @@ public class PrecinctService {
         return targetPrecinct;
     }
 
-    public Precinct updateBoundary(String pCName, Geometry geometry) {
+    public Precinct updateBoundary(String pCName, String geometry) {
         PrecinctRepository pr = getPr();
         Precinct targetPrecinct = getPrecinct(pCName);
 
