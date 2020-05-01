@@ -8,9 +8,7 @@ import com.teammander.salamander.data.DemographicData;
 import com.teammander.salamander.data.ElectionData;
 import com.teammander.salamander.map.District;
 import com.teammander.salamander.map.Precinct;
-import com.teammander.salamander.repository.DistrictRepository;
 import com.teammander.salamander.repository.PrecinctRepository;
-import com.teammander.salamander.repository.StateRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,33 +68,106 @@ public class PrecinctService {
         pr.flush();
     }
 
-    public boolean addNeighbor(String precinctName1, String precinctName2) {
+    /**
+     * Adds a neighbor edge between two precincts
+     * @param precinctName1 the canon name of the first precinct
+     * @param precinctName2 the canon name of the second precinct
+     * @return The canon name of the precinct that could not be found, null otherwise
+     */
+    public String addNeighbor(String precinctName1, String precinctName2) {
         PrecinctRepository pr = getPr();
         Precinct p1 = getPrecinct(precinctName1);
         Precinct p2 = getPrecinct(precinctName2);
 
-        if (p1 == null || p2 == null) {
-            return false;
+        if (p1 == null) {
+            return precinctName1;
+        } else if (p2 == null) {
+            return precinctName2;
         }
         p1.addNeighbor(p2);
         p2.addNeighbor(p1);
         pr.flush();
-        return true;
+        return null;
     }
 
-    public boolean deleteNeighbor(String precinctName1, String precinctName2) {
+    /**
+     * Deletes a neighbor edge between two precincts
+     * @param precinctName1 the canon name of the first precinct
+     * @param precinctName2 the canon name of the second precinct
+     * @return the canon name of the precinct that could not be found, null otherwise
+     */
+    public String deleteNeighbor(String precinctName1, String precinctName2) {
         PrecinctRepository pr = getPr();
         Precinct p1 = getPrecinct(precinctName1);
         Precinct p2 = getPrecinct(precinctName2);
 
-        if (p1 == null || p2 == null) {
-            return false;
+        if (p1 == null) {
+            return precinctName1;
+        } else if (p2 == null) {
+            return precinctName2;
         }
         p1.deleteNeighbor(p2);
         p2.deleteNeighbor(p1);
         pr.flush();
-        return true;
+        return null;
     }
+
+    /**
+     * Adds multiple neighbors to a given precinct
+     * @param precinctName the canon name of the precinct to add neighbors to
+     * @param neighbors the list of neighbors to add
+     * @return null if successful, else the canon name of the precinct that could not be found
+     */
+    public String addMultiNeighbors(String precinctName, List<String> neighbors) {
+        Precinct queryResult;
+        
+        // Check if the target precinct exists
+        queryResult = getPrecinct(precinctName);
+        if (queryResult == null)
+            return precinctName;
+        
+        // Check if neighbors exist
+        for (String neighbor : neighbors) {
+            queryResult = getPrecinct(neighbor);
+            if (queryResult == null)
+                return neighbor;
+        }
+
+        // Add all neighbors, at this point we know that the neighbors exist
+        for (String neighbor : neighbors) {
+            deleteNeighbor(precinctName, neighbor);
+        }
+        return null;
+    }
+
+    /**
+     * Deletes multiple neighbors from a given precinct
+     * @param precinctName the canon name of the precinct to delete neighbors from
+     * @param neighbors the list of neighbors to delete
+     * @return null if successful, else the canon name of the precinct that could not be found
+     */
+    public String deleteMultiNeighbors(String precinctName, List<String> neighbors) {
+        Precinct queryResult;
+        
+        // Check if the target precinct exists
+        queryResult = getPrecinct(precinctName);
+        if (queryResult == null)
+            return precinctName;
+        
+        // Check if neighbors exist
+        for (String neighbor : neighbors) {
+            queryResult = getPrecinct(neighbor);
+            if (queryResult == null)
+                return neighbor;
+        }
+
+        // Delete all neighbors, at this point we know that the neighbors exist
+        for (String neighbor : neighbors) {
+            addNeighbor(precinctName, neighbor);
+        }
+        return null;
+    }
+
 
     // Returns the result of merge to controller
     public Precinct mergePrecincts(String canonName1, String canonName2) {

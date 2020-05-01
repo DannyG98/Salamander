@@ -1,19 +1,14 @@
 package com.teammander.salamander.map;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
-
-@Entity(name = "PRECINCT_TABLE")
-@EntityListeners(AuditingEntityListener.class)
+@Entity(name = "PRECINCTS")
 public class Precinct extends Region{
 
     String parentDistrictCName;
@@ -42,7 +37,7 @@ public class Precinct extends Region{
         return null;
     }
 
-    @Column(name = "PARENT_DISTRICT")
+    @Column(name = "parent_district")
     public String getParentDistrictCName() {
         return this.parentDistrictCName;
     }
@@ -51,7 +46,7 @@ public class Precinct extends Region{
         this.parentDistrictCName = district;
     }
 
-    @Column(name = "PARENT_STATE")
+    @Column(name = "parent_state")
     public String getParentStateCName() {
         return this.parentStateCName;
     }
@@ -61,7 +56,7 @@ public class Precinct extends Region{
     }
 
     @ElementCollection
-    @Column(name = "NEIGHBORS")
+    @Column(name = "neighbor_cname")
     public Set<String> getNeighborCNames() {
         return this.neighborCNames;
     }
