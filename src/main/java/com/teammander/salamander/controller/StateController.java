@@ -43,8 +43,6 @@ public class StateController {
         return foundState;
     }
 
-    /* ONLY FOR DEV USE REMOVE FOR FINAL BUILD*/
-
     @PostMapping("/uploadState")
     public void uploadState(@RequestBody State state) {
         StateService ss = getSs();

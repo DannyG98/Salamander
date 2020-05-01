@@ -13,8 +13,6 @@ import com.teammander.salamander.repository.PrecinctRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import mil.nga.sf.geojson.Geometry;
-
 @Service
 public class PrecinctService {
     PrecinctRepository pr;

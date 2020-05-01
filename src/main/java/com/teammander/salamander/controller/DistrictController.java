@@ -52,8 +52,6 @@ public class DistrictController {
         return foundDistrict;
     }
 
-    /* ONLY FOR DEV USE REMOVE FOR FINAL BUILD **/
-
     @PostMapping("/uploadDistrict")
     public void uploadDistrict(@RequestBody District district) {
         DistrictService ds = getDs();
