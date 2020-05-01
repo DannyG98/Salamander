@@ -1,3 +1,18 @@
+const SideBar = {
+    init: () => {
+        SideBar.initSideBarButton();
+    },
+
+    initSideBarButton: () => {
+        $("#collapse-menu-btn").click( function() {
+            $("#mapid").toggleClass('showSide');
+            $("#sidebar").toggleClass('showSide');
+        });
+    },
+}
+
+SideBar.init();
+
 var Colorado_errs = [
     {
         "id": 1,
@@ -19,97 +34,6 @@ var Colorado_errs = [
     }
 ]
 
-$(document).ready(function () {
-
-    $("#collapse-menu-btn").click( function()
-    {
-        $("#mapid").toggleClass('showSide');
-        $("#sidebar").toggleClass('showSide');
-    });
-
-    $('#reset-btn').click( function() 
-    {
-        mymap.setView(usaCoords, 5);
-    })
-
-    $('#insert-precinct-btn').click( function()
-    {
-        if(mode == 'default')
-        {
-            // Go into ghost mode, allowing user to click on points on the map
-            mode = 'ghost'
-            // Enable the done selecting button
-            $('#done-edit-btn').show()
-        }
-
-    })
-
-    $("#error-dropdwn").click( function () {
-        if (!$("#error-tab").hasClass("show")) {
-            displayErrors(Colorado_errs);
-        } 
-        else {
-            removeCircles();
-        }
-    });
-
-    $('#insert-comment-btn').click( function() 
-    {
-        // Allow user to place marker and write a comment for that marker
-        if(mode == 'default')
-        {
-            mode = 'comment'
-            $('#done-edit-btn').show()
-        }
-    })
-    $('#done-edit-btn').click( function() {
-        if(mode == 'ghost')
-        {
-            // User is done clicking points for ghost precinct
-            // Create geoJSON object for new precinct and push to correct State array
-            coloradoPrecincts[0].features.push( 
-            {
-                "type": "Feature",
-                "properties": 
-                {
-                    "name": "Ghost Precinct",
-                    "density": 0,
-                    "population": 0,
-                    "Democratic":0,
-                    "Republican":0,
-                    "White":0,
-                    "Hispanic":0,
-                    "AfricanAmerican":0
-                },
-                "geometry": 
-                {
-                    "type": "Polygon",
-                    "coordinates": [[...ghost_points]]
-                }
-            })
-            // Change mode back to default and empty ghost_points
-            mode = 'default'
-            ghost_points = []
-            
-            //remove current precinct data and readd in everthing
-            if (mymap.hasLayer(precinctGeojson)) {
-            //remove precinct geojson and add district
-            mymap.removeLayer(precinctGeojson);
-            }
-            precinctGeojson=L.geoJson(coloradoPrecincts,{
-                onEachFeature: onEachFeature
-                }).addTo(mymap);
-
-            $('#done-edit-btn').hide()
-        }
-        if(mode == 'comment')
-        {
-            mode = 'default'
-            $('#done-edit-btn').hide()
-        }
-    })
-});
-
 function displayErrors(json) {
     $("#error-list").empty();
     for (error in json) {
@@ -126,7 +50,4 @@ function displayErrors(json) {
     });
 }
 
-function stateChangeHandler(stateName) {
-    $("#state-name").text(stateName);
-}
 

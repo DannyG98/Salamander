@@ -1,5 +1,5 @@
 /* Takes a region json (received from server) and formats it for geoJson */
-const jsonHandler = {
+const JsonHandler = {
     convertToGeojson: function(regionJson) {
         let geoJson = {
             "type": "Feature",

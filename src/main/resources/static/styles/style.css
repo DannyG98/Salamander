@@ -117,7 +117,7 @@ html, body {
 .data-info {
     color: black;
     background-color: lavender;
-    direction: rtl;
+    direction: ltr;
     padding: 10px;
 
 }
