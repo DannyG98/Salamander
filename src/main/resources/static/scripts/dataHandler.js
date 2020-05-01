@@ -9,7 +9,7 @@ const DataHandler = {
             for (let i = 0; i < serverData.length; i++) {
                 let canonName = serverData[i].canonName;
                 LeafletMap.states[canonName] = serverData[i];
-                LeafletMap.statesGeojson.push(jsonHandler.convertToGeojson(serverData[i]));
+                LeafletMap.statesGeojson.push(JsonHandler.convertToGeojson(serverData[i]));
             }
             LeafletMap.stateLayer = L.geoJson(LeafletMap.statesGeojson, {
                 onEachFeature: LeafletMap.onEachFeature
@@ -56,7 +56,7 @@ const DataHandler = {
             for (let i = 0; i < serverData.length; i++) {
                 let canonName = serverData[i].canonName;
                 LeafletMap.districts[canonName] = serverData[i];
-                LeafletMap.districtGeojson.push(jsonHandler.convertToGeojson(serverData[i]));
+                LeafletMap.districtGeojson.push(JsonHandler.convertToGeojson(serverData[i]));
             }
             LeafletMap.updateDistrictLayer();
         });
@@ -77,7 +77,7 @@ const DataHandler = {
             for (let i = 0; i < serverData.length; i++) {
                 let canonName = serverData[i].canonName;
                 LeafletMap.precincts[canonName] = serverData[i];
-                LeafletMap.precinctGeojson.push(jsonHandler.convertToGeojson(serverData[i]));
+                LeafletMap.precinctGeojson.push(JsonHandler.convertToGeojson(serverData[i]));
             }
             LeafletMap.updatePrecinctLayer();
         });
@@ -99,12 +99,30 @@ const DataHandler = {
         });
     },
 
-    getMergedPrecinct: (precinctName1, precinctName2) => {
-        fetch('/precinct/mergePrecinct?p1={' + precinctName1 + '}&p2={' + precinctName2 +'}').then(function(response) {
+    mergePrecincts: (precinctList) => {
+        let postTemplate = {
+            method: 'post',
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            },
+            body: JSON.stringify(precinctList)
+        }
+        // TODO waiting for endpoint to be completed
+        fetch('').then(function(response) {
             return response.text();
         }).then(function(text) {
-            // Remove old precincts and store the merged precinct
-
+            let serverData = JSON.parse(text);
+            // Should only receive one precinct from server
+            if (serverData.length != 1) {
+                console.log("Error merging precincts");
+            }
+            else {
+                /*  Since the precincts are merged, the neighbors of the new precinct need their
+                    neighbors list to be updated too. So request those precincts from server
+                */
+                let neighborCNames = serverData[0].neighborCNames;
+                DataHandler.getPrecinctData(neighborCNames);
+            }
         });
     },
 
@@ -133,6 +151,10 @@ const DataHandler = {
                 }
                 break;
             }
+            case LeafletMap.modes.merge: {
+                DataHandler.mergePrecincts();
+                break;
+            }
             case LeafletMap.modes.modify: {
                 // Replace precinctCoordinates with the new ones from the precinctLayer 
                 // Replace only the precincts that were changed
@@ -153,10 +175,6 @@ const DataHandler = {
                 };
                 break;
             }
-            case LeafletMap.modes.merge: {
-                LeafletMap.updatePrecinctLayer();
-                break;
-            }
             case LeafletMap.modes.add: {
                 DataHandler.updateNeighbors(DataHandler.options.addNeighbor);
                 break;        
@@ -173,7 +191,7 @@ const DataHandler = {
         LeafletMap.precinctGeojson = [];
         for (let i = 0; i < precinctList.length; i++) {
             let canonName = precinctList[i];
-            let geojson = jsonHandler.convertToGeojson(LeafletMap.precincts[canonName]);
+            let geojson = JsonHandler.convertToGeojson(LeafletMap.precincts[canonName]);
             LeafletMap.precinctGeojson.push(geojson);
         }
         LeafletMap.updatePrecinctLayer();
@@ -183,7 +201,7 @@ const DataHandler = {
         LeafletMap.districtGeojson = [];
         for (let i = 0; i < districtList.length; i++) {
             let canonName = districtList[i];
-            let geojson = jsonHandler.convertToGeojson(LeafletMap.districts[canonName]);
+            let geojson = JsonHandler.convertToGeojson(LeafletMap.districts[canonName]);
             LeafletMap.districtGeojson.push(geojson);
         }
         LeafletMap.updateDistrictLayer();

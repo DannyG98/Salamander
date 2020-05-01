@@ -82,7 +82,7 @@ const LeafletMap = {
                 '</b><br>Republican: ' +  + '%' + '</b><br />White: ' +  + '%' +
                 '</b><br />Other: ' +  + '%' + '</b><br />African American: '
                 +  + '%' + '</b><br />Population:'
-                : 'Hover for more detail');
+                : '');
 
             //  '<b>' + props.name + '</b><br />' + props.density + ' people / mi<sup>2</sup>'
             //  : 'Hover states for more details');
@@ -165,6 +165,22 @@ const LeafletMap = {
         }
     },
 
+    allowPrecinctModification: (event) => {
+        // Only want one precinct to be modified at a time
+        if (LeafletMap.currentPrecinct != event.target.feature.properties.canonName) {
+            LeafletMap.precinctLayer.pm.disable();
+            event.target.pm.enable();
+        }
+        LeafletMap.precinctLayer.on('pm:edit', e => {
+            let canonName = e.sourceTarget.feature.properties.canonName;
+            let index = LeafletMap.modifiedPrecincts.indexOf(canonName);
+            // indexOf() returns -1 if the element is not found
+            if (index === -1) {
+                LeafletMap.modifiedPrecincts.push(canonName);
+            }
+        });
+    },
+
     onClickHandler: (event) => {
         LeafletMap.infoBox.update(event.target.feature.properties);
         const canonicalName = event.target.feature.properties.canonName;
@@ -198,7 +214,7 @@ const LeafletMap = {
             LeafletMap.currentPrecinct = canonicalName;
             LeafletMap.precinctLayerHandler(canonicalName, event);
         }
-        stateChangeHandler(event.target.feature.properties.canonName);
+        LeafletMap.changeInfoBoxName(event.target.feature.properties.canonName);
     },
 
     stateLayerHandler: (stateCanonName) => {
@@ -257,29 +273,15 @@ const LeafletMap = {
                 break;
             }
             case LeafletMap.modes.merge: {
-                if (selectedPrecincts.length == 2) {
-                    selectedPrecincts.shift();
-                }
+                LeafletMap.togglePrecinctSelection(event);
                 break;
             }
             case LeafletMap.modes.modify: {
-                    // Only want one precinct to be modified at a time
-                    if (LeafletMap.currentPrecinct != event.target.feature.properties.canonName) {
-                        LeafletMap.precinctLayer.pm.disable();
-                        event.target.pm.enable();
-                    }
-                    LeafletMap.precinctLayer.on('pm:edit', e => {
-                        let canonName = e.sourceTarget.feature.properties.canonName;
-                        let index = LeafletMap.modifiedPrecincts.indexOf(canonName);
-                        // indexOf() returns -1 if the element is not found
-                        if (index === -1) {
-                            LeafletMap.modifiedPrecincts.push(canonName);
-                        }
-                        console.log(LeafletMap.modifiedPrecincts);
-                    });
+                LeafletMap.allowPrecinctModification(event);
                 break;
             }
             case LeafletMap.modes.add: {
+                
                 let neighborCNames = LeafletMap.precincts[LeafletMap.precinctBeingChanged].neighborCNames;
                 // Only allow the precinct to be selected if it is not a neighbor already and it is not the precinct being changed
                 if (neighborCNames.indexOf(LeafletMap.currentPrecinct) === -1 && LeafletMap.currentPrecinct != LeafletMap.precinctBeingChanged) {
@@ -418,8 +420,13 @@ const LeafletMap = {
             default:
                 console.log("INVALID CURRENT MODE");
         }
+        LeafletMap.currentPrecinct = null;
         LeafletMap.currentMode = LeafletMap.modes.default;
         ToolBar.toggleEditButtons();
     },
+
+    changeInfoBoxName: (stateName) => {
+        $("#state-name").text(stateName);
+    }
 }
 LeafletMap.init();
