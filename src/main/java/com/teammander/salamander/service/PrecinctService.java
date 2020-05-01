@@ -1,6 +1,5 @@
 package com.teammander.salamander.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -9,9 +8,7 @@ import com.teammander.salamander.data.DemographicData;
 import com.teammander.salamander.data.ElectionData;
 import com.teammander.salamander.map.District;
 import com.teammander.salamander.map.Precinct;
-import com.teammander.salamander.repository.DistrictRepository;
 import com.teammander.salamander.repository.PrecinctRepository;
-import com.teammander.salamander.repository.StateRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

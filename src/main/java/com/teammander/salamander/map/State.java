@@ -1,13 +1,10 @@
 package com.teammander.salamander.map;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 
 @Entity(name = "STATES")
 public class State extends Region {

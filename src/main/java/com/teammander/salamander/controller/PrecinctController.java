@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import mil.nga.sf.geojson.Geometry;
 
-
 @RestController
 @RequestMapping("/precinct")
 public class PrecinctController {
