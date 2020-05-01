@@ -60,7 +60,7 @@ const LeafletMap = {
                 ToolBar.enableAllFilters(true);
             }    
             // Display only the district borders when zoomed out too far from the precincts
-            else if (zoomLevel == 8 && LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
+            else if (zoomLevel == 7 && LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
                 LeafletMap.enableStateLayer(false);
                 LeafletMap.enableDistrictLayer(true);
                 LeafletMap.enablePrecinctLayer(false);
