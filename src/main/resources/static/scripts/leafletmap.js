@@ -166,11 +166,8 @@ const LeafletMap = {
     },
 
     allowPrecinctModification: (event) => {
-        // Only want one precinct to be modified at a time
-        if (LeafletMap.currentPrecinct != event.target.feature.properties.canonName) {
-            LeafletMap.precinctLayer.pm.disable();
-            event.target.pm.enable();
-        }
+        LeafletMap.precinctLayer.pm.disable();
+        event.target.pm.enable();
         LeafletMap.precinctLayer.on('pm:edit', e => {
             let canonName = e.sourceTarget.feature.properties.canonName;
             let index = LeafletMap.modifiedPrecincts.indexOf(canonName);

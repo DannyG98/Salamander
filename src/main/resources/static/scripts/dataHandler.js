@@ -2,9 +2,9 @@ const DataHandler = {
     options: {addNeighbor: 'add', removeNeighbor: 'delete'},
 
     getAllStateData: () => {
-        fetch('/state/getAllStates').then(function(response) {
+        fetch('/state/getAllStates').then((response) => {
             return response.text();
-        }).then(function(text) {
+        }).then((text) => {
             let serverData = JSON.parse(text);
             for (let i = 0; i < serverData.length; i++) {
                 let canonName = serverData[i].canonName;
@@ -18,9 +18,9 @@ const DataHandler = {
     },
 
     getAllDistrictData: () => {
-        fetch('/district/getAllDistricts').then(function(response) {
+        fetch('/district/getAllDistricts').then((response) => {
             return response.text();
-        }).then(function(text) {
+        }).then((text) => {
             let serverData = JSON.parse(text);
             for (let i = 0; i < serverData.length; i++) {
                 let canonName = serverData[i].canonName;
@@ -30,9 +30,9 @@ const DataHandler = {
     },
 
     getAllPrecinctData: () => {
-        fetch('/precinct/getAllPrecincts').then(function(response) {
+        fetch('/precinct/getAllPrecincts').then((response) => {
             return response.text();
-        }).then(function(text) {
+        }).then((text) => {
             let serverData = JSON.parse(text);
             for (let i = 0; i < serverData.length; i++) {
                 let canonName = serverData[i].canonName;
@@ -49,9 +49,9 @@ const DataHandler = {
             },
             body: JSON.stringify(districtList)
         }
-        fetch('/district/getMultipleDistricts', postTemplate).then(function(response) {
+        fetch('/district/getMultipleDistricts', postTemplate).then((response) => {
             return response.text();
-        }).then(function(text) {
+        }).then((text) => {
             let serverData  = JSON.parse(text);
             for (let i = 0; i < serverData.length; i++) {
                 let canonName = serverData[i].canonName;
@@ -70,9 +70,9 @@ const DataHandler = {
             },
             body: JSON.stringify(precinctList)
         }
-        fetch('/precinct/getMultiplePrecincts', postTemplate).then(function(response) {
+        fetch('/precinct/getMultiplePrecincts', postTemplate).then((response) => {
             return response.text();
-        }).then(function(text) {
+        }).then((text) => {
             let serverData = JSON.parse(text);
             for (let i = 0; i < serverData.length; i++) {
                 let canonName = serverData[i].canonName;
@@ -84,7 +84,6 @@ const DataHandler = {
     },
 
     changePrecinctNeighbor: (precinctName, precinctNeighbors, option) => {
-        // TODO need to modify end points to accept list of neighbors to be added
         let postTemplate = {
             method: 'post',
             headers: {
@@ -92,11 +91,13 @@ const DataHandler = {
             },
             body: JSON.stringify(precinctNeighbors)
         }
-        fetch('/precinct/getMultiplePrecincts', postTemplate).then(function(response) {
-            return response.text();
-        }).then(function(text) {
-            // Check for updateSuccess?
-        });
+        fetch('/precinct/modifyNeighbor?p=' + precinctName + '&op=' + option, postTemplate).then((response) => {
+            if(response.ok) {
+                // Request the updated precincts
+                precinctNeighbors.push(precinctName);
+                DataHandler.getPrecinctData(precinctNeighbors);
+            }
+        })
     },
 
     mergePrecincts: (precinctList) => {
@@ -108,9 +109,9 @@ const DataHandler = {
             body: JSON.stringify(precinctList)
         }
         // TODO waiting for endpoint to be completed
-        fetch('').then(function(response) {
+        fetch('/precinct/mergePrecinct', postTemplate).then((response) => {
             return response.text();
-        }).then(function(text) {
+        }).then((text) => {
             let serverData = JSON.parse(text);
             // Should only receive one precinct from server
             if (serverData.length != 1) {
@@ -126,19 +127,15 @@ const DataHandler = {
         });
     },
 
-    uploadPrecinctData: (precinctList) => {
+    uploadPrecinctData: (precinctObjects) => {
         let postTemplate = {
             method: 'post',
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
             },
-            body: JSON.stringify(precinctList)
+            body: JSON.stringify(precinctObjects)
         }
-        fetch('/precinct/multiUploadPrecincts', postTemplate).then(function(response) {
-            return response.text();
-        }).then(function(text) {
-            // Check if reponse is 200 OK
-        });
+        fetch('/precinct/multiUploadPrecincts', postTemplate);
     },
 
     updatePrecinctData: () => {
@@ -158,21 +155,7 @@ const DataHandler = {
             case LeafletMap.modes.modify: {
                 // Replace precinctCoordinates with the new ones from the precinctLayer 
                 // Replace only the precincts that were changed
-                for (let i in LeafletMap.precinctLayer._layers) {
-                    let precinctName = LeafletMap.precinctLayer._layers[i].feature.properties.name;
-                    for (let j in LeafletMap.precinctGeojson) {
-                        if (precinctName == LeafletMap.precinctGeojson[j].properties.name) {
-                            let newPrecinctCoordinates = [];
-                            let coordinatesList = LeafletMap.precinctLayer._layers[i]._latlngs[0];
-                            for (let k in coordinatesList) {
-                                newPrecinctCoordinates.push([coordinatesList[k].lng, coordinatesList[k].lat]);
-                            };
-                            LeafletMap.precinctGeojson[j].geometry.type = LeafletMap.precinctLayer._layers[i].feature.geometry.type;
-                            LeafletMap.precinctGeojson[j].geometry.coordinates = [newPrecinctCoordinates];
-                            break;
-                        }
-                    }
-                };
+                DataHandler.replacePrecinctCoordinates();
                 break;
             }
             case LeafletMap.modes.add: {
@@ -185,6 +168,27 @@ const DataHandler = {
             default:
                 console.log("INVALID CURRENT MODE");
         }
+    },
+
+    replacePrecinctCoordinates: () => {
+        let precinctObjects = [];
+        for (let i in LeafletMap.precinctLayer._layers) {
+            let precinctName = LeafletMap.precinctLayer._layers[i].feature.properties.canonName;
+            if (LeafletMap.modifiedPrecincts.indexOf(precinctName) != -1) {
+                let newPrecinctCoordinates = [];
+                let coordinatesList = LeafletMap.precinctLayer._layers[i]._latlngs[0];
+                // Leaflet stores as latlng but server uses lnglat
+                for (let k in coordinatesList) {
+                    newPrecinctCoordinates.push([coordinatesList[k].lng, coordinatesList[k].lat]);
+                };
+                LeafletMap.precincts[precinctName].geometry.type = LeafletMap.precinctLayer._layers[i].feature.geometry.type;
+                LeafletMap.precincts[precinctName].geometry.coordinates = [newPrecinctCoordinates];
+                precinctObjects.push(LeafletMap.precincts[precinctName]);
+            }
+        };
+        DataHandler.updatePrecinctGeojson();
+        DataHandler.uploadPrecinctData(precinctObjects);
+        
     },
 
     updatePrecincts: (precinctList) => {
@@ -223,6 +227,15 @@ const DataHandler = {
             }
             default:
                 console.log("Error updating neighbors");
+        }
+    },
+
+    updatePrecinctGeojson: () => {
+        LeafletMap.precinctGeojson = [];
+        let precinctCNames = LeafletMap.districts[LeafletMap.currentDistrict].precinctCNames;
+        for (let i in precinctCNames) {
+            let precinctGeojson = JsonHandler.convertToGeojson(LeafletMap.precincts[precinctCNames[i]]);
+            LeafletMap.precinctGeojson.push(precinctGeojson);
         }
     }
 }
