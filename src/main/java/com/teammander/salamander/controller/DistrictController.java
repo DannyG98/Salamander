@@ -34,6 +34,7 @@ public class DistrictController {
         return allDistricts;
     }
 
+    // Change query
     @PostMapping("/getMultipleDistricts")
     public List<District> getMultipleDistricts(@RequestBody List<String> query) {
         DistrictService ds = getDs();

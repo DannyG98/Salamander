@@ -7,6 +7,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Lob;
 
 @Entity(name = "PRECINCTS")
 public class Precinct extends Region{
@@ -55,7 +56,7 @@ public class Precinct extends Region{
         this.parentStateCName = state;
     }
 
-    @ElementCollection
+    @Lob
     @Column(name = "neighbor_cname")
     public Set<String> getNeighborCNames() {
         return this.neighborCNames;
