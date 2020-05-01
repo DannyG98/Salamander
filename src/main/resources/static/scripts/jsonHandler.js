@@ -9,7 +9,7 @@ const JsonHandler = {
             },
             "properties": {}
         };
-        geoJson["geometry"] = regionJson["geometry"];
+        geoJson["geometry"] = JSON.parse(regionJson["geometry"]);
 
         // Place each field besides the geometry inside properties
         let keys = Object.keys(regionJson);
