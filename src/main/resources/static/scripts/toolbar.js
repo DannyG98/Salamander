@@ -184,16 +184,18 @@ const ToolBar = {
             if (LeafletMap.currentMode == LeafletMap.modes.default || LeafletMap.currentMode == LeafletMap.modes.modify) {
                 // Should only work if precincts are showing
                 if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
-                    let element = $('#modify')[0];
-                    if (element.className.includes("active")) {
-                        element.className = element.className.replace(/active/g, "");
-                        LeafletMap.precinctLayer.pm.disable();
-                        LeafletMap.currentMode = LeafletMap.modes.default;
-                    }
-                    else {
-                        element.className = element.className += " active";
+                    // let element = $('#modify')[0];
+                    // if (element.className.includes("active")) {
+                    //     element.className = element.className.replace(/active/g, "");
+                    //     LeafletMap.precinctLayer.pm.disable();
+                    //     LeafletMap.currentMode = LeafletMap.modes.default;
+                    // }
+                    // else {
+                        // element.className = element.className += " active";
+                        LeafletMap.modifiedPrecincts = [];
                         LeafletMap.currentMode = LeafletMap.modes.modify;
-                    }
+                        ToolBar.toggleEditButtons();
+                    
                 }
                 else {
                     alert("Please select a district first.");
