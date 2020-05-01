@@ -8,7 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity(name = "ELECTIONS")
-public abstract class Election {
+public class Election {
 
     int electionId;
     Year year;

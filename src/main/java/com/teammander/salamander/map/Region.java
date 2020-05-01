@@ -10,13 +10,11 @@ import javax.persistence.OneToOne;
 import com.teammander.salamander.data.DemographicData;
 import com.teammander.salamander.data.ElectionData;
 
-import mil.nga.sf.geojson.Geometry;
-
 @MappedSuperclass
 public abstract class Region {
     String canonName;
     String displayName;
-    Geometry geometry;
+    String geometry;
     DemographicData demoData;
     ElectionData elecData;
 
@@ -40,11 +38,11 @@ public abstract class Region {
     }
 
     @Lob
-    public Geometry getGeometry() {
+    public String getGeometry() {
         return this.geometry;
     }
 
-    public void setGeometry(Geometry geoemtry) {
+    public void setGeometry(String geoemtry) {
         this.geometry = geoemtry;
     }
 

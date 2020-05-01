@@ -126,7 +126,7 @@ public class PrecinctController {
     }
 
     @PostMapping("/updateBoundary")
-    public ResponseEntity<?> updateBoundary(@RequestParam String pCName, @RequestBody Geometry geometry) {
+    public ResponseEntity<?> updateBoundary(@RequestParam String pCName, @RequestBody String geometry) {
         Precinct targetPrecinct = getPs().updateBoundary(pCName, geometry);
         if (targetPrecinct == null) {
             String errMsg = ControllerErrors.unableToFindMsg(pCName);
