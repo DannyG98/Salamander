@@ -105,8 +105,10 @@ public class PrecinctController {
         PrecinctService ps = getPs();
         List<Precinct> queryResponse = new ArrayList<>();
         for (String s : query) {
-            Precinct foundPrecinct = ps.getPrecinct(s); 
-            queryResponse.add(foundPrecinct);
+            Precinct foundPrecinct = ps.getPrecinct(s);
+            if (foundPrecinct != null) {
+                queryResponse.add(foundPrecinct);
+            }
         }
         return queryResponse;
     }
