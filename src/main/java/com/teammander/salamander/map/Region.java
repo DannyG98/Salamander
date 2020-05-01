@@ -37,7 +37,7 @@ public abstract class Region {
         this.displayName = displayName;
     }
 
-    @Lob
+    @Column(name = "geometry")
     public String getGeometry() {
         return this.geometry;
     }
