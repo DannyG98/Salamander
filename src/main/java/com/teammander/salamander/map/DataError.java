@@ -2,22 +2,30 @@ package com.teammander.salamander.map;
 
 import java.util.Set;
 
-import mil.nga.sf.geojson.Position;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Lob;
 
+@Entity(name = "DATA_ERRORS")
 public class DataError {
 
     int eid;
     ErrorType eType;
-    Set<Precinct> affectedPrct;
-    Position mapCoord;
+    Set<String> affectedPrct;
 
-    public DataError(int eid, ErrorType eType, Set<Precinct> affectedPrct, Position mapCoord) {
+    public DataError(int eid, ErrorType eType, Set<String> affectedPrct) {
         this.eid = eid;
         this.eType = eType;
         this.affectedPrct = affectedPrct;
-        this.mapCoord = mapCoord;
     }
 
+    @Id
+    @GeneratedValue
+    @Column(name = "ID")
     public int getEid() {
         return eid;
     }
@@ -26,28 +34,22 @@ public class DataError {
         this.eid = eid;
     }
 
-    public ErrorType geteType() {
+    @Enumerated(EnumType.STRING)
+    public ErrorType getEType() {
         return eType;
     }
 
-    public void seteType(ErrorType eType) {
+    public void setEType(ErrorType eType) {
         this.eType = eType;
     }
 
-    public Set<Precinct> getAffectedPrct() {
+    @Lob
+    @Column(name = "affected_prcts")
+    public Set<String> getAffectedPrct() {
         return affectedPrct;
     }
 
-    public void setAffectedPrct(Set<Precinct> affectedPrct) {
+    public void setAffectedPrct(Set<String> affectedPrct) {
         this.affectedPrct = affectedPrct;
     }
-
-    public Position getMapCoord() {
-        return mapCoord;
-    }
-
-    public void setMapCoord(Position mapCoord) {
-        this.mapCoord = mapCoord;
-    }
-
 }
