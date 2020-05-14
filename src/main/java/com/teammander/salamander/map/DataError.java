@@ -15,6 +15,7 @@ public class DataError {
 
     int eid;
     ErrorType eType;
+    boolean resolved;
     Set<String> affectedPrct;
 
     public DataError(int eid, ErrorType eType, Set<String> affectedPrct) {
@@ -32,6 +33,15 @@ public class DataError {
 
     public void setEid(int eid) {
         this.eid = eid;
+    }
+
+    @Column(name = "resolved_status")
+    public boolean getResolved() {
+        return this.resolved;
+    }
+
+    public void setResolved(boolean newStatus) {
+        this.resolved = newStatus;
     }
 
     @Enumerated(EnumType.STRING)

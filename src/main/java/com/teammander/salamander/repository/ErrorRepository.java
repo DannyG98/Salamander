@@ -1,17 +1,15 @@
 package com.teammander.salamander.repository;
 
-import com.teammander.salamander.map.DataError;
-import org.springframework.stereotype.Repository;
 import java.util.List;
 
+import com.teammander.salamander.map.DataError;
+import com.teammander.salamander.map.ErrorType;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 @Repository
-public class ErrorRepository {
-    List<Error> errorList;
-
-    public DataError findErrorById (int eid) {
-        return null;
-    }
-
-    public void updateChanged() {
-    }
+public interface ErrorRepository extends JpaRepository<DataError, Integer> {
+    List<DataError> findAllByResolved(boolean status);
+    List<DataError> findAllByEType(ErrorType type);
 }
