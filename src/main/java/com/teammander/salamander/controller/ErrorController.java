@@ -47,10 +47,10 @@ public class ErrorController {
         return unresolvedErrs;
     }
 
-    @GetMapping("/{errorId}")
+    @GetMapping("/setErrorStatus/{errorId}")
     public void setErrorStatus(@PathVariable int eid, @RequestParam boolean resolved) {
         ErrorService es = getEs();
         DataError targetError = es.getError(eid);
-        es.markAsResolved(targetError);
+        es.changeErrStatus(targetError, resolved);
     }
 }

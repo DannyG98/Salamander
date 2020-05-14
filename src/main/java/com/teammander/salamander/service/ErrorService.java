@@ -57,9 +57,9 @@ public class ErrorService {
         er.saveAndFlush(err);
     }
 
-    public void markAsResolved(DataError err) {
+    public void changeErrStatus(DataError err, boolean status) {
         ErrorRepository er = getEr();
-        err.setResolved(true);
+        err.setResolved(status);
         er.flush();
     }
 }
