@@ -2,18 +2,19 @@ package com.teammander.salamander.map;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 
 @Entity(name = "PRECINCTS")
 public class Precinct extends Region{
 
-    String parentDistrictCName;
-    String parentStateCName;
+    District parentDistrict;
     Set<String> neighborCNames;
     PrecinctType type;
 
@@ -38,22 +39,14 @@ public class Precinct extends Region{
         return null;
     }
 
-    @Column(name = "parent_district")
-    public String getParentDistrictCName() {
-        return this.parentDistrictCName;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "parent_district")
+    public District getParentDistrict() {
+        return this.parentDistrict;
     }
 
-    public void setParentDistrictCName(String district) {
-        this.parentDistrictCName = district;
-    }
-
-    @Column(name = "parent_state")
-    public String getParentStateCName() {
-        return this.parentStateCName;
-    }
-
-    public void setParentStateCName(String state) {
-        this.parentStateCName = state;
+    public void setParentDistrict(District district) {
+        this.parentDistrict = district;
     }
 
     @Lob

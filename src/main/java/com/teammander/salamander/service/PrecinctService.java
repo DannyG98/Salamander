@@ -33,9 +33,7 @@ public class PrecinctService {
     }
 
     public District getParentDistrict(Precinct precinct) {
-        DistrictService ds = getDs();
-        String districtCName = precinct.getParentDistrictCName();
-        District parentDistrict = ds.getDistrict(districtCName);
+        District parentDistrict = precinct.getParentDistrict();
         return parentDistrict;
     }
 
@@ -61,7 +59,7 @@ public class PrecinctService {
         for (String neighbor : neighbors) {
             deleteNeighbor(neighbor, targetCName);
         }
-        parent.removePrecinctChild(targetCName);
+        parent.removePrecinctChild(precinct);
         pr.delete(precinct);
         pr.flush();
     }
