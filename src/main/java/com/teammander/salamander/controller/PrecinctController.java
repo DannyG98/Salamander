@@ -54,7 +54,7 @@ public class PrecinctController {
     }
 
     @GetMapping("/removePrecinct/{precinct1}")
-    public void remove(String precinct1) {
+    public void remove(@PathVariable String precinct1) {
         PrecinctService ps = getPs();
         ps.remove(precinct1);
     }
@@ -78,15 +78,15 @@ public class PrecinctController {
         if (op.equals("add")) {
             badQuery = ps.addMultiNeighbors(p, neighbors);
             if (badQuery != null) {
-                errMsg = ControllerErrors.unableToFindMsg(badQuery);
+                errMsg = ErrorMsg.unableToFindMsg(badQuery);
             }
         } else if (op.equals("delete")) {
             badQuery = ps.deleteMultiNeighbors(p, neighbors);
             if (badQuery != null) {
-                errMsg = ControllerErrors.unableToFindMsg(badQuery);
+                errMsg = ErrorMsg.unableToFindMsg(badQuery);
             }
         } else {
-            errMsg = ControllerErrors.badQueryMsg("op", op);
+            errMsg = ErrorMsg.badQueryMsg("op", op);
         }
          
         // Check if operation was successful and handle accordingly
@@ -117,7 +117,7 @@ public class PrecinctController {
         PrecinctService ps = getPs();
         Precinct targetPrecinct = ps.updateDemoData(pCName, demoData);
         if (targetPrecinct == null) {
-            String errMsg = ControllerErrors.unableToFindMsg(pCName);
+            String errMsg = ErrorMsg.unableToFindMsg(pCName);
             ResponseEntity<String> re = new ResponseEntity<>(errMsg, HttpStatus.NOT_FOUND);
             return re;
         }
@@ -129,7 +129,7 @@ public class PrecinctController {
     public ResponseEntity<?> updateBoundary(@RequestParam String pCName, @RequestBody String geometry) {
         Precinct targetPrecinct = getPs().updateBoundary(pCName, geometry);
         if (targetPrecinct == null) {
-            String errMsg = ControllerErrors.unableToFindMsg(pCName);
+            String errMsg = ErrorMsg.unableToFindMsg(pCName);
             ResponseEntity<String> re = new ResponseEntity<>(errMsg, HttpStatus.NOT_FOUND);
             return re;
         }
@@ -141,14 +141,12 @@ public class PrecinctController {
     public ResponseEntity<?> updateElecData(@RequestParam String pCName, @RequestBody ElectionData elecData) {
         Precinct targetPrecinct = getPs().updateElectionData(pCName, elecData);
         if (targetPrecinct == null) {
-            String errMsg = ControllerErrors.unableToFindMsg(pCName);
+            String errMsg = ErrorMsg.unableToFindMsg(pCName);
             ResponseEntity<String> re = new ResponseEntity<>(errMsg, HttpStatus.NOT_FOUND);
             return re;
         }
         return new ResponseEntity<>(targetPrecinct, HttpStatus.OK);
     }
-
-    /* ONLY FOR DEV USE REMOVE FOR FINAL BUILD **/
 
     @PostMapping("/uploadPrecinct")
     public void uploadPrecinct(@RequestBody Precinct precinct) {
