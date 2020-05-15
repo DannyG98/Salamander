@@ -47,7 +47,7 @@ public class ElectionData {
         return null;
     }
 
-    static ElectionData mergeElectionData(List<ElectionData> elecDatas) {
+    public static ElectionData mergeElectionData(List<ElectionData> elecDatas) {
         HashMap<String, Election> dataTracker = new HashMap<>();
         // Populate the "tracker"
         for (ElectionData ed : elecDatas) {

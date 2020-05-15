@@ -1,5 +1,6 @@
 package com.teammander.salamander.map;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -14,6 +15,15 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.teammander.salamander.data.DemographicData;
+import com.teammander.salamander.data.ElectionData;
+
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.wololo.geojson.GeoJSON;
+import org.wololo.jts2geojson.GeoJSONReader;
+import org.wololo.jts2geojson.GeoJSONWriter;
 
 @Entity(name = "PRECINCTS")
 public class Precinct extends Region{
@@ -69,6 +79,36 @@ public class Precinct extends Region{
     }
 
     public static Precinct mergePrecincts(List<Precinct> precincts) {
-        return null;
+        List<Geometry> allGeoms = new ArrayList<>();
+        List<ElectionData> allED = new ArrayList<>();
+        List<DemographicData> allDD = new ArrayList<>();
+        GeoJSONReader reader = new GeoJSONReader();
+        GeoJSONWriter writer = new GeoJSONWriter();
+        // Aggregate all the fields into lists
+        for (Precinct p : precincts) {
+            Geometry newGeom = reader.read(p.getGeometry());
+            allGeoms.add(newGeom);
+            allED.add(p.getElecData());
+            allDD.add(p.getDemoData());
+        }
+        // Merge Geometries
+        GeometryFactory gf = new GeometryFactory();
+        GeometryCollection collection = gf.createGeometryCollection(allGeoms.toArray(new Geometry[] {}));
+        Geometry mergedGeometry = collection.union();
+        GeoJSON mergedJSON = writer.write(mergedGeometry);
+        String mergedString = mergedJSON.toString();
+
+        // Merge Election Data & Demo Data
+        ElectionData mergedED = ElectionData.mergeElectionData(allED);
+        DemographicData mergedDD = DemographicData.mergeDemoData(allDD);
+
+        Precinct mergedPrecinct = new Precinct();
+        mergedPrecinct.setCanonName(precincts.get(0).getCanonName());
+        mergedPrecinct.setDisplayName(precincts.get(0).getDisplayName());
+        mergedPrecinct.setElecData(mergedED);
+        mergedPrecinct.setDemoData(mergedDD);
+
+        mergedPrecinct.setGeometry(mergedString);
+        return mergedPrecinct;
     }
 }
