@@ -38,8 +38,6 @@ const LeafletMap = {
 
     initData: () => {
         DataHandler.getAllStateData();
-        DataHandler.getAllDistrictData();
-        DataHandler.getAllPrecinctData();
     },
 
     initLeafletLayers: () => {
@@ -243,24 +241,26 @@ const LeafletMap = {
             if (statesDropdownElements[i].text.toLowerCase() == stateCanonName) {
                 ToolBar.unselectState();
                 statesDropdownElements[i].className += " active";
-                // Only request district data that has not been request before
-                let districtCNames = LeafletMap.states[stateCanonName].districtCNames;
-                let requestList = [];
-                let currentList = [];
-                for (let j = 0; j < districtCNames.length; j++) {
-                    if (LeafletMap.districts[districtCNames[j]] == null) {
-                        requestList.push(districtCNames[j]);
-                    }
-                    else {
-                        currentList.push(districtCNames[j]);
-                    }
-                }
-                if (requestList.length != 0) {
-                    DataHandler.getDistrictData(requestList);
-                }
-                // Display the districts that are already on the client
-                DataHandler.updateDistricts(currentList);
+                DataHandler.getAllDistrictData(stateCanonName);
                 break;
+                // // Only request district data that has not been request before
+                // let districtCNames = LeafletMap.states[stateCanonName].districtCNames;
+                // let requestList = [];
+                // let currentList = [];
+                // for (let j = 0; j < districtCNames.length; j++) {
+                //     if (LeafletMap.districts[districtCNames[j]] == null) {
+                //         requestList.push(districtCNames[j]);
+                //     }
+                //     else {
+                //         currentList.push(districtCNames[j]);
+                //     }
+                // }
+                // if (requestList.length != 0) {
+                //     DataHandler.getDistrictData(requestList);
+                // }
+                // // Display the districts that are already on the client
+                // DataHandler.updateDistricts(currentList);
+                // break;
             }
         }
     },

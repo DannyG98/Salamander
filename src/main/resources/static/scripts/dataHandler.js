@@ -17,15 +17,17 @@ const DataHandler = {
         });
     },
 
-    getAllDistrictData: () => {
-        fetch('/district/getAllDistricts').then((response) => {
+    getAllDistrictData: (stateCName) => {
+        fetch(`/state/${stateCName}/districts`).then((response) => {
             return response.text();
         }).then((text) => {
-            let serverData = JSON.parse(text);
+            let serverData  = JSON.parse(text);
             for (let i = 0; i < serverData.length; i++) {
                 let canonName = serverData[i].canonName;
                 LeafletMap.districts[canonName] = serverData[i];
+                LeafletMap.districtGeojson.push(JsonHandler.convertToGeojson(serverData[i]));
             }
+            LeafletMap.updateDistrictLayer();
         });
     },
 

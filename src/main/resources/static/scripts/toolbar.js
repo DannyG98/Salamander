@@ -33,23 +33,25 @@ const ToolBar = {
                 }
                 states[i].className += " active";
 
-                let districtCNames = LeafletMap.states[state].districtCNames;
-                let requestList = [];
-                let currentList = [];
-                for (let j = 0; j < districtCNames.length; j++) {
-                    if (LeafletMap.districts[districtCNames[j]] == null) {
-                        requestList.push(districtCNames[j]);
-                    }
-                    else {
-                        currentList.push(districtCNames[j]);
-                    }
-                }
-                if (requestList.length != 0) {
-                    DataHandler.getDistrictData(requestList);
-                }
+                // let districtCNames = LeafletMap.states[state].districtCNames;
+                // let requestList = [];
+                // let currentList = [];
+                // for (let j = 0; j < districtCNames.length; j++) {
+                //     if (LeafletMap.districts[districtCNames[j]] == null) {
+                //         requestList.push(districtCNames[j]);
+                //     }
+                //     else {
+                //         currentList.push(districtCNames[j]);
+                //     }
+                // }
+                // if (requestList.length != 0) {
+                //     DataHandler.getDistrictData(requestList);
+                // }
                 LeafletMap.enableStateLayer(false);
-                // Display the districts that are already on the client
-                DataHandler.updateDistricts(currentList);
+                let stateCanonName = LeafletMap.states[state].canonName;
+                DataHandler.getAllDistrictData(stateCanonName);
+                // // Display the districts that are already on the client
+                // DataHandler.updateDistricts(currentList);
             })
         }
     },
