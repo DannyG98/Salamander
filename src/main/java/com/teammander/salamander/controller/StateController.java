@@ -58,6 +58,10 @@ public class StateController {
     public List<District> getDistricts(@PathVariable String stateCanonName) {
         StateService ss = getSs();
         State foundState = ss.getState(stateCanonName);
+        List<District> districts = new ArrayList<>(foundState.getDistricts());
+        for (District d : districts) {
+            d.setChildPrecincts(null);
+        }
         return new ArrayList<>(foundState.getDistricts());
     }
 
