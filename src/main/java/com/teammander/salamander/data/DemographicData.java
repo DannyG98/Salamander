@@ -1,5 +1,7 @@
 package com.teammander.salamander.data;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -58,5 +60,16 @@ public class DemographicData {
 
     public void setOtherPop(int otherPop) {
         this.otherPop = otherPop;
+    }
+
+    static public DemographicData mergeDemoData(List<DemographicData> demoDatas) {
+        DemographicData mergedData = new DemographicData();
+        for (DemographicData data : demoDatas) {
+            mergedData.setWhitePop(mergedData.getWhitePop() + data.getWhitePop());
+            mergedData.setBlackPop(mergedData.getBlackPop() + data.getBlackPop());
+            mergedData.setAsianPop(mergedData.getAsianPop() + data.getAsianPop());
+            mergedData.setOtherPop(mergedData.getOtherPop() + data.getOtherPop());
+        }
+        return mergedData;
     }
 }

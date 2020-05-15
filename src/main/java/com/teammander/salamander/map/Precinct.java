@@ -1,18 +1,34 @@
 package com.teammander.salamander.map;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.teammander.salamander.data.DemographicData;
+import com.teammander.salamander.data.ElectionData;
+
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.wololo.geojson.GeoJSON;
+import org.wololo.jts2geojson.GeoJSONReader;
+import org.wololo.jts2geojson.GeoJSONWriter;
 
 @Entity(name = "PRECINCTS")
 public class Precinct extends Region{
 
-    String parentDistrictCName;
-    String parentStateCName;
+    District parentDistrict;
     Set<String> neighborCNames;
     PrecinctType type;
 
@@ -32,27 +48,15 @@ public class Precinct extends Region{
         neighborCNames.remove(neighCName);
     }
 
-    // TODO
-    public Precinct merge(Precinct p1){
-        return null;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "parent_district")
+    @JsonBackReference
+    public District getParentDistrict() {
+        return this.parentDistrict;
     }
 
-    @Column(name = "parent_district")
-    public String getParentDistrictCName() {
-        return this.parentDistrictCName;
-    }
-
-    public void setParentDistrictCName(String district) {
-        this.parentDistrictCName = district;
-    }
-
-    @Column(name = "parent_state")
-    public String getParentStateCName() {
-        return this.parentStateCName;
-    }
-
-    public void setParentStateCName(String state) {
-        this.parentStateCName = state;
+    public void setParentDistrict(District district) {
+        this.parentDistrict = district;
     }
 
     @ElementCollection
@@ -72,5 +76,39 @@ public class Precinct extends Region{
 
     public void setType(PrecinctType type) {
         this.type = type;
+    }
+
+    public static Precinct mergePrecincts(List<Precinct> precincts) {
+        List<Geometry> allGeoms = new ArrayList<>();
+        List<ElectionData> allED = new ArrayList<>();
+        List<DemographicData> allDD = new ArrayList<>();
+        GeoJSONReader reader = new GeoJSONReader();
+        GeoJSONWriter writer = new GeoJSONWriter();
+        // Aggregate all the fields into lists
+        for (Precinct p : precincts) {
+            Geometry newGeom = reader.read(p.getGeometry());
+            allGeoms.add(newGeom);
+            allED.add(p.getElecData());
+            allDD.add(p.getDemoData());
+        }
+        // Merge Geometries
+        GeometryFactory gf = new GeometryFactory();
+        GeometryCollection collection = gf.createGeometryCollection(allGeoms.toArray(new Geometry[] {}));
+        Geometry mergedGeometry = collection.union();
+        GeoJSON mergedJSON = writer.write(mergedGeometry);
+        String mergedString = mergedJSON.toString();
+
+        // Merge Election Data & Demo Data
+        ElectionData mergedED = ElectionData.mergeElectionData(allED);
+        DemographicData mergedDD = DemographicData.mergeDemoData(allDD);
+
+        Precinct mergedPrecinct = new Precinct();
+        mergedPrecinct.setCanonName(precincts.get(0).getCanonName());
+        mergedPrecinct.setDisplayName(precincts.get(0).getDisplayName());
+        mergedPrecinct.setElecData(mergedED);
+        mergedPrecinct.setDemoData(mergedDD);
+
+        mergedPrecinct.setGeometry(mergedString);
+        return mergedPrecinct;
     }
 }

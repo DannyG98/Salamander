@@ -13,8 +13,6 @@ import com.teammander.salamander.repository.PrecinctRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import mil.nga.sf.geojson.Geometry;
-
 @Service
 public class PrecinctService {
     PrecinctRepository pr;
@@ -35,9 +33,7 @@ public class PrecinctService {
     }
 
     public District getParentDistrict(Precinct precinct) {
-        DistrictService ds = getDs();
-        String districtCName = precinct.getParentDistrictCName();
-        District parentDistrict = ds.getDistrict(districtCName);
+        District parentDistrict = precinct.getParentDistrict();
         return parentDistrict;
     }
 
@@ -63,7 +59,7 @@ public class PrecinctService {
         for (String neighbor : neighbors) {
             deleteNeighbor(neighbor, targetCName);
         }
-        parent.removePrecinctChild(targetCName);
+        parent.removePrecinctChild(precinct);
         pr.delete(precinct);
         pr.flush();
     }
@@ -170,8 +166,13 @@ public class PrecinctService {
 
 
     // Returns the result of merge to controller
-    public Precinct mergePrecincts(String canonName1, String canonName2) {
-        return null;
+    public Precinct mergePrecincts(List<String> precinctNames) {
+        PrecinctRepository pr = getPr();
+        List<Precinct> precincts = pr.findAllById(precinctNames);
+        Precinct mergedPrecinct = Precinct.mergePrecincts(precincts);
+        pr.deleteAll(precincts);
+        pr.saveAndFlush(mergedPrecinct);
+        return mergedPrecinct;
     }
 
     public void remove(String precinctCanonName) {

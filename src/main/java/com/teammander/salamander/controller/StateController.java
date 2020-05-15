@@ -1,5 +1,6 @@
 package com.teammander.salamander.controller;
 
+import com.teammander.salamander.map.District;
 import com.teammander.salamander.map.State;
 import com.teammander.salamander.service.StateService;
 
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -32,6 +34,9 @@ public class StateController {
     public List<State> getAllStates() {
         StateService ss = getSs();
         List<State> allStates = ss.getAllStates();
+        for (State s : allStates) {
+            s.setDistricts(null);
+        }
         return allStates;
     }
 
@@ -43,12 +48,21 @@ public class StateController {
         return foundState;
     }
 
-    /* ONLY FOR DEV USE REMOVE FOR FINAL BUILD*/
-
     @PostMapping("/uploadState")
     public void uploadState(@RequestBody State state) {
         StateService ss = getSs();
         ss.insertState(state);
+    }
+
+    @GetMapping("/{stateCanonName}/districts")
+    public List<District> getDistricts(@PathVariable String stateCanonName) {
+        StateService ss = getSs();
+        State foundState = ss.getState(stateCanonName);
+        List<District> districts = new ArrayList<>(foundState.getDistricts());
+        for (District d : districts) {
+            d.setChildPrecincts(null);
+        }
+        return new ArrayList<>(foundState.getDistricts());
     }
 
     @PostMapping("/multiUploadStates")

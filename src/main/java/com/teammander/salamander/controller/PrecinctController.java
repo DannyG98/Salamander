@@ -5,7 +5,9 @@ import java.util.List;
 
 import com.teammander.salamander.data.DemographicData;
 import com.teammander.salamander.data.ElectionData;
+import com.teammander.salamander.map.District;
 import com.teammander.salamander.map.Precinct;
+import com.teammander.salamander.service.DistrictService;
 import com.teammander.salamander.service.PrecinctService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,20 +20,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import mil.nga.sf.geojson.Geometry;
-
 @RestController
 @RequestMapping("/precinct")
 public class PrecinctController {
     PrecinctService ps;
+    DistrictService ds;
 
     @Autowired
-    public PrecinctController(PrecinctService ps) {
+    public PrecinctController(DistrictService ds, PrecinctService ps) {
         this.ps = ps;
+        this.ds = ds;
     }
 
     public PrecinctService getPs() {
         return this.ps;
+    }
+
+    public DistrictService getDs() {
+        return this.ds;
     }
 
     @GetMapping("/getPrecinct/{precinctCanonName}")
@@ -48,15 +54,15 @@ public class PrecinctController {
         return foundPrecincts;
     }
 
-    @GetMapping("/mergePrecinct")
-    public Precinct mergePrecinct(@RequestParam String p1, @RequestParam String p2) {
+    @PostMapping("/mergePrecinct")
+    public Precinct mergePrecinct(@RequestBody List<String> precincts) {
         PrecinctService ps = getPs();
-        Precinct mergedPrecinct = ps.mergePrecincts(p1, p2);
+        Precinct mergedPrecinct = ps.mergePrecincts(precincts);
         return mergedPrecinct;
     }
 
     @GetMapping("/removePrecinct/{precinct1}")
-    public void remove(String precinct1) {
+    public void remove(@PathVariable String precinct1) {
         PrecinctService ps = getPs();
         ps.remove(precinct1);
     }
@@ -80,15 +86,15 @@ public class PrecinctController {
         if (op.equals("add")) {
             badQuery = ps.addMultiNeighbors(p, neighbors);
             if (badQuery != null) {
-                errMsg = ControllerErrors.unableToFindMsg(badQuery);
+                errMsg = ErrorMsg.unableToFindMsg(badQuery);
             }
         } else if (op.equals("delete")) {
             badQuery = ps.deleteMultiNeighbors(p, neighbors);
             if (badQuery != null) {
-                errMsg = ControllerErrors.unableToFindMsg(badQuery);
+                errMsg = ErrorMsg.unableToFindMsg(badQuery);
             }
         } else {
-            errMsg = ControllerErrors.badQueryMsg("op", op);
+            errMsg = ErrorMsg.badQueryMsg("op", op);
         }
          
         // Check if operation was successful and handle accordingly
@@ -119,7 +125,7 @@ public class PrecinctController {
         PrecinctService ps = getPs();
         Precinct targetPrecinct = ps.updateDemoData(pCName, demoData);
         if (targetPrecinct == null) {
-            String errMsg = ControllerErrors.unableToFindMsg(pCName);
+            String errMsg = ErrorMsg.unableToFindMsg(pCName);
             ResponseEntity<String> re = new ResponseEntity<>(errMsg, HttpStatus.NOT_FOUND);
             return re;
         }
@@ -131,7 +137,7 @@ public class PrecinctController {
     public ResponseEntity<?> updateBoundary(@RequestParam String pCName, @RequestBody String geometry) {
         Precinct targetPrecinct = getPs().updateBoundary(pCName, geometry);
         if (targetPrecinct == null) {
-            String errMsg = ControllerErrors.unableToFindMsg(pCName);
+            String errMsg = ErrorMsg.unableToFindMsg(pCName);
             ResponseEntity<String> re = new ResponseEntity<>(errMsg, HttpStatus.NOT_FOUND);
             return re;
         }
@@ -143,24 +149,33 @@ public class PrecinctController {
     public ResponseEntity<?> updateElecData(@RequestParam String pCName, @RequestBody ElectionData elecData) {
         Precinct targetPrecinct = getPs().updateElectionData(pCName, elecData);
         if (targetPrecinct == null) {
-            String errMsg = ControllerErrors.unableToFindMsg(pCName);
+            String errMsg = ErrorMsg.unableToFindMsg(pCName);
             ResponseEntity<String> re = new ResponseEntity<>(errMsg, HttpStatus.NOT_FOUND);
             return re;
         }
         return new ResponseEntity<>(targetPrecinct, HttpStatus.OK);
     }
 
-    /* ONLY FOR DEV USE REMOVE FOR FINAL BUILD **/
-
-    @PostMapping("/uploadPrecinct")
-    public void uploadPrecinct(@RequestBody Precinct precinct) {
+    @PostMapping("/uploadPrecinct/{parentName}")
+    public void uploadPrecinct(@PathVariable String parentName, @RequestBody Precinct precinct) {
         PrecinctService ps = getPs();
+        DistrictService ds = getDs();
+        District parentDistrict = ds.getDistrict(parentName);
+        precinct.setParentDistrict(parentDistrict);
+        ds.insertChildPrecinct(parentName, precinct);
         ps.insertPrecinct(precinct, true);
+        
     }
     
-    @PostMapping("/multiUploadPrecincts")
-    public void multiUploadPrecincts(@RequestBody List<Precinct> precincts) {
+    @PostMapping("/multiUploadPrecincts/{parentName}")
+    public void multiUploadPrecincts(@PathVariable String parentName, @RequestBody List<Precinct> precincts) {
         PrecinctService ps = getPs();
+        DistrictService ds = getDs();
+        District parentDistrict = ds.getDistrict(parentName);
+        for (Precinct p : precincts) {
+            p.setParentDistrict(parentDistrict);
+        }
+        ds.insertMultipleChildPrecincts(parentName, precincts);
         ps.insertMultiplePrecincts(precincts);
     }
 

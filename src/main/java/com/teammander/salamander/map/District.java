@@ -2,42 +2,53 @@ package com.teammander.salamander.map;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity(name = "DISTRICTS")
 public class District extends Region{
 
-    String stateCName;
-    Set<String> precinctCNames;
-
-    @Column(name = "parent_state")
-    public String getStateCName() {
-        return this.stateCName;
+    State parentState;
+    Set<Precinct> childPrecincts;
+   
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "parent_state")
+    @JsonBackReference
+    public State getParentState() {
+        return this.parentState;
     }
 
-    public void setStateCName(String state) {
-        this.stateCName = state;
+    public void setParentState(State state) {
+        this.parentState = state;
     }
 
-    @ElementCollection
-    @Column(name="child_precinct")
-    public Set<String> getPrecinctCNames() {
-        return this.precinctCNames;
+    
+    @OneToMany(mappedBy = "parentDistrict", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    public Set<Precinct> getChildPrecincts() {
+        return this.childPrecincts;
     }
 
-    public void setPrecinctCNames(Set<String> precinct) {
-        this.precinctCNames = precinct;
+    public void setChildPrecincts(Set<Precinct> precinct) {
+        this.childPrecincts = precinct;
     }
 
-    public void addPrecinctChild(String childName) {
-        Set<String> children = getPrecinctCNames();
-        children.add(childName);
+    public void addPrecinctChild(Precinct precinct) {
+        Set<Precinct> children = getChildPrecincts();
+        children.add(precinct);
     }
 
-    public void removePrecinctChild(String childName) {
-        Set<String> children = getPrecinctCNames();
-        children.remove(childName);
+    public void removePrecinctChild(Precinct precinct) {
+        Set<Precinct> children = getChildPrecincts();
+        children.remove(precinct);
     }
 }

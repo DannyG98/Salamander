@@ -1,6 +1,6 @@
 package com.teammander.salamander.controller;
 
-public class ControllerErrors {
+public class ErrorMsg {
     private static String unableToFindFormat = "Unable to find %s";
     private static String badQueryFormat = "Bad request %s for %s";
 

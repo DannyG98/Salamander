@@ -2,22 +2,27 @@ package com.teammander.salamander.map;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity(name = "STATES")
 public class State extends Region {
 
-    Set<String> districtCNames;
+    Set<District> districts;
 
-    @ElementCollection
-    @Column(name = "child_district")
-    public Set<String> getDistrictCNames() {
-        return this.districtCNames;
+    @OneToMany(mappedBy = "parentState", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    public Set<District> getDistricts() {
+        return this.districts;
     }
 
-    public void setDistrictCNames(Set<String> district) {
-        this.districtCNames = district;
+    public void setDistricts(Set<District> districts) {
+        this.districts = districts;
     }
 }
