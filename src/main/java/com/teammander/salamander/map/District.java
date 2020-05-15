@@ -28,7 +28,7 @@ public class District extends Region{
     }
 
     public void setParentState(State state) {
-        this.parentState= state;
+        this.parentState = state;
     }
 
     

@@ -166,8 +166,13 @@ public class PrecinctService {
 
 
     // Returns the result of merge to controller
-    public Precinct mergePrecincts(String canonName1, String canonName2) {
-        return null;
+    public Precinct mergePrecincts(List<String> precinctNames) {
+        PrecinctRepository pr = getPr();
+        List<Precinct> precincts = pr.findAllById(precinctNames);
+        Precinct mergedPrecinct = Precinct.mergePrecincts(precincts);
+        pr.deleteAll(precincts);
+        pr.saveAndFlush(mergedPrecinct);
+        return mergedPrecinct;
     }
 
     public void remove(String precinctCanonName) {

@@ -18,11 +18,11 @@ public class State extends Region {
 
     @OneToMany(mappedBy = "parentState", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
-    public Set<District> getDistrictCNames() {
+    public Set<District> getDistricts() {
         return this.districts;
     }
 
-    public void setDistrictCNames(Set<District> districts) {
+    public void setDistricts(Set<District> districts) {
         this.districts = districts;
     }
 }

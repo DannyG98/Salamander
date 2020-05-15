@@ -1,5 +1,6 @@
 package com.teammander.salamander.service;
 
+import com.teammander.salamander.map.District;
 import com.teammander.salamander.map.State;
 import com.teammander.salamander.repository.StateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,5 +43,29 @@ public class StateService {
         StateRepository sr = getSr();
         sr.saveAll(states);
         sr.flush();
+    }
+
+    public boolean addChildDistrict(String stateCanonName, District district) {
+        StateRepository sr = getSr();
+        State targetState = sr.findById(stateCanonName).orElse(null);
+        if (targetState != null) {
+            targetState.getDistricts().add(district);
+        } else {
+            return false;
+        }
+        sr.flush();
+        return true;
+    }
+
+    public boolean addMultipleChildDistricts(String stateCanonName, List<District> districts) {
+        StateRepository sr = getSr();
+        State targetState = sr.findById(stateCanonName).orElse(null);
+        if (targetState != null) {
+            targetState.getDistricts().addAll(districts);
+        } else {
+            return false;
+        }
+        sr.flush();
+        return true;
     }
 }

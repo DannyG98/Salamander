@@ -1,5 +1,6 @@
 package com.teammander.salamander.map;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -10,6 +11,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity(name = "PRECINCTS")
 public class Precinct extends Region{
@@ -34,13 +37,9 @@ public class Precinct extends Region{
         neighborCNames.remove(neighCName);
     }
 
-    // TODO
-    public Precinct merge(Precinct p1){
-        return null;
-    }
-
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "parent_district")
+    @JsonBackReference
     public District getParentDistrict() {
         return this.parentDistrict;
     }
@@ -66,5 +65,9 @@ public class Precinct extends Region{
 
     public void setType(PrecinctType type) {
         this.type = type;
+    }
+
+    public static Precinct mergePrecincts(List<Precinct> precincts) {
+        return null;
     }
 }
