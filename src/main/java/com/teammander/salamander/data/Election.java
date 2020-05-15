@@ -92,4 +92,5 @@ public class Election {
     public void setOtherVotes(int otherVotes) {
         this.otherVotes = otherVotes;
     }
+
 }

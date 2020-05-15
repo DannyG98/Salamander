@@ -1,5 +1,8 @@
 package com.teammander.salamander.data;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -42,5 +45,35 @@ public class ElectionData {
             }
         }
         return null;
-    } 
+    }
+
+    static ElectionData mergeElectionData(List<ElectionData> elecDatas) {
+        HashMap<String, Election> dataTracker = new HashMap<>();
+        // Populate the "tracker"
+        for (ElectionData ed : elecDatas) {
+            List<Election> elections = ed.getElections();
+
+            for (Election elec : elections) {
+                String sKey = elec.getType().toString() + elec.getYear().toString();
+
+                if (dataTracker.containsKey(sKey)) {
+                    Election mergedElection = dataTracker.get(sKey);
+
+                    mergedElection.setDemocraticVotes(mergedElection.getDemocraticVotes() + elec.getDemocraticVotes());
+                    mergedElection.setRepublicanVotes(mergedElection.getRepublicanVotes() + elec.getRepublicanVotes());
+                    mergedElection.setGreenVotes(mergedElection.getGreenVotes() + elec.getGreenVotes());
+                    mergedElection.setLibertarianVotes(mergedElection.getLibertarianVotes() + elec.getLibertarianVotes());
+                }
+                else {
+                    dataTracker.put(sKey, elec);
+                }
+            }
+        }
+
+        // Create a new ElectionData and return that
+        ElectionData mergedED = new ElectionData();
+        List<Election> mergedElections = new ArrayList<>(dataTracker.values());
+        mergedED.setElections(mergedElections);
+        return mergedED;
+    }
 }
