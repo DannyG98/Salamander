@@ -233,7 +233,7 @@ const LeafletMap = {
             LeafletMap.currentPrecinct = canonicalName;
             LeafletMap.precinctLayerHandler(canonicalName, event);
         }
-        LeafletMap.changeInfoBoxName(event.target.feature.properties.canonName);
+        LeafletMap.changeInfoBoxName(event.target.feature.properties.displayName);
     },
 
     stateLayerHandler: (stateCanonName) => {

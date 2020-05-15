@@ -99,32 +99,47 @@
                           <li>
                               <a href='#' data-toggle="collapse"class="menu-tab-headers sidemenu-items" data-target="#demo-data">Demographic Data</a>
                               <div class="info-field collapse data-info" id="demo-data">
-                                <div class="form-group row">
-                                  <label for="white-pop" class="col-2 col-form-label">White Population</label>
-                                  <div class="col-10">
-                                    <input class="form-control" type="text" value="Artisanal kale" id="example-text-input">
-                                  </div>
-                                </div>
-                                <ul class="list-group">
-                                  <div>
-                                    <input id= 'white-pop' type='number' placeholder='1'></input>
-                                    <p>White Population </p>
-                                  </div>
-                                  <label for='asian-population'>Asian Population</label>
-                                  <label for='black-population'>Black Population</label>
-                                  <label for='other-population'>Other Population</label>
-                                </ul>
+                                <table class="table table-bordered table-striped">
+                                  <tbody> 
+                                      <tr>         
+                                          <td>
+                                            <select id="population">
+                                              <option value="asianPop">Asian</option>
+                                              <option value="blackPop">Black</option>
+                                              <option value="whitePop">White</option>
+                                              <option value="otherPop">Other</option>
+                                            </select>
+                                          </td>
+                                          <td><input href="#" id="username" type="number" contenteditable="true" style="width: 100px"><b></b></input></td>
+                                          <td><button>Submit</button></td>
+                                      </tr>
+                                  </tbody>
+                              </table>
                               </div>
                           </li>
                           <li>
-                            <a id="state-election" data-toggle="collapse" class="menu-tab-headers sidemenu-items">Election Data</a>
-                              <li>
-                                <label for='democratic'>Democratic</label>
-                                <label for='republican'>Republican</label>
-                                <label for='libertarian green'>Libertarian green</label>
-                                <label for='others'>Other</label>
-                              </li>
-                          <li>
+                            <a href='#' data-toggle="collapse"class="menu-tab-headers sidemenu-items" data-target="#elec-data">Election Data</a>
+                            <div class="info-field collapse data-info" id="elec-data">
+                              <table class="table table-bordered table-striped">
+                                <tbody> 
+                                    <tr>         
+                                        <td>
+                                          <select id="votes">
+                                            <option value="democratic">Democratic</option>
+                                            <option value="republican">Republican</option>
+                                            <option value="libertarian">Libertarian</option>
+                                            <option value="green">Green</option>
+                                            <option value="other">Other</option>
+                                          </select>
+                                        </td>
+                                        <td><input href="#" id="username" type="number" contenteditable="true" style="width: 100px"><b></b></input></td>
+                                        <td><button>Submit</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            </div>
+                        </li>
+                        <li>
                               <a href="#" data-toggle="collapse"class="menu-tab-headers sidemenu-items" data-target="#source-data">Sources</a>
                               <div class="info-field collapse data-info" id="source-data">
                                   <a href=https://www2.census.gov/census_2010/03-Demographic_Profile_with_SF1geos/0README_DPSFwSF1geos.pdf class="errlist-item" style="color:black" target="_blank">Demographic Data</a>
