@@ -222,20 +222,22 @@ const LeafletMap = {
                 ToolBar.unselectState();
                 statesDropdownElements[i].className += " active";
                 // Only request district data that has not been request before
-                let districtCNames = LeafletMap.states[stateCanonName].districtCNames;
-                let requestList = [];
-                let currentList = [];
-                for (let j = 0; j < districtCNames.length; j++) {
-                    if (LeafletMap.districts[districtCNames[j]] == null) {
-                        requestList.push(districtCNames[j]);
-                    }
-                    else {
-                        currentList.push(districtCNames[j]);
-                    }
-                }
-                if (requestList.length != 0) {
-                    DataHandler.getDistrictData(requestList);
-                }
+                // let districtCNames = LeafletMap.states[stateCanonName].districtCNames;
+                // let requestList = [];
+                // let currentList = [];
+                // for (let j = 0; j < districtCNames.length; j++) {
+                //     if (LeafletMap.districts[districtCNames[j]] == null) {
+                //         requestList.push(districtCNames[j]);
+                //     }
+                //     else {
+                //         currentList.push(districtCNames[j]);
+                //     }
+                // }
+                // if (requestList.length != 0) {
+                //     // DataHandler.getDistrictData(requestList);
+
+                // }
+                DataHandler.getDistricts(stateCanonName);
                 // Display the districts that are already on the client
                 DataHandler.updateDistricts(currentList);
                 break;
@@ -245,20 +247,21 @@ const LeafletMap = {
 
     districtLayerHandler: (districtCanonName) => {
         // Only request the precincts that are not stored on the client
-        let precinctCNames = LeafletMap.districts[districtCanonName].precinctCNames;
-        let requestList = [];
-        let currentList = [];
-        for (let i = 0; i < precinctCNames.length; i++) {
-            if (LeafletMap.precincts[precinctCNames[i]] == null) {
-                requestList.push(precinctCNames[i]);
-            }
-            else {
-                currentList.push(precinctCNames[i]);
-            }
-        }
-        if (requestList.length != 0) {
-            DataHandler.getPrecinctData(requestList);
-        }
+        // let precinctCNames = LeafletMap.districts[districtCanonName].precinctCNames;
+        // let requestList = [];
+        // let currentList = [];
+        // for (let i = 0; i < precinctCNames.length; i++) {
+        //     if (LeafletMap.precincts[precinctCNames[i]] == null) {
+        //         requestList.push(precinctCNames[i]);
+        //     }
+        //     else {
+        //         currentList.push(precinctCNames[i]);
+        //     }
+        // }
+        // if (requestList.length != 0) {
+        //     DataHandler.getPrecinctData(requestList);
+        // }
+        DataHandler.getPrecincts(districtCanonName);
         DataHandler.updatePrecincts(currentList);
     },
 
