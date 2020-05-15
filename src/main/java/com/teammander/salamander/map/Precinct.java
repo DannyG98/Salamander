@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -48,7 +49,7 @@ public class Precinct extends Region{
         this.parentDistrict = district;
     }
 
-    @Lob
+    @ElementCollection
     @Column(name = "neighbor_cname")
     public Set<String> getNeighborCNames() {
         return this.neighborCNames;

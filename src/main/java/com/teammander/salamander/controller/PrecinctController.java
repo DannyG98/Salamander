@@ -156,7 +156,7 @@ public class PrecinctController {
         return new ResponseEntity<>(targetPrecinct, HttpStatus.OK);
     }
 
-    @PostMapping("/uploadPrecinct/{parentDistrict}")
+    @PostMapping("/uploadPrecinct/{parentName}")
     public void uploadPrecinct(@PathVariable String parentName, @RequestBody Precinct precinct) {
         PrecinctService ps = getPs();
         DistrictService ds = getDs();
@@ -164,9 +164,10 @@ public class PrecinctController {
         precinct.setParentDistrict(parentDistrict);
         ds.insertChildPrecinct(parentName, precinct);
         ps.insertPrecinct(precinct, true);
+        
     }
     
-    @PostMapping("/multiUploadPrecincts/{parentDistrict}")
+    @PostMapping("/multiUploadPrecincts/{parentName}")
     public void multiUploadPrecincts(@PathVariable String parentName, @RequestBody List<Precinct> precincts) {
         PrecinctService ps = getPs();
         DistrictService ds = getDs();
