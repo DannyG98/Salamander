@@ -1,5 +1,10 @@
 const ToolBar = {
     stateCoordinates: {"colorado": [39.5501, -105.7821], "florida": [27.6648, -81.5158], "west virginia": [38.5976, -80.4549]},
+    elections: {
+        con2016: {name:'2016 Congressional Election', year: 'SIXTEEN', type: 'CONGRESSIONAL'},
+        pres2016: {name:'2016 Presidential Election', year: 'SIXTEEN', type: 'PRESIDENTIAL'},
+        con2018: {name:'2018 Congressional Election', year: 'EIGHTEEN', type: 'CONGRESSIONAL'},
+    },
 
     init: () => {
         ToolBar.initEventHandlers();
@@ -26,8 +31,25 @@ const ToolBar = {
                 if (currentState != null) {
                     currentState.className = currentState.className.replace("active", "");
                 }
-                this.className += " active";
-                DataHandler.getDistrictData(LeafletMap.states[state.toLowerCase()].districtCNames);
+                states[i].className += " active";
+
+                let districtCNames = LeafletMap.states[state].districtCNames;
+                let requestList = [];
+                let currentList = [];
+                for (let j = 0; j < districtCNames.length; j++) {
+                    if (LeafletMap.districts[districtCNames[j]] == null) {
+                        requestList.push(districtCNames[j]);
+                    }
+                    else {
+                        currentList.push(districtCNames[j]);
+                    }
+                }
+                if (requestList.length != 0) {
+                    DataHandler.getDistrictData(requestList);
+                }
+                LeafletMap.enableStateLayer(false);
+                // Display the districts that are already on the client
+                DataHandler.updateDistricts(currentList);
             })
         }
     },
@@ -41,8 +63,7 @@ const ToolBar = {
                 let currentElection = $('#elections').find(".active")[0];
                 currentElection.className = currentElection.className.replace("active", "");
                 this.className += " active";
-                // TODO
-                // Send request to backend for election data of selected year
+                LeafletMap.infoBox.update(LeafletMap.currentProps);
             })
         }
     },
@@ -270,6 +291,20 @@ const ToolBar = {
             // Disable the current highlighted state
             currentState.className = currentState.className.replace(/active/g, "");
         }
+    },
+
+    getSelectedElection: () => {
+        let year = null;
+        let type = null;
+        const election = $('#elections').find(".active")[0];
+        Object.entries(ToolBar.elections).forEach(([key, value]) => {
+            if (value.name == election.text) {
+                year = value.year;
+                type = value.type;
+            }
+        })
+
+        return {year, type};
     },
 };
 

@@ -42,45 +42,49 @@ const DataHandler = {
     },
 
     getDistrictData: (districtList) => {
-        let postTemplate = {
-            method: 'post',
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-            },
-            body: JSON.stringify(districtList)
-        }
-        fetch('/district/getMultipleDistricts', postTemplate).then((response) => {
-            return response.text();
-        }).then((text) => {
-            let serverData  = JSON.parse(text);
-            for (let i = 0; i < serverData.length; i++) {
-                let canonName = serverData[i].canonName;
-                LeafletMap.districts[canonName] = serverData[i];
-                LeafletMap.districtGeojson.push(JsonHandler.convertToGeojson(serverData[i]));
+        if (districtList != null) {
+            let postTemplate = {
+                method: 'post',
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                },
+                body: JSON.stringify(districtList)
             }
-            LeafletMap.updateDistrictLayer();
-        });
+            fetch('/district/getMultipleDistricts', postTemplate).then((response) => {
+                return response.text();
+            }).then((text) => {
+                let serverData  = JSON.parse(text);
+                for (let i = 0; i < serverData.length; i++) {
+                    let canonName = serverData[i].canonName;
+                    LeafletMap.districts[canonName] = serverData[i];
+                    LeafletMap.districtGeojson.push(JsonHandler.convertToGeojson(serverData[i]));
+                }
+                LeafletMap.updateDistrictLayer();
+            });
+        }
     },
    
     getPrecinctData: (precinctList) => {
-        let postTemplate = {
-            method: 'post',
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-            },
-            body: JSON.stringify(precinctList)
-        }
-        fetch('/precinct/getMultiplePrecincts', postTemplate).then((response) => {
-            return response.text();
-        }).then((text) => {
-            let serverData = JSON.parse(text);
-            for (let i = 0; i < serverData.length; i++) {
-                let canonName = serverData[i].canonName;
-                LeafletMap.precincts[canonName] = serverData[i];
-                LeafletMap.precinctGeojson.push(JsonHandler.convertToGeojson(serverData[i]));
+        if (precinctList != null) {
+            let postTemplate = {
+                method: 'post',
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                },
+                body: JSON.stringify(precinctList)
             }
-            LeafletMap.updatePrecinctLayer();
-        });
+            fetch('/precinct/getMultiplePrecincts', postTemplate).then((response) => {
+                return response.text();
+            }).then((text) => {
+                let serverData = JSON.parse(text);
+                for (let i = 0; i < serverData.length; i++) {
+                    let canonName = serverData[i].canonName;
+                    LeafletMap.precincts[canonName] = serverData[i];
+                    LeafletMap.precinctGeojson.push(JsonHandler.convertToGeojson(serverData[i]));
+                }
+                LeafletMap.updatePrecinctLayer();
+            });
+        }
     },
 
     changePrecinctNeighbor: (precinctName, precinctNeighbors, option) => {

@@ -21,6 +21,7 @@ const LeafletMap = {
     precinctBeingChanged: null,
     selectedPrecincts: [],
     modifiedPrecincts: [],
+    currentProps: null,
     usaCoordinates: [39.51073, -96.4247],
 
     highlightColors: {red: '#FF0000', blue: '#1a0aff', green: '#32CD32'},
@@ -75,17 +76,35 @@ const LeafletMap = {
     initInfoBox: () => {
         // Create an function that creates a information box in the top right corner and populates it with the given props
         LeafletMap.infoBox.update = (props) => {
-            // TODO
-            // Need to update properties to their correct name in the geojson from server
-            Window._div.innerHTML = '<h4>U.S State Data</h4>' + (props ?
-                '<b>' + props.displayName + '</b><br />' + 'Democratic: ' +  + '%' +
-                '</b><br>Republican: ' +  + '%' + '</b><br />White: ' +  + '%' +
-                '</b><br />Other: ' +  + '%' + '</b><br />African American: '
-                +  + '%' + '</b><br />Population:'
-                : '');
+            if (props != null) {
+                let election = ToolBar.getSelectedElection();
+                // Need to match the election data with the selected election 
+                let index = 0;
+                let data = props.elecData.elections;
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].year == election.year && data[i].type == election.type) {
+                        index = i;
+                        break;
+                    }
+                }
+                Window._div.innerHTML = '<h4>U.S State Data</h4>' + (props ?
+                    'Name: ' + props.displayName + '<br/>' + 
+                    '<b>Demographic Data</b>' +
+                    '<br/>Asian: ' + props.demoData.asianPop +
+                    '<br/> Black: ' + props.demoData.blackPop + 
+                    '<br/>White: ' + props.demoData.whitePop +
+                    '<br/>Other: ' + props.demoData.otherPop + '<br/>' +
+                    '<b>Electon Data</b>' +
+                    '<br/>Democratic: ' + props.elecData.elections[index].democraticVotes +
+                    '<br/>Republican: ' + props.elecData.elections[index].republicanVotes +
+                    '<br/>Libertarian: ' + props.elecData.elections[index].libertarianVotes+
+                    '<br/>Green: ' + props.elecData.elections[index].greenVotes +
+                    '<br/>Other: ' + props.elecData.elections[index].otherVotes 
+                    : '');
 
-            //  '<b>' + props.name + '</b><br />' + props.density + ' people / mi<sup>2</sup>'
-            //  : 'Hover states for more details');
+                //  '<b>' + props.name + '</b><br />' + props.density + ' people / mi<sup>2</sup>'
+                //  : 'Hover states for more details');
+            }
         };
         LeafletMap.infoBox.onAdd = () => {
             Window._div = L.DomUtil.create('div', 'info');
@@ -118,6 +137,7 @@ const LeafletMap = {
         else {
             layer.bringToBack();
         }
+        LeafletMap.currentProps = layer.feature.properties;
         LeafletMap.infoBox.update(layer.feature.properties);
     },
 
@@ -139,17 +159,18 @@ const LeafletMap = {
     },
 
     resetHighlight: (event) => {
+        LeafletMap.currentProps = event.target.feature.properties
         if (LeafletMap.map.hasLayer(LeafletMap.stateLayer)) {
             LeafletMap.stateLayer.resetStyle(event.target);
-            LeafletMap.infoBox.update();
+            LeafletMap.infoBox.update(event.target.feature.properties);
         }
         else if (LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
             LeafletMap.precinctLayer.resetStyle(event.target);
-            LeafletMap.infoBox.update();
+            LeafletMap.infoBox.update(event.target.feature.properties);
         }
         else if (LeafletMap.map.hasLayer(LeafletMap.districtLayer)) {
             LeafletMap.districtLayer.resetStyle(event.target);
-            LeafletMap.infoBox.update();
+            LeafletMap.infoBox.update(event.target.feature.properties);
         }
     },
 
@@ -179,6 +200,7 @@ const LeafletMap = {
     },
 
     onClickHandler: (event) => {
+        LeafletMap.currentProps = event.target.feature.properties;
         LeafletMap.infoBox.update(event.target.feature.properties);
         const canonicalName = event.target.feature.properties.canonName;
         // The clicked layer is a state layer
