@@ -2,6 +2,7 @@ package com.teammander.salamander.map;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -16,6 +17,7 @@ import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.teammander.salamander.data.DemographicData;
+import com.teammander.salamander.data.Election;
 import com.teammander.salamander.data.ElectionData;
 
 import org.locationtech.jts.geom.Geometry;
@@ -76,6 +78,17 @@ public class Precinct extends Region{
 
     public void setType(PrecinctType type) {
         this.type = type;
+    }
+
+    public Election findElection(int eid) {
+        ElectionData ed = getElecData();
+        List<Election> elecs = ed.getElections();
+        for (Election e : elecs) {
+            if (e.getElectionId() == eid) {
+                return e;
+            }
+        }
+        throw new NoSuchElementException("Cannot find election with eid: " + eid);
     }
 
     public static Precinct mergePrecincts(List<Precinct> precincts) {

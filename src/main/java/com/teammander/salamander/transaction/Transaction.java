@@ -7,6 +7,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
@@ -20,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 public class Transaction {
 
     int tid;
+    TransactionType transType;
     String before;
     String after;
     String whoCanon;
@@ -54,6 +57,16 @@ public class Transaction {
 
     public void setWhoDisplay(String whoDisplay) {
         this.whoDisplay = whoDisplay;
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "trans_type")
+    public TransactionType getTransType() {
+        return this.transType;
+    }
+
+    public void setTransType(TransactionType transType) {
+        this.transType = transType;
     }
 
     @Column(name = "what")

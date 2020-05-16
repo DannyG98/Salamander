@@ -32,6 +32,9 @@ public class DemographicData {
     }
 
     public void setWhitePop(int whitePop) {
+        if (whitePop < 0) {
+            throw new IllegalArgumentException("Negative number");
+        }
         this.whitePop = whitePop;
     }
 
@@ -41,6 +44,9 @@ public class DemographicData {
     }
 
     public void setBlackPop(int blackPop) {
+        if (blackPop < 0) {
+            throw new IllegalArgumentException("Negative number");
+        }
         this.blackPop = blackPop;
     }
 
@@ -50,6 +56,9 @@ public class DemographicData {
     }
 
     public void setAsianPop(int asianPop) {
+        if (asianPop < 0) {
+            throw new IllegalArgumentException("Negative number");
+        }
         this.asianPop = asianPop;
     }
 
@@ -59,6 +68,9 @@ public class DemographicData {
     }
 
     public void setOtherPop(int otherPop) {
+        if (otherPop < 0) {
+            throw new IllegalArgumentException("Negative number");
+        }
         this.otherPop = otherPop;
     }
 
