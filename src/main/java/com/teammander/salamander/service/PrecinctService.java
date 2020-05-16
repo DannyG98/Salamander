@@ -9,6 +9,7 @@ import com.teammander.salamander.data.ElectionData;
 import com.teammander.salamander.map.District;
 import com.teammander.salamander.map.Precinct;
 import com.teammander.salamander.repository.PrecinctRepository;
+import com.teammander.salamander.transaction.Transaction;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,13 @@ import org.springframework.stereotype.Service;
 public class PrecinctService {
     PrecinctRepository pr;
     DistrictService ds;
+    TransactionService ts;
 
     @Autowired
-    public PrecinctService(PrecinctRepository pr, DistrictService ds) {
+    public PrecinctService(PrecinctRepository pr, DistrictService ds, TransactionService ts) {
         this.pr = pr;
         this.ds = ds;
+        this.ts = ts;
     }
 
     public PrecinctRepository getPr() {
@@ -30,6 +33,10 @@ public class PrecinctService {
 
     public DistrictService getDs() {
         return this.ds;
+    }
+
+    public TransactionService getTs() {
+        return this.ts;
     }
 
     public District getParentDistrict(Precinct precinct) {
@@ -80,6 +87,18 @@ public class PrecinctService {
         } else if (p2 == null) {
             return precinctName2;
         }
+
+        TransactionService ts = getTs();
+        Transaction nTrans = new Transaction();
+        String p1Display = p1.getDisplayName();
+        String p2Display = p2.getDisplayName();
+        nTrans.setBefore(p1Display + "<-/->" + p2Display);
+        nTrans.setAfter(p1Display + " <--> " + p2Display);
+        nTrans.setWhoCanon(precinctName1 + ", " + precinctName2);
+        nTrans.setWhoDisplay(p1Display + ", " + p2Display);
+        nTrans.setWhat("Neighborship");
+        ts.addTransaction(nTrans);
+
         p1.addNeighbor(p2);
         p2.addNeighbor(p1);
         pr.flush();
@@ -104,6 +123,18 @@ public class PrecinctService {
         }
         p1.deleteNeighbor(p2);
         p2.deleteNeighbor(p1);
+
+        TransactionService ts = getTs();
+        Transaction nTrans = new Transaction();
+        String p1Display = p1.getDisplayName();
+        String p2Display = p2.getDisplayName();
+        nTrans.setBefore(p1Display + " <--> " + p2Display);
+        nTrans.setAfter(p1Display + "<-/->" + p2Display);
+        nTrans.setWhoCanon(precinctName1 + ", " + precinctName2);
+        nTrans.setWhoDisplay(p1Display + ", " + p2Display);
+        nTrans.setWhat("Neighborship");
+        ts.addTransaction(nTrans);
+
         pr.flush();
         return null;
     }
@@ -161,6 +192,7 @@ public class PrecinctService {
         for (String neighbor : neighbors) {
             deleteNeighbor(precinctName, neighbor);
         }
+
         return null;
     }
 

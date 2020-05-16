@@ -17,7 +17,7 @@ import javax.persistence.TemporalType;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity(name = "ERROR_TRANSACTIONS")
-public abstract class Transaction {
+public class Transaction {
 
     int tid;
     String before;
@@ -54,6 +54,15 @@ public abstract class Transaction {
 
     public void setWhoDisplay(String whoDisplay) {
         this.whoDisplay = whoDisplay;
+    }
+
+    @Column(name = "what")
+    public String getWhat() {
+        return this.what;
+    }
+
+    public void setWhat(String what) {
+        this.what = what;
     }
 
     @Lob
