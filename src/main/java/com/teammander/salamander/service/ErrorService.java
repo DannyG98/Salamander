@@ -69,19 +69,19 @@ public class ErrorService {
 
     public List<DataError> getStateErrors(String stateName, boolean status) {
         ErrorRepository er = getEr();
-        List<DataError> result = er.findAllByAffectedStateAndResolved(stateName, status);
+        List<DataError> result = er.findAllByAffectedStateAndResolvedEquals(stateName, status);
         return result;
     }
 
     public List<DataError> getDistrictErrors(String districtName, boolean status) {
         ErrorRepository er = getEr();
-        List<DataError> result = er.findAllByAffectedDistrictAndResolved(districtName, status);
+        List<DataError> result = er.findAllByAffectedDistrictAndResolvedEquals(districtName, status);
         return result;
     }
 
     public List<DataError> getPrecinctErrors(String precinctName, boolean status) {
         ErrorRepository er = getEr();
-        List<DataError> result = er.findAllByAffectedPrecinctAndResolved(precinctName, status);
+        List<DataError> result = er.findAllByAffectedPrecinctAndResolvedEquals(precinctName, status);
         return result;
     }
 
