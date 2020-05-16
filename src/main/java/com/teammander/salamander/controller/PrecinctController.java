@@ -157,10 +157,10 @@ public class PrecinctController {
         return re;
     }
 
-    @PostMapping("/newPrecinct")
-    public Precinct createNewPrecinct(@RequestBody Precinct precinct) {
+    @PostMapping("/newPrecinct/{parentName}")
+    public Precinct createNewPrecinct(@PathVariable String parentName, @RequestBody Precinct precinct) {
         PrecinctService ps = getPs();
-        Precinct newPrecinct = ps.createNewPrecinct(precinct);
+        Precinct newPrecinct = ps.createNewPrecinct(precinct, parentName);
         return newPrecinct;
     }
 

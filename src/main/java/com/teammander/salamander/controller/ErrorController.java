@@ -49,24 +49,24 @@ public class ErrorController {
         return unresolvedErrs;
     }
 
-    @GetMapping("/stateErrors/{stateName}")
-    public List<DataError> getStateErrors(@PathVariable String stateName) {
+    @GetMapping("/stateErrors/{stateName}/{resolved}")
+    public List<DataError> getStateErrors(@PathVariable String stateName, @PathVariable boolean resolved) {
         ErrorService es = getEs();
-        List<DataError> stateErrs = es.getStateErrors(stateName);
+        List<DataError> stateErrs = es.getStateErrors(stateName, resolved);
         return stateErrs;
     }
 
-    @GetMapping("/districtErrors/{districtName}")
-    public List<DataError> getDistrictErrors(@PathVariable String districtName) {
+    @GetMapping("/districtErrors/{districtName}/{resolved}")
+    public List<DataError> getDistrictErrors(@PathVariable String districtName, @PathVariable boolean resolved) {
         ErrorService es = getEs();
-        List<DataError> stateErrs = es.getDistrictErrors(districtName);
+        List<DataError> stateErrs = es.getDistrictErrors(districtName, resolved);
         return stateErrs;
     }
 
-    @GetMapping("/precinctErrors/{precinctName}")
-    public List<DataError> getPrecinctErrors(@PathVariable String precinctName) {
+    @GetMapping("/precinctErrors/{precinctName}/{resolved}")
+    public List<DataError> getPrecinctErrors(@PathVariable String precinctName, @PathVariable boolean resolved) {
         ErrorService es = getEs();
-        List<DataError> stateErrs = es.getPrecinctErrors(precinctName);
+        List<DataError> stateErrs = es.getPrecinctErrors(precinctName, resolved);
         return stateErrs;
     }
 

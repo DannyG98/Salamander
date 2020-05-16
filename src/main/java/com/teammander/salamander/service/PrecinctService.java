@@ -346,8 +346,10 @@ public class PrecinctService {
         return targetPrecinct;
     }
 
-    public Precinct createNewPrecinct(Precinct precinct) {
+    public Precinct createNewPrecinct(Precinct precinct, String parentName) {
         PrecinctRepository pr = getPr();
+        DistrictService ds = getDs();
+        District parentDistrict = ds.getDistrict(parentName);
         Random rand = new Random();
         ElectionData newED = new ElectionData();
         DemographicData newDD = new DemographicData();
@@ -370,7 +372,9 @@ public class PrecinctService {
         while(pr.existsById(canonName)) {
             canonName = String.format("ClientGenerated_%d",Math.abs(rand.nextLong()));
         }
+        precinct.setParentDistrict(parentDistrict);
         precinct.setCanonName(canonName);
+        ds.insertChildPrecinct(parentName, precinct);
         pr.saveAndFlush(precinct);
 
         TransactionService ts = getTs();
