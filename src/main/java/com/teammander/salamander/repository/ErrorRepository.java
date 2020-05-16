@@ -12,4 +12,7 @@ import org.springframework.stereotype.Repository;
 public interface ErrorRepository extends JpaRepository<DataError, Integer> {
     List<DataError> findAllByResolved(boolean status);
     List<DataError> findAllByEType(ErrorType type);
+    List<DataError> findAllByAffectedState(String stateName);
+    List<DataError> findAllByAffectedDistrict(String districtName);
+    List<DataError> findAllByAffectedPrct(String precinctName);
 }

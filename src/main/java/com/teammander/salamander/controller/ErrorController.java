@@ -49,6 +49,27 @@ public class ErrorController {
         return unresolvedErrs;
     }
 
+    @GetMapping("/stateErrors/{stateName}")
+    public List<DataError> getStateErrors(@PathVariable String stateName) {
+        ErrorService es = getEs();
+        List<DataError> stateErrs = es.getStateErrors(stateName);
+        return stateErrs;
+    }
+
+    @GetMapping("/stateErrors/{districtName}")
+    public List<DataError> getDistrictErrors(@PathVariable String districtName) {
+        ErrorService es = getEs();
+        List<DataError> stateErrs = es.getDistrictErrors(districtName);
+        return stateErrs;
+    }
+
+    @GetMapping("/stateErrors/{precinctName}")
+    public List<DataError> getPrecinctErrors(@PathVariable String precinctName) {
+        ErrorService es = getEs();
+        List<DataError> stateErrs = es.getPrecinctErrors(precinctName);
+        return stateErrs;
+    }
+
     @GetMapping("/setErrorStatus/{errorId}")
     public void setErrorStatus(@PathVariable int eid, @RequestParam boolean resolved) {
         ErrorService es = getEs();
