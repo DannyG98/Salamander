@@ -56,14 +56,14 @@ public class ErrorController {
         return stateErrs;
     }
 
-    @GetMapping("/stateErrors/{districtName}")
+    @GetMapping("/districtErrors/{districtName}")
     public List<DataError> getDistrictErrors(@PathVariable String districtName) {
         ErrorService es = getEs();
         List<DataError> stateErrs = es.getDistrictErrors(districtName);
         return stateErrs;
     }
 
-    @GetMapping("/stateErrors/{precinctName}")
+    @GetMapping("/precinctErrors/{precinctName}")
     public List<DataError> getPrecinctErrors(@PathVariable String precinctName) {
         ErrorService es = getEs();
         List<DataError> stateErrs = es.getPrecinctErrors(precinctName);
