@@ -3,8 +3,10 @@ package com.teammander.salamander.transaction;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
@@ -14,6 +16,7 @@ import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+@Entity(name = "ERROR_TRANSACTIONS")
 public abstract class Transaction {
 
     int tid;
@@ -54,7 +57,7 @@ public abstract class Transaction {
     }
 
     @Lob
-    @Column(name = "before")
+    @Column(name = "before_val")
     public String getBefore() {
         return before;
     }
@@ -64,7 +67,7 @@ public abstract class Transaction {
     }
 
     @Lob
-    @Column(name = "after")
+    @Column(name = "after_val")
     public String getAfter() {
         return after;
     }
@@ -73,7 +76,7 @@ public abstract class Transaction {
         this.after = after;
     }
 
-    @OneToMany(mappedBy = "owner_transaction", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ownerTransaction", cascade = CascadeType.ALL)
     @JsonManagedReference
     public List<Comment> getComments() {
         return comments;
@@ -83,6 +86,7 @@ public abstract class Transaction {
         this.comments = comment;
     }
 
+    @Basic
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "time_created")
     public Date getTimeCreated() {
