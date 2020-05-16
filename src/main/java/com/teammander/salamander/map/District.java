@@ -18,7 +18,6 @@ public class District extends Region{
 
     State parentState;
     Set<Precinct> childPrecincts;
-    List<DataError> dataErrors;
    
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "parent_state")
