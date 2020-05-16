@@ -1,10 +1,9 @@
 package com.teammander.salamander.map;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -19,6 +18,7 @@ public class District extends Region{
 
     State parentState;
     Set<Precinct> childPrecincts;
+    List<DataError> dataErrors;
    
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "parent_state")
@@ -31,7 +31,6 @@ public class District extends Region{
         this.parentState = state;
     }
 
-    
     @OneToMany(mappedBy = "parentDistrict", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     public Set<Precinct> getChildPrecincts() {
