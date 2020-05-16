@@ -21,6 +21,7 @@ const DataHandler = {
         fetch(`/state/${stateCName}/districts`).then((response) => {
             return response.text();
         }).then((text) => {
+            LeafletMap.districtGeojson = [];
             let serverData  = JSON.parse(text);
             for (let i = 0; i < serverData.length; i++) {
                 let canonName = serverData[i].canonName;
@@ -31,15 +32,18 @@ const DataHandler = {
         });
     },
 
-    getAllPrecinctData: () => {
-        fetch('/precinct/getAllPrecincts').then((response) => {
+    getAllPrecinctData: (districtCName) => {
+        fetch(`/district/${districtCName}/precincts`).then((response) => {
             return response.text();
         }).then((text) => {
-            let serverData = JSON.parse(text);
+            LeafletMap.precinctGeojson = [];
+            let serverData  = JSON.parse(text);
             for (let i = 0; i < serverData.length; i++) {
                 let canonName = serverData[i].canonName;
                 LeafletMap.precincts[canonName] = serverData[i];
+                LeafletMap.precinctGeojson.push(JsonHandler.convertToGeojson(serverData[i]));
             }
+            LeafletMap.updatePrecinctLayer();
         });
     },
 
@@ -100,8 +104,7 @@ const DataHandler = {
         fetch('/precinct/modifyNeighbor?p=' + precinctName + '&op=' + option, postTemplate).then((response) => {
             if(response.ok) {
                 // Request the updated precincts
-                precinctNeighbors.push(precinctName);
-                DataHandler.getPrecinctData(precinctNeighbors);
+                DataHandler.getAllPrecinctData(LeafletMap.currentDistrict);
             }
         })
     },
@@ -117,19 +120,8 @@ const DataHandler = {
         // TODO waiting for endpoint to be completed
         fetch('/precinct/mergePrecinct', postTemplate).then((response) => {
             return response.text();
-        }).then((text) => {
-            let serverData = JSON.parse(text);
-            // Should only receive one precinct from server
-            if (serverData.length != 1) {
-                console.log("Error merging precincts");
-            }
-            else {
-                /*  Since the precincts are merged, the neighbors of the new precinct need their
-                    neighbors list to be updated too. So request those precincts from server
-                */
-                let neighborCNames = serverData[0].neighborCNames;
-                DataHandler.getPrecinctData(neighborCNames);
-            }
+        }).then(() => {
+            DataHandler.getAllPrecinctData(LeafletMap.currentDistrict); 
         });
     },
 

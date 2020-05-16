@@ -23,7 +23,7 @@ const ToolBar = {
         for (let i = 0; i  < states.length; i++) {
             states[i].addEventListener("click", () => {
                 // Move map view to the selected state
-                const state = states[i].text.toLowerCase();
+                const state = states[i].text.toLowerCase().replace(" ", "");
                 LeafletMap.panMap(ToolBar.stateCoordinates[state][0], ToolBar.stateCoordinates[state][1], 7);
 
                 // Highlight the selected state in the dropdown
@@ -32,26 +32,10 @@ const ToolBar = {
                     currentState.className = currentState.className.replace("active", "");
                 }
                 states[i].className += " active";
-
-                // let districtCNames = LeafletMap.states[state].districtCNames;
-                // let requestList = [];
-                // let currentList = [];
-                // for (let j = 0; j < districtCNames.length; j++) {
-                //     if (LeafletMap.districts[districtCNames[j]] == null) {
-                //         requestList.push(districtCNames[j]);
-                //     }
-                //     else {
-                //         currentList.push(districtCNames[j]);
-                //     }
-                // }
-                // if (requestList.length != 0) {
-                //     DataHandler.getDistrictData(requestList);
-                // }
                 LeafletMap.enableStateLayer(false);
                 let stateCanonName = LeafletMap.states[state].canonName;
                 DataHandler.getAllDistrictData(stateCanonName);
-                // // Display the districts that are already on the client
-                // DataHandler.updateDistricts(currentList);
+          
             })
         }
     },

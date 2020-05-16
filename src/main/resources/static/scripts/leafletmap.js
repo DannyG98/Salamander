@@ -24,7 +24,7 @@ const LeafletMap = {
     currentProps: null,
     usaCoordinates: [39.51073, -96.4247],
 
-    highlightColors: {red: '#FF0000', blue: '#1a0aff', green: '#32CD32'},
+    highlightColors: {red: '#FF0000', blue: '#1a0aff', green: '#32CD32', pink: '#eb57ff'},
     // The iteractive map that is going to be displayed on the webpage
     map: L.map('mapid', { minZoom: 5, maxZoom: 18, maxBounds: [[20.396308, -135.848974], [49.384358, -55.885444]] }),
 
@@ -238,50 +238,18 @@ const LeafletMap = {
         // Update the states dropdown menu UI
         const statesDropdownElements = $('#states').find(".dropdown-item");
         for (let i = 0; i < statesDropdownElements.length; i++) {
-            if (statesDropdownElements[i].text.toLowerCase() == stateCanonName) {
+            if (statesDropdownElements[i].text.toLowerCase().replace(" ", "") == stateCanonName) {
                 ToolBar.unselectState();
                 statesDropdownElements[i].className += " active";
                 DataHandler.getAllDistrictData(stateCanonName);
                 break;
-                // // Only request district data that has not been request before
-                // let districtCNames = LeafletMap.states[stateCanonName].districtCNames;
-                // let requestList = [];
-                // let currentList = [];
-                // for (let j = 0; j < districtCNames.length; j++) {
-                //     if (LeafletMap.districts[districtCNames[j]] == null) {
-                //         requestList.push(districtCNames[j]);
-                //     }
-                //     else {
-                //         currentList.push(districtCNames[j]);
-                //     }
-                // }
-                // if (requestList.length != 0) {
-                //     DataHandler.getDistrictData(requestList);
-                // }
-                // // Display the districts that are already on the client
-                // DataHandler.updateDistricts(currentList);
-                // break;
             }
         }
     },
 
     districtLayerHandler: (districtCanonName) => {
-        // Only request the precincts that are not stored on the client
-        let precinctCNames = LeafletMap.districts[districtCanonName].precinctCNames;
-        let requestList = [];
-        let currentList = [];
-        for (let i = 0; i < precinctCNames.length; i++) {
-            if (LeafletMap.precincts[precinctCNames[i]] == null) {
-                requestList.push(precinctCNames[i]);
-            }
-            else {
-                currentList.push(precinctCNames[i]);
-            }
-        }
-        if (requestList.length != 0) {
-            DataHandler.getPrecinctData(requestList);
-        }
-        DataHandler.updatePrecincts(currentList);
+        DataHandler.getAllPrecinctData(districtCanonName);
+        LeafletMap.updatePrecinctLayer();
     },
 
     precinctLayerHandler: (precinctCanonName, event) => {
@@ -346,7 +314,12 @@ const LeafletMap = {
                 if (!LeafletMap.map.hasLayer(LeafletMap.districtLayer)) { 
                     LeafletMap.districtLayer = L.geoJson(LeafletMap.districtGeojson, {
                         onEachFeature: LeafletMap.onEachFeature 
-                    }).addTo(LeafletMap.map).bringToFront(); }
+                    }).addTo(LeafletMap.map).bringToFront(); 
+                    LeafletMap.districtLayer.setStyle({
+                        color: LeafletMap.highlightColors.pink
+                    });
+                }
+                    
                 break;
             case false:
                 if (LeafletMap.map.hasLayer(LeafletMap.districtLayer)) { 
@@ -404,6 +377,9 @@ const LeafletMap = {
         LeafletMap.districtLayer = L.geoJson(LeafletMap.districtGeojson, {
             onEachFeature: LeafletMap.onEachFeature
         }).addTo(LeafletMap.map);
+        LeafletMap.districtLayer.setStyle({
+            color: LeafletMap.highlightColors.pink
+        });
     },
 
     resetMapFunctionalities: () => {

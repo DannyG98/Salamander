@@ -1,13 +1,65 @@
 const SideBar = {
     init: () => {
-        SideBar.initSideBarButton();
+        SideBar.initSideBarButtons();
+        SideBar.initErrors();
     },
 
-    initSideBarButton: () => {
-        $("#collapse-menu-btn").click( function() {
+    initSideBarButtons: () => {
+        $("#collapse-menu-btn").click(() => {
             $("#mapid").toggleClass('showSide');
             $("#sidebar").toggleClass('showSide');
         });
+
+        $('#submit-demo-data').click(() => {
+            let popType = $('#popType')[0].value;
+            let inputValue = $('#popValue')[0].value;
+
+            if (inputValue != "" && LeafletMap.currentProps != null) {
+                let demoID = LeafletMap.currentProps.demoData.demographicDataID;
+                Object.entries(LeafletMap.currentProps.demoData).forEach(([key, ]) => {
+                    if (key == popType) {
+                        LeafletMap.currentProps.demoData[key] = parseInt(inputValue);
+                    }
+                });
+                LeafletMap.infoBox.update(LeafletMap.currentProps);
+                // DataHandler.uploadDemoData();
+            }
+        });
+
+        $('#submit-elec-data').click(() => {
+            let partyType = $('#partyType')[0].value;
+            let inputValue = $('#partyValue')[0].value;
+
+            if (inputValue != "" && LeafletMap.currentProps != null) {
+                let elecID = LeafletMap.currentProps.elecData.electionDataId;
+                let selectedElection = ToolBar.getSelectedElection();
+
+                let elections = LeafletMap.currentProps.elecData.elections;
+                for (let i = 0; i < elections.length; i++) {
+                    if (elections[i].year == selectedElection.year && elections[i].type == selectedElection.type) {
+                        Object.entries(elections[i]).forEach(([key, value]) => {
+                            if (key.toLowerCase() == partyType.toLowerCase() + "votes") {
+                                LeafletMap.currentProps.elecData.elections[i][key] = inputValue;
+                            }
+                        });
+                    }
+                }
+                LeafletMap.infoBox.update(LeafletMap.currentProps);
+                // DataHandler.uploadDemoData();
+            }
+        });
+    },
+
+    initErrors: () => {
+        // Call DataHandler to get errors from server
+        let errorsList = [1,2,3,4,5,6];
+        let errorSelection = $('#error-selection')[0];
+        for(let i = 0; i < errorsList.length; i++) {
+            let opt = document.createElement('option');
+            opt.value = i;
+            opt.innerHTML = 'Error ' + i;
+            errorSelection.appendChild(opt);
+        }
     },
 }
 
