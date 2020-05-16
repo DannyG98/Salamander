@@ -1,25 +1,31 @@
 package com.teammander.salamander.transaction;
 
 import java.util.Date;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 public abstract class Transaction {
 
     int tid;
     String before;
     String after;
-    String comment;
-    String changedRegion;
-    Date timeStamp;
+    String who;
+    String what;
+    List<Comment> comments;
+    Date timeCreated;
 
-    public Transaction(int tid, String before, String after, String comment, String changedRegion, Date timeStamp) {
-        this.tid = tid;
-        this.before = before;
-        this.after = after;
-        this.comment = comment;
-        this.changedRegion = changedRegion;
-        this.timeStamp = timeStamp;
-    }
-
+    @Id
+    @GeneratedValue
     public int getTid() {
         return tid;
     }
@@ -28,6 +34,8 @@ public abstract class Transaction {
         this.tid = tid;
     }
 
+    @Lob
+    @Column(name = "before")
     public String getBefore() {
         return before;
     }
@@ -36,6 +44,8 @@ public abstract class Transaction {
         this.before = before;
     }
 
+    @Lob
+    @Column(name = "after")
     public String getAfter() {
         return after;
     }
@@ -44,39 +54,23 @@ public abstract class Transaction {
         this.after = after;
     }
 
-    public String getComment() {
-        return comment;
+    @OneToMany(mappedBy = "owner_transaction", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    public List<Comment> getComments() {
+        return comments;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setComments(List<Comment> comment) {
+        this.comments = comment;
     }
 
-    public String getChangedRegion() {
-        return changedRegion;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "time_created")
+    public Date getTimeCreated() {
+        return timeCreated;
     }
 
-    public void setChangedRegion(String changedRegion) {
-        this.changedRegion = changedRegion;
-    }
-
-    public Date getTimeStamp() {
-        return timeStamp;
-    }
-
-    public void setTimeStamp(Date timeStamp) {
-        this.timeStamp = timeStamp;
-    }
-
-    @Override
-    public String toString() {
-        return "Transaction{" +
-                "tid=" + tid +
-                ", before='" + before + '\'' +
-                ", after='" + after + '\'' +
-                ", comment='" + comment + '\'' +
-                ", changedRegion='" + changedRegion + '\'' +
-                ", timeStamp=" + timeStamp +
-                '}';
+    public void setTimeCreated(Date timeCreated) {
+        this.timeCreated = timeCreated;
     }
 }
