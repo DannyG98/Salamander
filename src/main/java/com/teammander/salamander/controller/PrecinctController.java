@@ -157,6 +157,13 @@ public class PrecinctController {
         return re;
     }
 
+    @PostMapping("/newPrecinct")
+    public Precinct createNewPrecinct(@RequestBody Precinct precinct) {
+        PrecinctService ps = getPs();
+        Precinct newPrecinct = ps.createNewPrecinct(precinct);
+        return newPrecinct;
+    }
+
     @PostMapping("/uploadPrecinct/{parentName}")
     public void uploadPrecinct(@PathVariable String parentName, @RequestBody Precinct precinct) {
         PrecinctService ps = getPs();

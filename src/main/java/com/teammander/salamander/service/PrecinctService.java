@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 
 import com.teammander.salamander.data.DemographicData;
@@ -347,6 +348,7 @@ public class PrecinctService {
 
     public Precinct createNewPrecinct(Precinct precinct) {
         PrecinctRepository pr = getPr();
+        Random rand = new Random();
         ElectionData newED = new ElectionData();
         DemographicData newDD = new DemographicData();
         Election pres16 = new Election();
@@ -363,7 +365,22 @@ public class PrecinctService {
 
         precinct.setElecData(newED);
         precinct.setDemoData(newDD);
+
+        String canonName = String.format("ClientGenerated_%d",Math.abs(rand.nextLong()));
+        while(pr.existsById(canonName)) {
+            canonName = String.format("ClientGenerated_%d",Math.abs(rand.nextLong()));
+        }
+        precinct.setCanonName(canonName);
         pr.saveAndFlush(precinct);
+
+        TransactionService ts = getTs();
+        Transaction nTrans = new Transaction();
+        nTrans.setTransType(TransactionType.NEW_PRECINCT);
+        nTrans.setWhoCanon(precinct.getCanonName());
+        nTrans.setWhoDisplay(precinct.getDisplayName());
+        nTrans.setWhat("New Precinct");
+        ts.addTransaction(nTrans);
+
         return precinct;
     }
 
