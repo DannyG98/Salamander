@@ -19,7 +19,8 @@ public abstract class Transaction {
     int tid;
     String before;
     String after;
-    String who;
+    String whoCanon;
+    String whoDisplay;
     String what;
     List<Comment> comments;
     Date timeCreated;
@@ -32,6 +33,24 @@ public abstract class Transaction {
 
     public void setTid(int tid) {
         this.tid = tid;
+    }
+
+    @Column(name = "who_canon")
+    public String getWhoCanon() {
+        return this.whoCanon;
+    }
+
+    public void setWhoCanon(String whoCanon) {
+        this.whoCanon = whoCanon;
+    }
+
+    @Column(name = "who_display")
+    public String getWhoDisplay() {
+        return this.whoDisplay;
+    }
+
+    public void setWhoDisplay(String whoDisplay) {
+        this.whoDisplay = whoDisplay;
     }
 
     @Lob
