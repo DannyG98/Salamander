@@ -16,6 +16,7 @@ public class DataError {
     String affectedPrct;
     String affectedState;
     String affectedDistrict;
+    String precinctDisplayName;
 
     @Id
     @GeneratedValue
@@ -71,5 +72,14 @@ public class DataError {
 
     public void setAffectedState(String affectedState) {
         this.affectedState = affectedState;
+    }
+
+    @Column(name = "precinct_display_name")
+    public String getPrecinctDisplayName() {
+        return this.precinctDisplayName;
+    }
+
+    public void setPrecinctDisplayName(String precinctDisplayName) {
+        this.precinctDisplayName = precinctDisplayName;
     }
 }
