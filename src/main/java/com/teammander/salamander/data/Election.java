@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity(name = "ELECTIONS")
@@ -55,6 +54,9 @@ public class Election {
     }
 
     public void setDemocraticVotes(int democraticVotes) {
+        if (democraticVotes < 0) {
+            throw new IllegalArgumentException("Negative number");
+        }
         this.democraticVotes = democraticVotes;
     }
 
@@ -64,6 +66,9 @@ public class Election {
     }
 
     public void setRepublicanVotes(int republicanVotes) {
+        if (republicanVotes < 0) {
+            throw new IllegalArgumentException("Negative number");
+        }
         this.republicanVotes = republicanVotes;
     }
 
@@ -73,6 +78,9 @@ public class Election {
     }
 
     public void setLibertarianVotes(int libertarianVotes) {
+        if (libertarianVotes < 0) {
+            throw new IllegalArgumentException("Negative number");
+        }
         this.libertarianVotes = libertarianVotes;
     }
 
@@ -82,6 +90,9 @@ public class Election {
     }
 
     public void setGreenVotes(int greenVotes) {
+        if (greenVotes < 0) {
+            throw new IllegalArgumentException("Negative number");
+        }
         this.greenVotes = greenVotes;
     }
 
@@ -91,6 +102,9 @@ public class Election {
     }
 
     public void setOtherVotes(int otherVotes) {
+        if (otherVotes < 0) {
+            throw new IllegalArgumentException("Negative number");
+        }
         this.otherVotes = otherVotes;
     }
 

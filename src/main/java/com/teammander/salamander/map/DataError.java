@@ -1,14 +1,11 @@
 package com.teammander.salamander.map;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 
 @Entity(name = "DATA_ERRORS")
 public class DataError {
@@ -16,13 +13,10 @@ public class DataError {
     int eid;
     ErrorType eType;
     boolean resolved;
-    Set<String> affectedPrct;
-
-    public DataError(int eid, ErrorType eType, Set<String> affectedPrct) {
-        this.eid = eid;
-        this.eType = eType;
-        this.affectedPrct = affectedPrct;
-    }
+    String affectedPrct;
+    String affectedState;
+    String affectedDistrict;
+    String precinctDisplayName;
 
     @Id
     @GeneratedValue
@@ -53,13 +47,39 @@ public class DataError {
         this.eType = eType;
     }
 
-    @Lob
     @Column(name = "affected_prcts")
-    public Set<String> getAffectedPrct() {
+    public String getAffectedPrct() {
         return affectedPrct;
     }
 
-    public void setAffectedPrct(Set<String> affectedPrct) {
+    public void setAffectedPrct(String affectedPrct) {
         this.affectedPrct = affectedPrct;
+    }
+
+    @Column(name = "affected_district")
+    public String getAffectedDistrict() {
+        return this.affectedDistrict;
+    }
+
+    public void setAffectedDistrict(String affectedDistrict) {
+        this.affectedDistrict = affectedDistrict;
+    }
+
+    @Column(name = "affected_state")
+    public String getAffectedState() {
+        return this.affectedState;
+    }
+
+    public void setAffectedState(String affectedState) {
+        this.affectedState = affectedState;
+    }
+
+    @Column(name = "precinct_display_name")
+    public String getPrecinctDisplayName() {
+        return this.precinctDisplayName;
+    }
+
+    public void setPrecinctDisplayName(String precinctDisplayName) {
+        this.precinctDisplayName = precinctDisplayName;
     }
 }

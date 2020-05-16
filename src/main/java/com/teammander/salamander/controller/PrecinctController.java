@@ -119,18 +119,30 @@ public class PrecinctController {
         return queryResponse;
     }
 
-    @PostMapping("/updateDemoData")
-    public ResponseEntity<?> updateDemoData(@RequestParam String pCName, 
-    @RequestBody DemographicData demoData) {
+    @GetMapping("/{precinctName}/updateDemoData/{id}/{field}/{newVal}")
+    public ResponseEntity<?> updateDemoData(@PathVariable String precinctName, 
+    @PathVariable int id, @PathVariable String field, @PathVariable int newVal) {
         PrecinctService ps = getPs();
-        Precinct targetPrecinct = ps.updateDemoData(pCName, demoData);
+        Precinct targetPrecinct = ps.updateDemoData(precinctName, id, field, newVal);
         if (targetPrecinct == null) {
-            String errMsg = ErrorMsg.unableToFindMsg(pCName);
+            String errMsg = ErrorMsg.unableToFindMsg(precinctName);
             ResponseEntity<String> re = new ResponseEntity<>(errMsg, HttpStatus.NOT_FOUND);
             return re;
         }
         ResponseEntity<Precinct> re = ResponseEntity.ok(targetPrecinct);
         return re;
+    }
+
+    @GetMapping("/{precinctName}/updateElecData/{id}/{field}/{newVal}")
+    public ResponseEntity<?> updateElecData(@PathVariable String precinctName, 
+    @PathVariable int id, @PathVariable String field, @PathVariable int newVal) {
+        Precinct targetPrecinct = getPs().updateElection(precinctName, id, field, newVal);
+        if (targetPrecinct == null) {
+            String errMsg = ErrorMsg.unableToFindMsg(precinctName);
+            ResponseEntity<String> re = new ResponseEntity<>(errMsg, HttpStatus.NOT_FOUND);
+            return re;
+        }
+        return new ResponseEntity<>(targetPrecinct, HttpStatus.OK);
     }
 
     @PostMapping("/updateBoundary")
@@ -145,15 +157,11 @@ public class PrecinctController {
         return re;
     }
 
-    @PostMapping("/updateElecData")
-    public ResponseEntity<?> updateElecData(@RequestParam String pCName, @RequestBody ElectionData elecData) {
-        Precinct targetPrecinct = getPs().updateElectionData(pCName, elecData);
-        if (targetPrecinct == null) {
-            String errMsg = ErrorMsg.unableToFindMsg(pCName);
-            ResponseEntity<String> re = new ResponseEntity<>(errMsg, HttpStatus.NOT_FOUND);
-            return re;
-        }
-        return new ResponseEntity<>(targetPrecinct, HttpStatus.OK);
+    @PostMapping("/newPrecinct/{parentName}")
+    public Precinct createNewPrecinct(@PathVariable String parentName, @RequestBody Precinct precinct) {
+        PrecinctService ps = getPs();
+        Precinct newPrecinct = ps.createNewPrecinct(precinct, parentName);
+        return newPrecinct;
     }
 
     @PostMapping("/uploadPrecinct/{parentName}")

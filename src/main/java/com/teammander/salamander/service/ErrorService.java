@@ -29,6 +29,7 @@ public class ErrorService {
         return foundError;
     }
 
+    /* Get Error By Type */
     public List<DataError> getUnresolvedErrors() {
         ErrorRepository er = getEr();
         List<DataError> result = er.findAllByResolved(false);
@@ -47,6 +48,44 @@ public class ErrorService {
         return result;
     }
 
+    /* Get Errors by Region */
+    public List<DataError> getStateErrors(String stateName) {
+        ErrorRepository er = getEr();
+        List<DataError> result = er.findAllByAffectedState(stateName);
+        return result;
+    }
+
+    public List<DataError> getDistrictErrors(String districtName) {
+        ErrorRepository er = getEr();
+        List<DataError> result = er.findAllByAffectedDistrict(districtName);
+        return result;
+    }
+
+    public List<DataError> getPrecinctErrors(String precinctName) {
+        ErrorRepository er = getEr();
+        List<DataError> result = er.findAllByAffectedPrct(precinctName);
+        return result;
+    }
+
+    public List<DataError> getStateErrors(String stateName, boolean status) {
+        ErrorRepository er = getEr();
+        List<DataError> result = er.findAllByAffectedStateAndResolved(stateName, status);
+        return result;
+    }
+
+    public List<DataError> getDistrictErrors(String districtName, boolean status) {
+        ErrorRepository er = getEr();
+        List<DataError> result = er.findAllByAffectedDistrictAndResolved(districtName, status);
+        return result;
+    }
+
+    public List<DataError> getPrecinctErrors(String precinctName, boolean status) {
+        ErrorRepository er = getEr();
+        List<DataError> result = er.findAllByAffectedPrecinctAndResolved(precinctName, status);
+        return result;
+    }
+
+    /* Add/Delete Errors */
     public void deleteError(DataError err) {
         ErrorRepository er = getEr();
         er.delete(err);

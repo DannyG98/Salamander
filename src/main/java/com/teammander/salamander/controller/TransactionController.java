@@ -2,8 +2,10 @@ package com.teammander.salamander.controller;
 
 
 import com.teammander.salamander.service.TransactionService;
+import com.teammander.salamander.transaction.Comment;
 import com.teammander.salamander.transaction.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,16 +24,23 @@ public class TransactionController {
         return this.ts;
     }
 
-    @GetMapping
-    public List<Transaction> getTransactions() {
+    @GetMapping("/all")
+    public List<Transaction> getAllTransactions() {
         TransactionService ts = getTs();
-        List<Transaction> foundTransactions = ts.getTransactions();
+        List<Transaction> foundTransactions = ts.getAllTransactions();
         return foundTransactions;
     }
 
-    @PostMapping()
-    public void addTransaction(@RequestBody Transaction trans) {
+    @PostMapping("/{tid}/newComment")
+    public void addNewComment(@PathVariable int tid, @RequestBody String comment) {
         TransactionService ts = getTs();
-        ts.addTransaction(trans);
+        ts.addComment(tid, comment);
     }
+
+    @PostMapping("/comment/{cid}/updateComment")
+    public void updateComment(@PathVariable int cid, @RequestBody String update) {
+        TransactionService ts = getTs();
+        ts.updateComment(cid, update);
+    }
+
 }
