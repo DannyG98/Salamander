@@ -18,6 +18,8 @@ import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 @Entity(name = "ERROR_TRANSACTIONS")
 public class Transaction {
 
@@ -109,6 +111,7 @@ public class Transaction {
     }
 
     @Basic
+    @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "time_created")
     public Date getTimeCreated() {

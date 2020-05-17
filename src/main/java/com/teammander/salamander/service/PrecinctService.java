@@ -2,6 +2,7 @@ package com.teammander.salamander.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -53,11 +54,6 @@ public class PrecinctService {
         return this.ts;
     }
 
-    public District getParentDistrict(Precinct precinct) {
-        District parentDistrict = precinct.getParentDistrict();
-        return parentDistrict;
-    }
-
     public Precinct getPrecinct(String canonName) {
         PrecinctRepository pr = getPr();
         Optional<Precinct> queryResult = pr.findById(canonName);
@@ -75,13 +71,40 @@ public class PrecinctService {
         PrecinctRepository pr = getPr();
         String targetCName = precinct.getCanonName();
         Set<String> neighbors = precinct.getNeighborCNames();
-        District parent = getParentDistrict(precinct);
+        District parent = precinct.getParentDistrict();
 
         for (String neighbor : neighbors) {
-            deleteNeighbor(neighbor, targetCName);
+            deleteNeighborUntracked(targetCName, neighbor);
         }
         parent.removePrecinctChild(precinct);
         pr.delete(precinct);
+        pr.flush();
+    }
+
+    public void deleteNeighborUntracked(String precinctName1, String precinctName2) {
+        PrecinctRepository pr = getPr();
+        Precinct p1 = getPrecinct(precinctName1);
+        Precinct p2 = getPrecinct(precinctName2);
+
+        if (p1 == null || p2 == null) {
+            return;
+        }
+
+        p1.deleteNeighbor(p2);
+        p2.deleteNeighbor(p1);
+        pr.flush();
+    }
+
+    public void addNeighborUntracked(String precinctName1, String precinctName2) {
+        PrecinctRepository pr = getPr();
+        Precinct p1 = getPrecinct(precinctName1);
+        Precinct p2 = getPrecinct(precinctName2);
+
+        if (p1 == null || p2 == null) {
+            return;
+        }
+        p1.addNeighbor(p2);
+        p2.addNeighbor(p1);
         pr.flush();
     }
 
@@ -218,7 +241,30 @@ public class PrecinctService {
         PrecinctRepository pr = getPr();
         List<Precinct> precincts = pr.findAllById(precinctNames);
         Precinct mergedPrecinct = Precinct.mergePrecincts(precincts);
-        pr.deleteAll(precincts);
+        Random rand = new Random();
+
+        // Generate a unique canonical name for it
+        String canonName = String.format("MergedPrecinct_%d",Math.abs(rand.nextLong()));
+        while(pr.existsById(canonName)) {
+            canonName = String.format("MergedPrecinct_%d",Math.abs(rand.nextLong()));
+        }
+        mergedPrecinct.setCanonName(canonName);
+
+        // Delete all the mergees and conglomerate their neighbor lists
+        Set<String> neighbors = new HashSet<>();
+        Set<String> mergedNames = new HashSet<>();
+        for (Precinct p : precincts) {
+            neighbors.addAll(p.getNeighborCNames());
+            mergedNames.add(p.getCanonName());
+            rmPrecinct(p);
+        }
+
+        // Create neighbor links for the new precinct
+        neighbors.removeAll(mergedNames);
+        for (String s : neighbors) {
+            addNeighborUntracked(canonName, s);
+        }
+
         pr.saveAndFlush(mergedPrecinct);
         return mergedPrecinct;
     }

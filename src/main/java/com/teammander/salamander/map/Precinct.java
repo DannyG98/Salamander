@@ -1,6 +1,7 @@
 package com.teammander.salamander.map;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -50,7 +51,7 @@ public class Precinct extends Region{
         neighborCNames.remove(neighCName);
     }
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "parent_district")
     @JsonBackReference
     public District getParentDistrict() {
@@ -116,12 +117,13 @@ public class Precinct extends Region{
         DemographicData mergedDD = DemographicData.mergeDemoData(allDD);
 
         Precinct mergedPrecinct = new Precinct();
-        mergedPrecinct.setCanonName(precincts.get(0).getCanonName());
-        mergedPrecinct.setDisplayName(precincts.get(0).getDisplayName());
+        mergedPrecinct.setDisplayName("Merged Precinct");
         mergedPrecinct.setElecData(mergedED);
         mergedPrecinct.setDemoData(mergedDD);
 
         mergedPrecinct.setGeometry(mergedString);
+
+        // Merge election 
         return mergedPrecinct;
     }
 }

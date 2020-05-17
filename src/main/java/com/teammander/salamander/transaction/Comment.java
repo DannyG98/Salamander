@@ -14,6 +14,9 @@ import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 @Entity(name = "COMMENTS")
 public class Comment {
     int id;
@@ -32,7 +35,7 @@ public class Comment {
         this.id = id;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "owner_transaction")
     @JsonBackReference
     public Transaction getOwnerTransaction() {
@@ -52,6 +55,7 @@ public class Comment {
         this.comment = comment;
     }
 
+    @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "time_created")
     public Date getTimeCreated() {
@@ -62,6 +66,7 @@ public class Comment {
         this.timeCreated = timeCreated;
     }
 
+    @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "time_updated")
     public Date getTimeUpdated() {

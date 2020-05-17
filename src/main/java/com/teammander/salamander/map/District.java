@@ -19,7 +19,7 @@ public class District extends Region{
     State parentState;
     Set<Precinct> childPrecincts;
    
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "parent_state")
     @JsonBackReference
     public State getParentState() {
