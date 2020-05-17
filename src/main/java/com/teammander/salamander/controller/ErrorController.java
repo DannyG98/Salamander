@@ -70,7 +70,7 @@ public class ErrorController {
         return stateErrs;
     }
 
-    @GetMapping("/setErrorStatus/{errorId}")
+    @GetMapping("/setErrorStatus/{eid}")
     public void setErrorStatus(@PathVariable int eid, @RequestParam boolean resolved) {
         ErrorService es = getEs();
         DataError targetError = es.getError(eid);

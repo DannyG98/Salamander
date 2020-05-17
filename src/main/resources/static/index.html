@@ -97,6 +97,19 @@
                         <div class="sidebar-contents overflow-auto">
                         <ul class="init-menu">
                           <li>
+                            <a href='#' data-toggle="collapse"class="menu-tab-headers sidemenu-items" data-target="#edit-name">Edit Name</a>
+                            <div class="info-field collapse data-info" id="edit-name">
+                              <table class="table table-bordered table-striped">
+                                <tbody> 
+                                    <tr>         
+                                        <td><input href="#" id="new-name" min="0" contenteditable="true" style="width: 100px"><b></b></input></td>
+                                        <td><button href='#' id='submit-new-name' onclick='SideBar.uploadNewName()'>Submit</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            </div>
+                        </li>
+                          <li>
                               <a href='#' data-toggle="collapse"class="menu-tab-headers sidemenu-items" data-target="#demo-data">Edit Demographic Data</a>
                               <div class="info-field collapse data-info" id="demo-data">
                                 <table class="table table-bordered table-striped">
@@ -140,7 +153,7 @@
                             </div>
                           </li>
                           <li>
-                            <a href='#' data-toggle="collapse"class="menu-tab-headers sidemenu-items" data-target="#errors">Errors</a>
+                            <a href='#' data-toggle="collapse"class="menu-tab-headers sidemenu-items" data-target="#errors">Unresolved Errors</a>
                             <div class="info-field collapse data-info" id="errors">
                               <table class="table table-bordered table-striped">
                                 <tbody> 
@@ -166,6 +179,11 @@
                                   <tr>
                                     <td><button id="go-to-error" onclick="SideBar.findPrecinct()">Go to Precinct</button></td>
                                   </tr>
+                                  <tr>
+                                    <td>
+                                      <button id="resolved" onclick="SideBar.errorResolved()">Resolved</button>
+                                    </td>
+                                  </tr> 
                                 </tbody>
                             </table>
                             </div>

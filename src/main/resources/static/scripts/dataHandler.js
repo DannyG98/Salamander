@@ -131,7 +131,6 @@ const DataHandler = {
             },
             body: JSON.stringify(precinctList)
         }
-        // TODO waiting for endpoint to be completed
         fetch('/precinct/mergePrecinct', postTemplate).then((response) => {
             return response.text();
         }).then(() => {
@@ -139,15 +138,58 @@ const DataHandler = {
         });
     },
 
-    uploadPrecinctData: (precinctObjects) => {
+    uploadPrecinctBoundary: (precinctCName, geometry) => {
         let postTemplate = {
             method: 'post',
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
             },
-            body: JSON.stringify(precinctObjects)
+            body: JSON.stringify(geometry)
         }
-        fetch('/precinct/multiUploadPrecincts', postTemplate);
+        fetch('/precinct/updateBoundary?pCName=' + precinctCName, postTemplate).then((response) => {
+            return response.text();
+        }).then(() => {
+            DataHandler.getAllPrecinctData(LeafletMap.currentDistrict);
+        })
+    },
+
+    uploadErrorStatus: (errorID, status) => {
+        fetch(`error/setErrorStatus/${errorID}?resolved=true`).then((response) => {
+            return response.text();
+        }).then(() => {
+            DataHandler.getAllErrorData();
+        });
+    },
+
+    uploadDemoData: (precinctName, id, field, newVal) => {
+        fetch(`precinct/${precinctName}/updateDemoData/${id}/${field}/${newVal}`).then((response) => {
+            return response.text();
+        }).then(() => {
+            LeafletMap.infoBox.update(LeafletMap.currentProps);
+        })
+    },
+
+    uploadElecData: (precinctName, id, field, newVal) => {
+        fetch(`precinct/${precinctName}/updateElecData/${id}/${field}/${newVal}`).then((response) => {
+            return response.text();
+        }).then(() => {
+            LeafletMap.infoBox.update(LeafletMap.currentProps);
+        })
+    },
+
+    uploadNewPrecinct: (displayName, geometry) => {
+        let postTemplate = {
+            method: 'post',
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            },
+            body: JSON.stringify({"displayName": displayName, "geometry" : JSON.stringify(geometry)})
+        }
+        fetch(`/precinct/newPrecinct/${LeafletMap.currentDistrict}`, postTemplate).then((response) => {
+            return response.text();
+        }).then(() => {
+            DataHandler.getAllPrecinctData(LeafletMap.currentDistrict);
+        });
     },
 
     updatePrecinctData: () => {
@@ -155,8 +197,7 @@ const DataHandler = {
             case LeafletMap.modes.insert: {
                 // Add all the new precincts to the current list of precincts
                 for (let i = 0; i < LeafletMap.tempPrecinctGeojson.length; i++) {
-                    LeafletMap.precinctGeojson.push(LeafletMap.tempPrecinctGeojson[i]);
-                    LeafletMap.precincts[LeafletMap.tempPrecinctGeojson[i].properties.canonName] = LeafletMap.tempPrecinctGeojson[i]
+                    DataHandler.uploadNewPrecinct(LeafletMap.tempPrecinctGeojson[i].properties.displayName, LeafletMap.tempPrecinctGeojson[i].geometry);
                 }
                 break;
             }
@@ -183,7 +224,7 @@ const DataHandler = {
     },
 
     replacePrecinctCoordinates: () => {
-        let precinctObjects = [];
+        DataHandler.updatePrecinctGeojson();
         for (let i in LeafletMap.precinctLayer._layers) {
             let precinctName = LeafletMap.precinctLayer._layers[i].feature.properties.canonName;
             if (LeafletMap.modifiedPrecincts.indexOf(precinctName) != -1) {
@@ -193,13 +234,11 @@ const DataHandler = {
                 for (let k in coordinatesList) {
                     newPrecinctCoordinates.push([coordinatesList[k].lng, coordinatesList[k].lat]);
                 };
-                LeafletMap.precincts[precinctName].geometry.type = LeafletMap.precinctLayer._layers[i].feature.geometry.type;
-                LeafletMap.precincts[precinctName].geometry.coordinates = [newPrecinctCoordinates];
-                precinctObjects.push(LeafletMap.precincts[precinctName]);
+                let geometry = {"type": LeafletMap.precinctLayer._layers[i].feature.geometry.type, "coordinates": [newPrecinctCoordinates]}
+                DataHandler.uploadPrecinctBoundary(precinctName, geometry);
             }
         };
-        DataHandler.updatePrecinctGeojson();
-        DataHandler.uploadPrecinctData(precinctObjects);
+    
         
     },
 
@@ -249,5 +288,9 @@ const DataHandler = {
             let precinctGeojson = JsonHandler.convertToGeojson(LeafletMap.precincts[precinctCNames[i]]);
             LeafletMap.precinctGeojson.push(precinctGeojson);
         }
+    }, 
+
+    numberWithCommas: (x) => {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 }

@@ -137,21 +137,6 @@ const ToolBar = {
                                 'district': LeafletMap.currentDistrict,
                                 'canonName': "ghost_" + LeafletMap.ghostCounter,
                                 "displayName": "Ghost Precinct",
-                                "demoData": {
-                                    "demographicDataID": 1,
-                                    "population": 0,
-                                    "whitePop": 0,
-                                    "blackPop": 0,
-                                    "asianPop": 0,
-                                    "otherPop": 0
-                                },
-                                "elecData": {
-                                    "democratic": 0,
-                                    "republican": 0,
-                                    "green": 0,
-                                    "libertarian": 0,
-                                    "other": 0
-                                },
                             },
                             "geometry": 
                             {

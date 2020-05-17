@@ -1,5 +1,5 @@
 const SideBar = {
-    errorNameMapping : {"Multi Polygon" : "MULTI_POLYGON", "Enclosed" : "ENCLOSED", "Overlap": "OVERLAP", "Unclosed": "UNCLOSED", "Zero Population": "ZERO_POPULATION", "Unproportional Election": "UNPROPORTIONAL_ELEC"},
+    errorNameMapping : {"Multi Polygon" : "MULTI_POLYGON", "Enclosed" : "ENCLOSED", "Overlap": "OVERLAP", "Unclosed": "UNCLOSED", "Zero Population": "ZERO_POPULATION", "Unproportional Election": "UNPROPORTIONAL_ELEC", "Ghost": "GHOST"},
 
     init: () => {
         SideBar.initSideBarButtons();
@@ -23,8 +23,8 @@ const SideBar = {
                         LeafletMap.currentProps.demoData[key] = parseInt(inputValue);
                     }
                 });
-                LeafletMap.infoBox.update(LeafletMap.currentProps);
-                // DataHandler.uploadDemoData();
+                let precinctName = LeafletMap.currentProps.canonName;
+                DataHandler.uploadDemoData(precinctName, demoID, popType, inputValue);
             }
         });
 
@@ -33,7 +33,7 @@ const SideBar = {
             let inputValue = $('#partyValue')[0].value;
 
             if (inputValue != "" && LeafletMap.currentProps != null) {
-                let elecID = LeafletMap.currentProps.elecData.electionDataId;
+                let elecID = null;
                 let selectedElection = ToolBar.getSelectedElection();
 
                 let elections = LeafletMap.currentProps.elecData.elections;
@@ -41,13 +41,14 @@ const SideBar = {
                     if (elections[i].year == selectedElection.year && elections[i].type == selectedElection.type) {
                         Object.entries(elections[i]).forEach(([key, value]) => {
                             if (key.toLowerCase() == partyType.toLowerCase() + "votes") {
+                                elecID = LeafletMap.currentProps.elecData.elections[i].electionId;
                                 LeafletMap.currentProps.elecData.elections[i][key] = inputValue;
                             }
                         });
                     }
                 }
-                LeafletMap.infoBox.update(LeafletMap.currentProps);
-                // DataHandler.uploadDemoData();
+                let precinctName = LeafletMap.currentProps.canonName;
+                DataHandler.uploadElecData(precinctName, elecID, partyType + "Votes", inputValue);
             }
         });
     },
@@ -91,8 +92,23 @@ const SideBar = {
                 LeafletMap.map.fitBounds(value.getBounds());
                 LeafletMap.highlightNeighbors(precinctCName);
                 LeafletMap.highlightPrecinct(value, LeafletMap.highlightColors.blue, true);
+                LeafletMap.changeInfoBoxName(value.feature.properties.displayName);
             }
         });
+    },
+
+    errorResolved: () => {
+        let precinctCName = $('#error-selection')[0].value;
+        Object.entries(LeafletMap.errors).forEach(([key, value]) => {
+            if (precinctCName == value.affectedPrct) {
+                DataHandler.uploadErrorStatus(value.eid, true);
+            }
+        });
+    },
+
+    uploadNewName: () => {
+        let cName = $('#new-name')[0].value;
+        // DataHandler.uploadNewName(cName);
     }
 }
 

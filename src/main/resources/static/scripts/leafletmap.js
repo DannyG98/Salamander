@@ -58,7 +58,8 @@ const LeafletMap = {
                 LeafletMap.enableDistrictLayer(false);
                 LeafletMap.enablePrecinctLayer(false);
                 ToolBar.enableAllFilters(true);
-                LeafletMap.infoBox.update();
+                LeafletMap.currentDistrict = null;
+                LeafletMap.currentPrecinct = null;
             }    
             // Display only the district borders when zoomed out too far from the precincts
             else if (zoomLevel == 7 && LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
@@ -68,6 +69,7 @@ const LeafletMap = {
                 ToolBar.enableAllFilters(true);
                 let filter = $('#district-filter')[0];
                 filter.className = filter.className.replace(/active/g, "");
+                LeafletMap.currentPrecinct = null;
             }  
             console.log("Current Zoom Level =" + zoomLevel)
          });
@@ -90,16 +92,16 @@ const LeafletMap = {
                 Window._div.innerHTML = '<h4>U.S State Data</h4>' + (props ?
                     'Name: ' + props.displayName + '<br/>' + 
                     '<b>Demographic Data</b>' +
-                    '<br/>Asian: ' + props.demoData.asianPop +
-                    '<br/> Black: ' + props.demoData.blackPop + 
-                    '<br/>White: ' + props.demoData.whitePop +
-                    '<br/>Other: ' + props.demoData.otherPop + '<br/>' +
+                    '<br/>Asian: ' + DataHandler.numberWithCommas(props.demoData.asianPop) +
+                    '<br/> Black: ' + DataHandler.numberWithCommas(props.demoData.blackPop) + 
+                    '<br/>White: ' + DataHandler.numberWithCommas(props.demoData.whitePop) +
+                    '<br/>Other: ' + DataHandler.numberWithCommas(props.demoData.otherPop) + '<br/>' +
                     '<b>Electon Data</b>' +
-                    '<br/>Democratic: ' + props.elecData.elections[index].democraticVotes +
-                    '<br/>Republican: ' + props.elecData.elections[index].republicanVotes +
-                    '<br/>Libertarian: ' + props.elecData.elections[index].libertarianVotes+
-                    '<br/>Green: ' + props.elecData.elections[index].greenVotes +
-                    '<br/>Other: ' + props.elecData.elections[index].otherVotes 
+                    '<br/>Democratic: ' + DataHandler.numberWithCommas(props.elecData.elections[index].democraticVotes) +
+                    '<br/>Republican: ' + DataHandler.numberWithCommas(props.elecData.elections[index].republicanVotes) +
+                    '<br/>Libertarian: ' + DataHandler.numberWithCommas(props.elecData.elections[index].libertarianVotes) +
+                    '<br/>Green: ' + DataHandler.numberWithCommas(props.elecData.elections[index].greenVotes) +
+                    '<br/>Other: ' + DataHandler.numberWithCommas(props.elecData.elections[index].otherVotes) 
                     : '');
 
                 //  '<b>' + props.name + '</b><br />' + props.density + ' people / mi<sup>2</sup>'
