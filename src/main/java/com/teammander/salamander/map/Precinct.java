@@ -122,6 +122,8 @@ public class Precinct extends Region{
         mergedPrecinct.setDemoData(mergedDD);
 
         mergedPrecinct.setGeometry(mergedString);
+        mergedPrecinct.setParentDistrict(precincts.get(0).getParentDistrict());
+        mergedPrecinct.setNeighborCNames(new HashSet<>());
 
         // Merge election 
         return mergedPrecinct;

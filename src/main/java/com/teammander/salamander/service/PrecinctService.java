@@ -70,7 +70,7 @@ public class PrecinctService {
     public void rmPrecinct(Precinct precinct) {
         PrecinctRepository pr = getPr();
         String targetCName = precinct.getCanonName();
-        Set<String> neighbors = precinct.getNeighborCNames();
+        Set<String> neighbors = new HashSet<>(precinct.getNeighborCNames());
         District parent = precinct.getParentDistrict();
 
         for (String neighbor : neighbors) {
@@ -256,16 +256,20 @@ public class PrecinctService {
         for (Precinct p : precincts) {
             neighbors.addAll(p.getNeighborCNames());
             mergedNames.add(p.getCanonName());
+        }
+
+        for (Precinct p : precincts) {
             rmPrecinct(p);
         }
 
         // Create neighbor links for the new precinct
         neighbors.removeAll(mergedNames);
+        pr.saveAndFlush(mergedPrecinct);
         for (String s : neighbors) {
             addNeighborUntracked(canonName, s);
         }
+        pr.flush();
 
-        pr.saveAndFlush(mergedPrecinct);
         return mergedPrecinct;
     }
 
