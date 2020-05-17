@@ -35,6 +35,7 @@ const LeafletMap = {
         LeafletMap.initLeafletLayers();
         LeafletMap.initZoomHandlers();
         LeafletMap.initInfoBox();
+        LeafletMap.initLayerHandlers();
     },
 
     initData: () => {
@@ -115,6 +116,36 @@ const LeafletMap = {
         };
         LeafletMap.infoBox.addTo(LeafletMap.map);
 
+    },
+
+    initLayerHandlers: () => {
+        LeafletMap.map.on('pm:create', e => {
+            LeafletMap.map.removeLayer(e.layer);
+            let precinctShape = e.shape;
+            let newPrecinctCoordinates = [];
+            let coordinatesList = e.layer._latlngs[0];
+            for (let i = 0; i < coordinatesList.length; i++) {
+                newPrecinctCoordinates.push([coordinatesList[i].lng, coordinatesList[i].lat]);
+            };
+            newPrecinctCoordinates.push([coordinatesList[0].lng, coordinatesList[0].lat]);
+            LeafletMap.tempPrecinctGeojson.push( 
+            {
+                "type": "Feature",
+                "properties": 
+                {
+                    'district': LeafletMap.currentDistrict,
+                    'canonName': "ghost_" + LeafletMap.ghostCounter,
+                    "displayName": "Ghost Precinct",
+                },
+                "geometry": 
+                {
+                    "type": precinctShape,
+                    "coordinates": [newPrecinctCoordinates]
+                }
+            });
+            LeafletMap.updateTempLayer();
+            LeafletMap.map.pm.enableDraw('Polygon');
+        });
     },
 
     onEachFeature: (feature, layer) => {

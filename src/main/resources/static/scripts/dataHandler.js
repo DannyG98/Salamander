@@ -138,6 +138,9 @@ const DataHandler = {
         });
     },
 
+    uploadPrecinctName: (precinctCName, newVal) => {
+    },
+
     uploadPrecinctBoundary: (precinctCName, geometry) => {
         let postTemplate = {
             method: 'post',

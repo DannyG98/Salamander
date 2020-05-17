@@ -121,32 +121,6 @@ const ToolBar = {
                     LeafletMap.currentMode = LeafletMap.modes.insert;
                     ToolBar.toggleEditButtons();
                     LeafletMap.map.pm.enableDraw('Polygon');
-                    LeafletMap.map.on('pm:create', e => {
-                        LeafletMap.map.removeLayer(e.layer);
-                        let precinctShape = e.shape;
-                        let newPrecinctCoordinates = [];
-                        let coordinatesList = e.layer._latlngs[0];
-                        for (let i = 0; i < coordinatesList.length; i++) {
-                            newPrecinctCoordinates.push([coordinatesList[i].lng, coordinatesList[i].lat])
-                        };
-                        LeafletMap.tempPrecinctGeojson.push( 
-                        {
-                            "type": "Feature",
-                            "properties": 
-                            {
-                                'district': LeafletMap.currentDistrict,
-                                'canonName': "ghost_" + LeafletMap.ghostCounter,
-                                "displayName": "Ghost Precinct",
-                            },
-                            "geometry": 
-                            {
-                                "type": precinctShape,
-                                "coordinates": [newPrecinctCoordinates]
-                            }
-                        });
-                        LeafletMap.updateTempLayer();
-                        LeafletMap.map.pm.enableDraw('Polygon');
-                    });
                 }
                 else {
                     alert("Please select a district first.");
