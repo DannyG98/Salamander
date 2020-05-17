@@ -16,6 +16,7 @@ import com.teammander.salamander.data.ElectionType;
 import com.teammander.salamander.data.Year;
 import com.teammander.salamander.map.District;
 import com.teammander.salamander.map.Precinct;
+import com.teammander.salamander.map.PrecinctType;
 import com.teammander.salamander.repository.ElectionRepository;
 import com.teammander.salamander.repository.PrecinctRepository;
 import com.teammander.salamander.transaction.Transaction;
@@ -373,27 +374,27 @@ public class PrecinctService {
         return targetPrecinct;
     }
 
+    public Precinct setGhostPrecinct(Precinct precinct) {
+        PrecinctRepository pr = getPr();
+        PrecinctType beforeType = precinct.getType();
+        precinct.initialize();
+        precinct.setDisplayName("Ghost Precinct");
+        precinct.setType(PrecinctType.GHOST);
+
+        pr.flush();
+        TransactionService ts = getTs();
+        ts.logInitializeGhost(precinct, beforeType);
+
+        return precinct;
+    }
+
+
     public Precinct createNewPrecinct(Precinct precinct, String parentName) {
         PrecinctRepository pr = getPr();
         DistrictService ds = getDs();
         District parentDistrict = ds.getDistrict(parentName);
         Random rand = new Random();
-        ElectionData newED = new ElectionData();
-        DemographicData newDD = new DemographicData();
-        Election pres16 = new Election();
-        Election cong16 = new Election();
-        Election cong18 = new Election();
-
-        pres16.setType(ElectionType.PRESIDENTIAL);
-        pres16.setYear(Year.SIXTEEN);
-        cong16.setType(ElectionType.CONGRESSIONAL);
-        cong16.setYear(Year.SIXTEEN);
-        cong18.setType(ElectionType.CONGRESSIONAL);
-        cong18.setYear(Year.EIGHTEEN);
-        newED.setElections(new ArrayList<>(Arrays.asList(pres16, cong16, cong18)));
-
-        precinct.setElecData(newED);
-        precinct.setDemoData(newDD);
+        precinct.initialize();
 
         String canonName = String.format("ClientGenerated_%d",Math.abs(rand.nextLong()));
         while(pr.existsById(canonName)) {
@@ -401,6 +402,7 @@ public class PrecinctService {
         }
         precinct.setParentDistrict(parentDistrict);
         precinct.setCanonName(canonName);
+        precinct.setType(PrecinctType.GHOST);
         ds.insertChildPrecinct(parentName, precinct);
         pr.saveAndFlush(precinct);
 

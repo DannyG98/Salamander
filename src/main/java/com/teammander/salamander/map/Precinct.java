@@ -1,6 +1,7 @@
 package com.teammander.salamander.map;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -20,6 +21,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.teammander.salamander.data.DemographicData;
 import com.teammander.salamander.data.Election;
 import com.teammander.salamander.data.ElectionData;
+import com.teammander.salamander.data.ElectionType;
+import com.teammander.salamander.data.Year;
 
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
@@ -92,6 +95,28 @@ public class Precinct extends Region{
         throw new NoSuchElementException("Cannot find election with eid: " + eid);
     }
 
+    /**
+     * Initializes the demo/election data for a precinct with zero.
+     */
+    public void initialize() {
+        ElectionData newED = new ElectionData();
+        DemographicData newDD = new DemographicData();
+        Election pres16 = new Election();
+        Election cong16 = new Election();
+        Election cong18 = new Election();
+
+        pres16.setType(ElectionType.PRESIDENTIAL);
+        pres16.setYear(Year.SIXTEEN);
+        cong16.setType(ElectionType.CONGRESSIONAL);
+        cong16.setYear(Year.SIXTEEN);
+        cong18.setType(ElectionType.CONGRESSIONAL);
+        cong18.setYear(Year.EIGHTEEN);
+        newED.setElections(new ArrayList<>(Arrays.asList(pres16, cong16, cong18)));
+
+        this.setElecData(newED);
+        this.setDemoData(newDD);
+    }
+
     public static Precinct mergePrecincts(List<Precinct> precincts) {
         List<Geometry> allGeoms = new ArrayList<>();
         List<ElectionData> allED = new ArrayList<>();
@@ -118,6 +143,7 @@ public class Precinct extends Region{
 
         Precinct mergedPrecinct = new Precinct();
         mergedPrecinct.setDisplayName("Merged Precinct");
+        mergedPrecinct.setType(PrecinctType.NORMAL);
         mergedPrecinct.setElecData(mergedED);
         mergedPrecinct.setDemoData(mergedDD);
 

@@ -1,7 +1,9 @@
 package com.teammander.salamander.service;
 
 import com.teammander.salamander.data.Election;
+import com.teammander.salamander.map.DataError;
 import com.teammander.salamander.map.Precinct;
+import com.teammander.salamander.map.PrecinctType;
 import com.teammander.salamander.repository.CommentRepository;
 import com.teammander.salamander.repository.TransactionRepository;
 import com.teammander.salamander.transaction.Comment;
@@ -145,6 +147,32 @@ public class TransactionService {
         nTrans.setWhat("Boundary Data");
         nTrans.setBefore(oldGeom);
         nTrans.setAfter(newGeom);
+        addTransaction(nTrans);
+    }
+
+    public void logInitializeGhost(Precinct targetPrecinct, PrecinctType beforeType) {
+        Transaction nTrans = new Transaction();
+        nTrans.setTransType(TransactionType.INIT_GHOST);
+        nTrans.setWhoCanon(targetPrecinct.getCanonName());
+        nTrans.setWhoDisplay(targetPrecinct.getDisplayName());
+        nTrans.setWhat("Initialize Ghost Precinct");
+        nTrans.setBefore(beforeType.toString());
+        nTrans.setAfter(targetPrecinct.getType().toString());
+        addTransaction(nTrans);
+    }
+
+    public void logErrorStatusChange(DataError targetError, boolean oldStatus, boolean newStatus) {
+        Transaction nTrans = new Transaction();
+        nTrans.setTransType(TransactionType.ERROR_RESOLUTION);
+        nTrans.setWhoCanon(targetError.getAffectedPrct());
+        nTrans.setWhoDisplay(targetError.getPrecinctDisplayName());
+        String errType = targetError.getEType().toString();
+        String whatString = String.format("%s Error Status Change", errType);
+        nTrans.setWhat(whatString);
+        String beforeString = Boolean.toString(oldStatus);
+        String afterString = Boolean.toString(newStatus);
+        nTrans.setBefore(beforeString);
+        nTrans.setAfter(afterString);
         addTransaction(nTrans);
     }
 }
