@@ -32,7 +32,7 @@ public class Comment {
         this.id = id;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "owner_transaction")
     @JsonBackReference
     public Transaction getOwnerTransaction() {

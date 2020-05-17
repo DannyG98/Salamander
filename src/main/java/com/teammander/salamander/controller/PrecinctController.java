@@ -40,7 +40,7 @@ public class PrecinctController {
         return this.ds;
     }
 
-    @GetMapping("/getPrecinct/{precinctCanonName}")
+    @GetMapping("/getPrecinct/{canonName}")
     public Precinct getPrecinct(@PathVariable String canonName) {
         PrecinctService ps = getPs();
         Precinct foundPrecinct = ps.getPrecinct(canonName);

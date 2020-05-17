@@ -1,6 +1,7 @@
 package com.teammander.salamander.map;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -50,7 +51,7 @@ public class Precinct extends Region{
         neighborCNames.remove(neighCName);
     }
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "parent_district")
     @JsonBackReference
     public District getParentDistrict() {
@@ -95,6 +96,8 @@ public class Precinct extends Region{
         List<Geometry> allGeoms = new ArrayList<>();
         List<ElectionData> allED = new ArrayList<>();
         List<DemographicData> allDD = new ArrayList<>();
+        Set<String> neighbors = new HashSet<>();
+        Set<String> mergedNames = new HashSet<>();
         GeoJSONReader reader = new GeoJSONReader();
         GeoJSONWriter writer = new GeoJSONWriter();
         // Aggregate all the fields into lists
@@ -103,6 +106,8 @@ public class Precinct extends Region{
             allGeoms.add(newGeom);
             allED.add(p.getElecData());
             allDD.add(p.getDemoData());
+            neighbors.addAll(p.getNeighborCNames());
+            mergedNames.add(p.getCanonName());
         }
         // Merge Geometries
         GeometryFactory gf = new GeometryFactory();
@@ -122,6 +127,10 @@ public class Precinct extends Region{
         mergedPrecinct.setDemoData(mergedDD);
 
         mergedPrecinct.setGeometry(mergedString);
+        neighbors.removeAll(mergedNames);
+        mergedPrecinct.setNeighborCNames(neighbors);
+
+        // Merge election 
         return mergedPrecinct;
     }
 }

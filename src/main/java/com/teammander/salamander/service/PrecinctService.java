@@ -53,11 +53,6 @@ public class PrecinctService {
         return this.ts;
     }
 
-    public District getParentDistrict(Precinct precinct) {
-        District parentDistrict = precinct.getParentDistrict();
-        return parentDistrict;
-    }
-
     public Precinct getPrecinct(String canonName) {
         PrecinctRepository pr = getPr();
         Optional<Precinct> queryResult = pr.findById(canonName);
@@ -75,7 +70,7 @@ public class PrecinctService {
         PrecinctRepository pr = getPr();
         String targetCName = precinct.getCanonName();
         Set<String> neighbors = precinct.getNeighborCNames();
-        District parent = getParentDistrict(precinct);
+        District parent = precinct.getParentDistrict();
 
         for (String neighbor : neighbors) {
             deleteNeighbor(neighbor, targetCName);
