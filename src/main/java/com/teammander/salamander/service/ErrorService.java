@@ -81,7 +81,7 @@ public class ErrorService {
 
     public List<DataError> getPrecinctErrors(String precinctName, boolean status) {
         ErrorRepository er = getEr();
-        List<DataError> result = er.findAllByAffectedPrecinctAndResolvedEquals(precinctName, status);
+        List<DataError> result = er.findAllByAffectedPrctAndResolvedEquals(precinctName, status);
         return result;
     }
 
