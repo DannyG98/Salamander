@@ -1,4 +1,6 @@
 const SideBar = {
+    errorNameMapping : {"Multi Polygon" : "MULTI_POLYGON", "Enclosed" : "ENCLOSED", "Overlap": "OVERLAP", "Unclosed": "UNCLOSED", "Zero Population": "ZERO_POPULATION", "Unproportional Election": "UNPROPORTIONAL_ELEC"},
+
     init: () => {
         SideBar.initSideBarButtons();
         SideBar.initErrors();
@@ -51,16 +53,47 @@ const SideBar = {
     },
 
     initErrors: () => {
-        // Call DataHandler to get errors from server
-        let errorsList = [1,2,3,4,5,6];
-        let errorSelection = $('#error-selection')[0];
-        for(let i = 0; i < errorsList.length; i++) {
-            let opt = document.createElement('option');
-            opt.value = i;
-            opt.innerHTML = 'Error ' + i;
-            errorSelection.appendChild(opt);
-        }
+        DataHandler.getAllErrorData();
     },
+    
+    displaySelectedTypeErrors: () => {
+        let selectElement = $('#error-type-selection')[0];
+        let errorType = SideBar.getErrorName(selectElement.value);
+        // 
+        let errorSelection = $('#error-selection').empty()[0];
+        Object.entries(LeafletMap.errors).forEach(([key, value]) => {
+            if (value.etype == errorType && value.affectedDistrict == LeafletMap.currentDistrict) {
+                let opt = document.createElement('option');
+                opt.value = value.affectedPrct;
+                opt.innerHTML = value.precinctDisplayName;
+                errorSelection.appendChild(opt);
+            }
+        });
+        
+    },
+
+    getErrorName: (name) => {
+        let errorName = null;
+        Object.entries(SideBar.errorNameMapping).forEach(([key, value]) => {
+            if (key == name) {
+                errorName = value;
+            }
+        });
+        return errorName;
+    },
+
+    findPrecinct: () => {
+        let precinctCName = $('#error-selection')[0].value;
+        let layers = LeafletMap.precinctLayer._layers;
+        Object.entries(layers).forEach(([, value]) => {
+            let cName = value.feature.properties.canonName;
+            if (precinctCName == cName) {
+                LeafletMap.map.fitBounds(value.getBounds());
+                LeafletMap.highlightNeighbors(precinctCName);
+                LeafletMap.highlightPrecinct(value, LeafletMap.highlightColors.blue, true);
+            }
+        });
+    }
 }
 
 SideBar.init();

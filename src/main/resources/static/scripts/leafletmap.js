@@ -14,6 +14,7 @@ const LeafletMap = {
     states: {},
     districts: {},
     precincts: {},
+    errors: {},
     ghostCounter: 0,
     currentState: null,
     currentDistrict: null,
@@ -57,6 +58,7 @@ const LeafletMap = {
                 LeafletMap.enableDistrictLayer(false);
                 LeafletMap.enablePrecinctLayer(false);
                 ToolBar.enableAllFilters(true);
+                LeafletMap.infoBox.update();
             }    
             // Display only the district borders when zoomed out too far from the precincts
             else if (zoomLevel == 7 && LeafletMap.map.hasLayer(LeafletMap.precinctLayer)) {
@@ -123,6 +125,23 @@ const LeafletMap = {
   
     highlightFeature: (event, hexColor, bringToFront) => {
         let layer = event.target;
+        layer.setStyle({
+            weight: 4,
+            color: hexColor,
+            dashArray: '',
+            fillOpacity: 0.2
+        });
+        if (bringToFront) {
+            layer.bringToFront();  
+        }
+        else {
+            layer.bringToBack();
+        }
+        LeafletMap.currentProps = layer.feature.properties;
+        LeafletMap.infoBox.update(layer.feature.properties);
+    },
+
+    highlightPrecinct: (layer, hexColor, bringToFront) => {
         layer.setStyle({
             weight: 4,
             color: hexColor,
@@ -212,6 +231,7 @@ const LeafletMap = {
             let filter = $('#district-filter')[0];
             filter.className = filter.className.replace(/active/g, "");
             LeafletMap.zoomToFeature(event);
+            SideBar.displaySelectedTypeErrors();
         }
         // The clicked layer is a district
         else if (LeafletMap.districts[canonicalName] != null) {
@@ -225,6 +245,7 @@ const LeafletMap = {
             let filter = $('#precinct-filter')[0];
             filter.className = filter.className.replace(/active/g, "");
             LeafletMap.zoomToFeature(event);
+            SideBar.displaySelectedTypeErrors();
         }
           // The clicked layer is a precinct
         else if (LeafletMap.precincts[canonicalName] != null) {

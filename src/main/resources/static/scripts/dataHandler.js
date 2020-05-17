@@ -47,6 +47,20 @@ const DataHandler = {
         });
     },
 
+    getAllErrorData: () => {
+        fetch('/error/unresolved').then((response) => {
+            return response.text();
+        }).then((text) => {
+            LeafletMap.errors = {};
+            let errorData = JSON.parse(text);
+            for (let i = 0; i < errorData.length; i++) {
+                let errorID = errorData[i].eid;
+                LeafletMap.errors[errorID] = errorData[i];
+            }
+            SideBar.displaySelectedTypeErrors();
+        });
+    },
+
     getDistrictData: (districtList) => {
         if (districtList != null) {
             let postTemplate = {
@@ -147,7 +161,7 @@ const DataHandler = {
                 break;
             }
             case LeafletMap.modes.merge: {
-                DataHandler.mergePrecincts();
+                DataHandler.mergePrecincts(LeafletMap.selectedPrecincts);
                 break;
             }
             case LeafletMap.modes.modify: {
