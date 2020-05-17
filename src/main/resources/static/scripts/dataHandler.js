@@ -195,6 +195,29 @@ const DataHandler = {
         });
     },
 
+    uploadNewName: (precinctName, newName)  => {
+        fetch(`precinct/${precinctName}/rename/${newName}`).then((response) => {
+            return response.text();
+        }).then(() => {
+            DataHandler.getAllPrecinctData(LeafletMap.currentDistrict);
+            setTimeout(() => {
+                let precinctCName = LeafletMap.currentProps.canonName;
+                let layers = LeafletMap.precinctLayer._layers;
+                Object.entries(layers).forEach(([, value]) => {
+                    let cName = value.feature.properties.canonName;
+                    if (precinctCName == cName) {
+                        LeafletMap.highlightNeighbors(precinctCName);
+                        LeafletMap.highlightPrecinct(value, LeafletMap.highlightColors.blue, true);
+                        LeafletMap.currentProps = LeafletMap.precincts[LeafletMap.currentProps.canonName];
+                        LeafletMap.infoBox.update(LeafletMap.currentProps);
+                        LeafletMap.changeInfoBoxName(LeafletMap.currentProps.displayName);
+                    }
+                });
+
+            },1000);
+        })
+    },
+
     updatePrecinctData: () => {
         switch(LeafletMap.currentMode) {
             case LeafletMap.modes.insert: {

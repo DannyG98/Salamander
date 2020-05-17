@@ -107,8 +107,9 @@ const SideBar = {
     },
 
     uploadNewName: () => {
-        let cName = $('#new-name')[0].value;
-        // DataHandler.uploadNewName(cName);
+        let newName = $('#new-name')[0].value;
+        let precinctName = LeafletMap.currentProps.canonName;
+        DataHandler.uploadNewName(precinctName, newName);
     }
 }
 
