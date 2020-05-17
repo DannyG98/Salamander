@@ -1,9 +1,13 @@
 package com.teammander.salamander.service;
 
+import com.teammander.salamander.data.Election;
+import com.teammander.salamander.map.Precinct;
 import com.teammander.salamander.repository.CommentRepository;
 import com.teammander.salamander.repository.TransactionRepository;
 import com.teammander.salamander.transaction.Comment;
 import com.teammander.salamander.transaction.Transaction;
+import com.teammander.salamander.transaction.TransactionType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,5 +54,97 @@ public class TransactionService {
         Comment targetComment = cr.findById(cid).orElseThrow();
         targetComment.setComment(update);
         cr.flush();
+    }
+
+    public void logNewPrecinct(Precinct targetPrecinct) {
+        Transaction nTrans = new Transaction();
+        nTrans.setTransType(TransactionType.NEW_PRECINCT);
+        nTrans.setWhoCanon(targetPrecinct.getCanonName());
+        nTrans.setWhoDisplay(targetPrecinct.getDisplayName());
+        nTrans.setWhat("New Precinct");
+        addTransaction(nTrans);
+    }
+
+    public void logMergePrecinct(Precinct targetPrecinct, String mergedString) {
+        Transaction nTrans = new Transaction();
+        nTrans.setTransType(TransactionType.MERGE_PRECINCT);
+        nTrans.setWhat("Merge Precinct");
+        nTrans.setWhoCanon(targetPrecinct.getCanonName());
+        nTrans.setWhoDisplay(targetPrecinct.getDisplayName());
+        nTrans.setBefore(mergedString);
+        nTrans.setAfter(targetPrecinct.getCanonName());
+        addTransaction(nTrans);
+    }
+
+    public void logRenamePrecinct(Precinct targetPrecinct, String beforeName, String afterName) {
+        Transaction nTrans = new Transaction();
+        nTrans.setTransType(TransactionType.RENAME_PRECINCT);
+        nTrans.setWhat("Display Name Change");
+        nTrans.setWhoCanon(targetPrecinct.getCanonName());
+        nTrans.setWhoDisplay(beforeName);
+        nTrans.setBefore(beforeName);
+        nTrans.setAfter(afterName);
+        addTransaction(nTrans);
+    }
+
+    public void logChangeNeighbor(Precinct p1, Precinct p2, boolean add) {
+        String edgePresent = " <--> ";
+        String edgeAbsent = " <-/-> ";
+        String beforeEdge;
+        String afterEdge;
+        if (add) {
+            beforeEdge = edgeAbsent;
+            afterEdge = edgePresent;
+        } else {
+            beforeEdge = edgePresent;
+            afterEdge = edgeAbsent;
+        }
+
+        Transaction nTrans = new Transaction();
+        String p1Display = p1.getDisplayName();
+        String p2Display = p2.getDisplayName();
+        String precinctName1 = p1.getCanonName();
+        String precinctName2 = p2.getCanonName();
+        nTrans.setTransType(TransactionType.CHANGE_NEIGHBOR);
+        nTrans.setBefore(p1Display + beforeEdge + p2Display);
+        nTrans.setAfter(p1Display + afterEdge + p2Display);
+        nTrans.setWhoCanon(precinctName1 + ", " + precinctName2);
+        nTrans.setWhoDisplay(p1Display + ", " + p2Display);
+        nTrans.setWhat("Neighborship");
+        addTransaction(nTrans);
+    }
+
+    public void logDemoDataChange(Precinct targetPrecinct, String field, String beforeVal, String afterVal) {
+        Transaction nTrans = new Transaction();
+        nTrans.setTransType(TransactionType.CHANGE_DEMODATA);
+        nTrans.setWhoCanon(targetPrecinct.getCanonName());
+        nTrans.setWhoDisplay(targetPrecinct.getDisplayName());
+        nTrans.setWhat(field);
+        nTrans.setBefore(beforeVal);
+        nTrans.setAfter(afterVal);
+        addTransaction(nTrans);
+    }
+
+    public void logElecDataChange(Precinct targetPrecinct, Election elec, String field, String beforeVal, String afterVal) {
+        Transaction nTrans = new Transaction();
+        String whatString = String.format("%s %s %s", elec.getYear(), elec.getType(), field);
+        nTrans.setTransType(TransactionType.CHANGE_ELECDATA);
+        nTrans.setWhoCanon(targetPrecinct.getCanonName());
+        nTrans.setWhoDisplay(targetPrecinct.getDisplayName());
+        nTrans.setWhat(whatString);
+        nTrans.setBefore(beforeVal);
+        nTrans.setAfter(afterVal);
+        addTransaction(nTrans);
+    }
+
+    public void logBoundaryChange(Precinct targetPrecinct, String oldGeom, String newGeom) {
+        Transaction nTrans = new Transaction();
+        nTrans.setTransType(TransactionType.CHANGE_BOUNDARY);
+        nTrans.setWhoCanon(targetPrecinct.getCanonName());
+        nTrans.setWhoDisplay(targetPrecinct.getDisplayName());
+        nTrans.setWhat("Boundary Data");
+        nTrans.setBefore(oldGeom);
+        nTrans.setAfter(newGeom);
+        addTransaction(nTrans);
     }
 }

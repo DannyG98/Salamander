@@ -67,6 +67,12 @@ public class PrecinctController {
         ps.remove(precinct1);
     }
 
+    @GetMapping("/{precinctName}/rename/{newName}")
+    public void renamePrecinctDisplay(@PathVariable String precinctName, @PathVariable String newName) {
+        PrecinctService ps = getPs();
+        ps.renamePrecinctDisplay(precinctName, newName);
+    }
+
     /**
      * Inserts/Deletes neighbors from a specified precinct. Will propogate changes
      * to the neighbors to maintain proper state.
