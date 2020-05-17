@@ -96,8 +96,6 @@ public class Precinct extends Region{
         List<Geometry> allGeoms = new ArrayList<>();
         List<ElectionData> allED = new ArrayList<>();
         List<DemographicData> allDD = new ArrayList<>();
-        Set<String> neighbors = new HashSet<>();
-        Set<String> mergedNames = new HashSet<>();
         GeoJSONReader reader = new GeoJSONReader();
         GeoJSONWriter writer = new GeoJSONWriter();
         // Aggregate all the fields into lists
@@ -106,8 +104,6 @@ public class Precinct extends Region{
             allGeoms.add(newGeom);
             allED.add(p.getElecData());
             allDD.add(p.getDemoData());
-            neighbors.addAll(p.getNeighborCNames());
-            mergedNames.add(p.getCanonName());
         }
         // Merge Geometries
         GeometryFactory gf = new GeometryFactory();
@@ -121,14 +117,11 @@ public class Precinct extends Region{
         DemographicData mergedDD = DemographicData.mergeDemoData(allDD);
 
         Precinct mergedPrecinct = new Precinct();
-        mergedPrecinct.setCanonName(precincts.get(0).getCanonName());
-        mergedPrecinct.setDisplayName(precincts.get(0).getDisplayName());
+        mergedPrecinct.setDisplayName("Merged Precinct");
         mergedPrecinct.setElecData(mergedED);
         mergedPrecinct.setDemoData(mergedDD);
 
         mergedPrecinct.setGeometry(mergedString);
-        neighbors.removeAll(mergedNames);
-        mergedPrecinct.setNeighborCNames(neighbors);
 
         // Merge election 
         return mergedPrecinct;
