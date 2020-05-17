@@ -3,6 +3,7 @@ package com.teammander.salamander.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -125,21 +126,13 @@ public class PrecinctService {
             return precinctName2;
         }
 
-        TransactionService ts = getTs();
-        Transaction nTrans = new Transaction();
-        String p1Display = p1.getDisplayName();
-        String p2Display = p2.getDisplayName();
-        nTrans.setTransType(TransactionType.CHANGE_NEIGHBOR);
-        nTrans.setBefore(p1Display + "<-/->" + p2Display);
-        nTrans.setAfter(p1Display + " <--> " + p2Display);
-        nTrans.setWhoCanon(precinctName1 + ", " + precinctName2);
-        nTrans.setWhoDisplay(p1Display + ", " + p2Display);
-        nTrans.setWhat("Neighborship");
-        ts.addTransaction(nTrans);
-
         p1.addNeighbor(p2);
         p2.addNeighbor(p1);
         pr.flush();
+
+        TransactionService ts = getTs();
+        ts.logChangeNeighbor(p1, p2, true);
+
         return null;
     }
 
@@ -162,19 +155,11 @@ public class PrecinctService {
         p1.deleteNeighbor(p2);
         p2.deleteNeighbor(p1);
 
-        TransactionService ts = getTs();
-        Transaction nTrans = new Transaction();
-        String p1Display = p1.getDisplayName();
-        String p2Display = p2.getDisplayName();
-        nTrans.setTransType(TransactionType.CHANGE_NEIGHBOR);
-        nTrans.setBefore(p1Display + " <--> " + p2Display);
-        nTrans.setAfter(p1Display + "<-/->" + p2Display);
-        nTrans.setWhoCanon(precinctName1 + ", " + precinctName2);
-        nTrans.setWhoDisplay(p1Display + ", " + p2Display);
-        nTrans.setWhat("Neighborship");
-        ts.addTransaction(nTrans);
-
         pr.flush();
+
+        TransactionService ts = getTs();
+        ts.logChangeNeighbor(p1, p2, false);
+
         return null;
     }
 
@@ -270,6 +255,17 @@ public class PrecinctService {
         }
         pr.flush();
 
+        TransactionService ts = getTs();
+        Iterator<String> iter = mergedNames.iterator();
+        String beforeString = "";
+        if (iter.hasNext()) {
+            beforeString += iter.next();
+        }
+        while (iter.hasNext()) {
+            beforeString += String.format(", %s", iter.next());
+        }
+        ts.logMergePrecinct(mergedPrecinct, beforeString);
+
         return mergedPrecinct;
     }
 
@@ -312,14 +308,7 @@ public class PrecinctService {
         pr.flush();
 
         TransactionService ts = getTs();
-        Transaction nTrans = new Transaction();
-        nTrans.setTransType(TransactionType.CHANGE_DEMODATA);
-        nTrans.setWhoCanon(targetPrecinct.getCanonName());
-        nTrans.setWhoDisplay(targetPrecinct.getDisplayName());
-        nTrans.setWhat(field);
-        nTrans.setBefore(Integer.toString(beforeVal));
-        nTrans.setAfter(Integer.toString(newVal));
-        ts.addTransaction(nTrans);
+        ts.logDemoDataChange(targetPrecinct, field, Integer.toString(beforeVal), Integer.toString(newVal));
 
         return targetPrecinct;
     }
@@ -336,14 +325,7 @@ public class PrecinctService {
         pr.flush();
 
         TransactionService ts = getTs();
-        Transaction nTrans = new Transaction();
-        nTrans.setTransType(TransactionType.CHANGE_BOUNDARY);
-        nTrans.setWhoCanon(targetPrecinct.getCanonName());
-        nTrans.setWhoDisplay(targetPrecinct.getDisplayName());
-        nTrans.setWhat("Boundary Data");
-        nTrans.setBefore(oldGeometry);
-        nTrans.setAfter(geometry);
-        ts.addTransaction(nTrans);
+        ts.logBoundaryChange(targetPrecinct, oldGeometry, geometry);
 
         return targetPrecinct;
     }
@@ -381,18 +363,13 @@ public class PrecinctService {
             throw new IllegalArgumentException(field);
         }
 
-        TransactionService ts = getTs();
-        Transaction nTrans = new Transaction();
-        String whatString = String.format("%s %s %s", elec.getYear(), elec.getType(), field);
-        nTrans.setTransType(TransactionType.CHANGE_ELECDATA);
-        nTrans.setWhoCanon(targetPrecinct.getCanonName());
-        nTrans.setWhoDisplay(targetPrecinct.getDisplayName());
-        nTrans.setWhat(whatString);
-        nTrans.setBefore(Integer.toString(beforeVal));
-        nTrans.setAfter(Integer.toString(newVal));
-        ts.addTransaction(nTrans);
-
         pr.flush();
+
+        TransactionService ts = getTs();
+        String bv = Integer.toString(beforeVal);
+        String nv = Integer.toString(newVal);
+        ts.logElecDataChange(targetPrecinct, elec, field, bv, nv);
+        
         return targetPrecinct;
     }
 
@@ -428,14 +405,20 @@ public class PrecinctService {
         pr.saveAndFlush(precinct);
 
         TransactionService ts = getTs();
-        Transaction nTrans = new Transaction();
-        nTrans.setTransType(TransactionType.NEW_PRECINCT);
-        nTrans.setWhoCanon(precinct.getCanonName());
-        nTrans.setWhoDisplay(precinct.getDisplayName());
-        nTrans.setWhat("New Precinct");
-        ts.addTransaction(nTrans);
+        ts.logNewPrecinct(precinct);
 
         return precinct;
+    }
+
+    public void renamePrecinctDisplay(String precinctCName, String newName) {
+        PrecinctRepository pr = getPr();
+        Precinct targetPrecinct = getPrecinct(precinctCName);
+        String beforeName = targetPrecinct.getDisplayName();
+        targetPrecinct.setDisplayName(newName);
+        pr.flush();
+
+        TransactionService ts = getTs();
+        ts.logRenamePrecinct(targetPrecinct, beforeName, newName);
     }
 
     public void insertPrecinct(Precinct precinct, Boolean flush) {
