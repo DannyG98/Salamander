@@ -374,8 +374,12 @@ public class PrecinctService {
         return targetPrecinct;
     }
 
-    public Precinct setGhostPrecinct(Precinct precinct) {
+    public Precinct setGhostPrecinct(String precinctName) {
         PrecinctRepository pr = getPr();
+        Precinct precinct = getPrecinct(precinctName);
+        if (precinct == null) {
+            return null;
+        }
         PrecinctType beforeType = precinct.getType();
         precinct.initialize();
         precinct.setDisplayName("Ghost Precinct");

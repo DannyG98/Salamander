@@ -139,6 +139,18 @@ public class PrecinctController {
         return re;
     }
 
+    @GetMapping("/{precinctName}/setGhost")
+    public ResponseEntity<?> setGhostPrecinct(@PathVariable String precinctName) {
+        PrecinctService ps = getPs();
+        Precinct targetPrecinct = ps.setGhostPrecinct(precinctName);
+        if (targetPrecinct == null) {
+            ResponseEntity<Void> re = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return re;
+        }
+        ResponseEntity<Precinct> re = ResponseEntity.ok(targetPrecinct);
+        return re;
+    }
+
     @GetMapping("/{precinctName}/updateElecData/{id}/{field}/{newVal}")
     public ResponseEntity<?> updateElecData(@PathVariable String precinctName, 
     @PathVariable int id, @PathVariable String field, @PathVariable int newVal) {
