@@ -218,6 +218,30 @@ const DataHandler = {
         })
     },
 
+    verifyGhostPrecinct: () => {
+        let precinctName = LeafletMap.currentProps.canonName
+        fetch(`/precinct/${precinctName}/setGhost`).then((response) => {
+            return response.text();
+        }).then(() => {
+            DataHandler.getAllPrecinctData(LeafletMap.currentDistrict);
+            setTimeout(() => {
+                let precinctCName = LeafletMap.currentProps.canonName;
+                let layers = LeafletMap.precinctLayer._layers;
+                Object.entries(layers).forEach(([, value]) => {
+                    let cName = value.feature.properties.canonName;
+                    if (precinctCName == cName) {
+                        LeafletMap.highlightNeighbors(precinctCName);
+                        LeafletMap.highlightPrecinct(value, LeafletMap.highlightColors.blue, true);
+                        LeafletMap.currentProps = LeafletMap.precincts[LeafletMap.currentProps.canonName];
+                        LeafletMap.infoBox.update(LeafletMap.currentProps);
+                        LeafletMap.changeInfoBoxName(LeafletMap.currentProps.displayName);
+                    }
+                });
+
+            },1000);
+        })
+    },
+
     updatePrecinctData: () => {
         switch(LeafletMap.currentMode) {
             case LeafletMap.modes.insert: {
@@ -320,23 +344,4 @@ const DataHandler = {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
 
-    verifyGhostPrecinct: () => {
-        let canonName = LeafletMap.currentProps.canonName;
-        LeafletMap.precincts[canonName].demoData.asianPop = 0;
-        LeafletMap.precincts[canonName].demoData.blackPop = 0;
-        LeafletMap.precincts[canonName].demoData.whitePop = 0;
-        LeafletMap.precincts[canonName].demoData.otherPop = 0;
-        LeafletMap.precincts[canonName].elecData.democraticVotes = 0;
-        LeafletMap.precincts[canonName].elecData.republicanVotes = 0;
-        LeafletMap.precincts[canonName].elecData.libertarianVotes = 0;
-        LeafletMap.precincts[canonName].elecData.greenVotes = 0;
-        LeafletMap.precincts[canonName].elecData.otherVotes = 0;
-        LeafletMap.precincts[canonName].displayName = "Ghost Precinct";
-        LeafletMap.infoBox.update(LeafletMap.precincts[canonName]);
-        LeafletMap.changeInfoBoxName("Ghost Precinct");
-        DataHandler.uploadNewName(canonName, "Ghost Precinct");
-        DataHandler.uploadDemoData()
-        DataHandler.uploadElecData()
-
-    }
 }
