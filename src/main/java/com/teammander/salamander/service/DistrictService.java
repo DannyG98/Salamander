@@ -6,7 +6,6 @@ import java.util.Optional;
 import com.teammander.salamander.map.District;
 import com.teammander.salamander.map.Precinct;
 import com.teammander.salamander.repository.DistrictRepository;
-import com.teammander.salamander.repository.StateRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -132,6 +132,9 @@ const DataHandler = {
             body: JSON.stringify(precinctList)
         }
         fetch('/precinct/mergePrecinct', postTemplate).then((response) => {
+            if(!response.ok) {
+                alert("Invalid Merge! Result would be a MultiPolygon")
+            }
             return response.text();
         }).then(() => {
             DataHandler.getAllPrecinctData(LeafletMap.currentDistrict); 
@@ -150,6 +153,9 @@ const DataHandler = {
             body: JSON.stringify(geometry)
         }
         fetch('/precinct/updateBoundary?pCName=' + precinctCName, postTemplate).then((response) => {
+            if (!response.ok) {
+                alert("Invalid Geometry!");
+            }
             return response.text();
         }).then(() => {
             DataHandler.getAllPrecinctData(LeafletMap.currentDistrict);
@@ -189,6 +195,9 @@ const DataHandler = {
             body: JSON.stringify({"displayName": displayName, "geometry" : JSON.stringify(geometry)})
         }
         fetch(`/precinct/newPrecinct/${LeafletMap.currentDistrict}`, postTemplate).then((response) => {
+            if (!response.ok) {
+                alert("Invalid Geometry!");
+            }
             return response.text();
         }).then(() => {
             DataHandler.getAllPrecinctData(LeafletMap.currentDistrict);
@@ -284,6 +293,7 @@ const DataHandler = {
                 for (let k in coordinatesList) {
                     newPrecinctCoordinates.push([coordinatesList[k].lng, coordinatesList[k].lat]);
                 };
+                newPrecinctCoordinates.push([coordinatesList[0].lng, coordinatesList[0].lat]);
                 let geometry = {"type": LeafletMap.precinctLayer._layers[i].feature.geometry.type, "coordinates": [newPrecinctCoordinates]}
                 DataHandler.uploadPrecinctBoundary(precinctName, geometry);
             }
