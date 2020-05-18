@@ -7,7 +7,9 @@ public enum TransactionType {
     CHANGE_NEIGHBOR("CHANGE_NEIGHBOR"),
     CHANGE_DEMODATA("CHANGE_DEMODATA"),
     CHANGE_ELECDATA("CHANGE_ELECDATA"),
-    CHANGE_BOUNDARY("CHANGE_BOUNDARY");
+    CHANGE_BOUNDARY("CHANGE_BOUNDARY"),
+    ERROR_RESOLUTION("ERROR_STATUS_CHANGE"),
+    INIT_GHOST("INITIALIZE_GHOST");
     private final String text;
 
     private TransactionType(final String text) {

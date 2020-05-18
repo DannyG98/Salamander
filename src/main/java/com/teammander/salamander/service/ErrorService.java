@@ -12,14 +12,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class ErrorService {
     ErrorRepository er;
+    TransactionService ts;
 
     @Autowired
-    public ErrorService(ErrorRepository er) {
+    public ErrorService(ErrorRepository er, TransactionService ts) {
         this.er = er;
+        this.ts = ts;
     }
 
     public ErrorRepository getEr() {
         return this.er;
+    }
+
+    public TransactionService getTs() {
+        return this.ts;
     }
 
     public DataError getError(int id) {
@@ -98,7 +104,11 @@ public class ErrorService {
 
     public void changeErrStatus(DataError err, boolean status) {
         ErrorRepository er = getEr();
+        boolean oldStatus = err.getResolved();
         err.setResolved(status);
         er.flush();
+
+        TransactionService ts = getTs();
+        ts.logErrorStatusChange(err, oldStatus, status);
     }
 }
