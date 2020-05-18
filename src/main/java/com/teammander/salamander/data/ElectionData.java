@@ -63,6 +63,7 @@ public class ElectionData {
                     mergedElection.setRepublicanVotes(mergedElection.getRepublicanVotes() + elec.getRepublicanVotes());
                     mergedElection.setGreenVotes(mergedElection.getGreenVotes() + elec.getGreenVotes());
                     mergedElection.setLibertarianVotes(mergedElection.getLibertarianVotes() + elec.getLibertarianVotes());
+                    mergedElection.setOtherVotes(mergedElection.getOtherVotes() + elec.getOtherVotes());
                 }
                 else {
                     dataTracker.put(sKey, elec);
