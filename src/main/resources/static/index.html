@@ -177,13 +177,12 @@
                                       </td>
                                   </tr>
                                   <tr>
-                                    <td><button id="go-to-error" onclick="SideBar.findPrecinct()">Go to Precinct</button></td>
-                                  </tr>
-                                  <tr>
-                                    <td>
+                                    <td id='error-buttons'>
+                                      <button id="go-to-error" onclick="SideBar.findPrecinct()">Go to Precinct</button>
                                       <button id="resolved" onclick="SideBar.errorResolved()">Resolved</button>
+                                      <button id="verify" onclick="DataHandler.verifyGhostPrecinct()"  style="display:none">Verify</button>
                                     </td>
-                                  </tr> 
+                                  </tr>
                                 </tbody>
                             </table>
                             </div>

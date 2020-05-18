@@ -60,7 +60,13 @@ const SideBar = {
     displaySelectedTypeErrors: () => {
         let selectElement = $('#error-type-selection')[0];
         let errorType = SideBar.getErrorName(selectElement.value);
-        // 
+        let precinctCName = $('#error-selection')[0].value;
+        if (errorType == "GHOST" && LeafletMap.currentProps != null && precinctCName == LeafletMap.currentProps.canonName) {
+            $('#verify').show();
+        }
+        else {
+            $('#verify').hide();
+        }
         let errorSelection = $('#error-selection').empty()[0];
         Object.entries(LeafletMap.errors).forEach(([key, value]) => {
             if (value.etype == errorType && value.affectedDistrict == LeafletMap.currentDistrict) {
@@ -85,6 +91,8 @@ const SideBar = {
 
     findPrecinct: () => {
         let precinctCName = $('#error-selection')[0].value;
+        let selectElement = $('#error-type-selection')[0];
+        let errorType = SideBar.getErrorName(selectElement.value);
         let layers = LeafletMap.precinctLayer._layers;
         Object.entries(layers).forEach(([, value]) => {
             let cName = value.feature.properties.canonName;
@@ -93,6 +101,12 @@ const SideBar = {
                 LeafletMap.highlightNeighbors(precinctCName);
                 LeafletMap.highlightPrecinct(value, LeafletMap.highlightColors.blue, true);
                 LeafletMap.changeInfoBoxName(value.feature.properties.displayName);
+                if (errorType == "GHOST" && LeafletMap.currentProps != null && precinctCName == LeafletMap.currentProps.canonName) {
+                    $('#verify').show();
+                }
+                else {
+                    $('#verify').hide();
+                }
             }
         });
     },
@@ -110,46 +124,10 @@ const SideBar = {
         let newName = $('#new-name')[0].value;
         let precinctName = LeafletMap.currentProps.canonName;
         DataHandler.uploadNewName(precinctName, newName);
-    }
+    },
 }
 
 SideBar.init();
 
-// var Colorado_errs = [
-//     {
-//         "id": 1,
-//         "district": "4-6",
-//         "coordinates" : [
-//             -105.15769958496094,
-//             39.15349256868936
-//         ],
-//         "zoom": 12
-//     },
-//     {
-//         "id": 2,
-//         "district": "2-5",
-//         "coordinates" : [
-//             -106.09977722167969,
-//             39.41418130031119
-//         ],
-//         "zoom": 12
-//     }
-// ]
-
-// function displayErrors(json) {
-//     $("#error-list").empty();
-//     for (error in json) {
-//         $("#error-list").append(
-//             "<li><a href='#' data-lat=" + json[error].coordinates[0] + " data-long=" + json[error].coordinates[1] +
-//              " data-zoom=" + json[error].zoom + " class=errlist-item id=" + json[error].id + ">Precinct " + json[error].district + "</a></li>"
-//         );
-//         addCircle(parseFloat(json[error].coordinates[0]), parseFloat(json[error].coordinates[1]), 10000);
-//     }
-
-//     $(".errlist-item").click( function () {
-//         panMap(parseFloat($(this).attr("data-lat")), parseFloat($(this).attr("data-long")), parseFloat($(this).attr("data-zoom")));
-//         addCircle(parseFloat($(this).attr("data-long")), parseFloat($(this).attr("data-lat")), 10000);
-//     });
-// }
 
 

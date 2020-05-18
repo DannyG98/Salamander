@@ -318,5 +318,25 @@ const DataHandler = {
 
     numberWithCommas: (x) => {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+
+    verifyGhostPrecinct: () => {
+        let canonName = LeafletMap.currentProps.canonName;
+        LeafletMap.precincts[canonName].demoData.asianPop = 0;
+        LeafletMap.precincts[canonName].demoData.blackPop = 0;
+        LeafletMap.precincts[canonName].demoData.whitePop = 0;
+        LeafletMap.precincts[canonName].demoData.otherPop = 0;
+        LeafletMap.precincts[canonName].elecData.democraticVotes = 0;
+        LeafletMap.precincts[canonName].elecData.republicanVotes = 0;
+        LeafletMap.precincts[canonName].elecData.libertarianVotes = 0;
+        LeafletMap.precincts[canonName].elecData.greenVotes = 0;
+        LeafletMap.precincts[canonName].elecData.otherVotes = 0;
+        LeafletMap.precincts[canonName].displayName = "Ghost Precinct";
+        LeafletMap.infoBox.update(LeafletMap.precincts[canonName]);
+        LeafletMap.changeInfoBoxName("Ghost Precinct");
+        DataHandler.uploadNewName(canonName, "Ghost Precinct");
+        DataHandler.uploadDemoData()
+        DataHandler.uploadElecData()
+
     }
 }
