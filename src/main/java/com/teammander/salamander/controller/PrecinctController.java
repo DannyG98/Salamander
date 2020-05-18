@@ -3,8 +3,6 @@ package com.teammander.salamander.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.teammander.salamander.data.DemographicData;
-import com.teammander.salamander.data.ElectionData;
 import com.teammander.salamander.map.District;
 import com.teammander.salamander.map.Precinct;
 import com.teammander.salamander.service.DistrictService;
@@ -176,10 +174,15 @@ public class PrecinctController {
     }
 
     @PostMapping("/newPrecinct/{parentName}")
-    public Precinct createNewPrecinct(@PathVariable String parentName, @RequestBody Precinct precinct) {
+    public ResponseEntity<?> createNewPrecinct(@PathVariable String parentName, @RequestBody Precinct precinct) {
         PrecinctService ps = getPs();
         Precinct newPrecinct = ps.createNewPrecinct(precinct, parentName);
-        return newPrecinct;
+        if (newPrecinct == null) {
+            ResponseEntity<Void> re = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return re;
+        }
+        ResponseEntity<Precinct> re = ResponseEntity.ok(newPrecinct);
+        return re;
     }
 
     @PostMapping("/uploadPrecinct/{parentName}")

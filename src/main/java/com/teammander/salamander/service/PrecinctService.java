@@ -1,7 +1,5 @@
 package com.teammander.salamander.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -11,16 +9,11 @@ import java.util.Set;
 
 import com.teammander.salamander.data.DemographicData;
 import com.teammander.salamander.data.Election;
-import com.teammander.salamander.data.ElectionData;
-import com.teammander.salamander.data.ElectionType;
-import com.teammander.salamander.data.Year;
 import com.teammander.salamander.map.District;
 import com.teammander.salamander.map.Precinct;
 import com.teammander.salamander.map.PrecinctType;
 import com.teammander.salamander.repository.ElectionRepository;
 import com.teammander.salamander.repository.PrecinctRepository;
-import com.teammander.salamander.transaction.Transaction;
-import com.teammander.salamander.transaction.TransactionType;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -322,6 +315,9 @@ public class PrecinctService {
             return null;
         }
         String oldGeometry = targetPrecinct.getGeometry();
+        if(!Precinct.verifyIsValid(geometry)) {
+            return null;
+        }
         targetPrecinct.setGeometry(geometry);
         pr.flush();
 
@@ -392,10 +388,15 @@ public class PrecinctService {
         return precinct;
     }
 
-
     public Precinct createNewPrecinct(Precinct precinct, String parentName) {
         PrecinctRepository pr = getPr();
         DistrictService ds = getDs();
+
+        String geometry = precinct.getGeometry();
+        if(!Precinct.verifyIsValid(geometry)) {
+            return null;
+        }
+
         District parentDistrict = ds.getDistrict(parentName);
         Random rand = new Random();
         precinct.initialize();

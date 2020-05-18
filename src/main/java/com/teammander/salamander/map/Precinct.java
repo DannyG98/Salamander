@@ -14,7 +14,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -115,6 +114,20 @@ public class Precinct extends Region{
 
         this.setElecData(newED);
         this.setDemoData(newDD);
+    }
+
+    public static boolean verifyIsValid(String geometry) {
+        GeoJSONReader reader = new GeoJSONReader();
+
+        Geometry geom = reader.read(geometry);
+        return geom.isValid();
+    }
+
+    public static boolean verifyIsSimple(String geometry) {
+        GeoJSONReader reader = new GeoJSONReader();
+
+        Geometry geom = reader.read(geometry);
+        return geom.isSimple();
     }
 
     public static Precinct mergePrecincts(List<Precinct> precincts) {

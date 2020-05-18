@@ -2,10 +2,8 @@ package com.teammander.salamander.controller;
 
 
 import com.teammander.salamander.service.TransactionService;
-import com.teammander.salamander.transaction.Comment;
 import com.teammander.salamander.transaction.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
