@@ -220,6 +220,9 @@ public class PrecinctService {
         PrecinctRepository pr = getPr();
         List<Precinct> precincts = pr.findAllById(precinctNames);
         Precinct mergedPrecinct = Precinct.mergePrecincts(precincts);
+        if (mergedPrecinct == null) {
+            return null;
+        }
         Random rand = new Random();
 
         // Generate a unique canonical name for it

@@ -26,6 +26,7 @@ import com.teammander.salamander.data.Year;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.MultiPolygon;
 import org.wololo.geojson.GeoJSON;
 import org.wololo.jts2geojson.GeoJSONReader;
 import org.wololo.jts2geojson.GeoJSONWriter;
@@ -147,6 +148,9 @@ public class Precinct extends Region{
         GeometryFactory gf = new GeometryFactory();
         GeometryCollection collection = gf.createGeometryCollection(allGeoms.toArray(new Geometry[] {}));
         Geometry mergedGeometry = collection.union();
+        if (mergedGeometry.getGeometryType().equalsIgnoreCase("multipolygon")) {
+            return null;
+        }
         GeoJSON mergedJSON = writer.write(mergedGeometry);
         String mergedString = mergedJSON.toString();
 

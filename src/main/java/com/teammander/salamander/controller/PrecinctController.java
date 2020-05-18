@@ -53,10 +53,15 @@ public class PrecinctController {
     }
 
     @PostMapping("/mergePrecinct")
-    public Precinct mergePrecinct(@RequestBody List<String> precincts) {
+    public ResponseEntity<?> mergePrecinct(@RequestBody List<String> precincts) {
         PrecinctService ps = getPs();
         Precinct mergedPrecinct = ps.mergePrecincts(precincts);
-        return mergedPrecinct;
+        if (mergedPrecinct == null) {
+            ResponseEntity<String> re = new ResponseEntity<>("Merge would result in MultiPolygon", HttpStatus.BAD_REQUEST);
+            return re;
+        }
+        ResponseEntity<Precinct> re = ResponseEntity.ok(mergedPrecinct);
+        return re;
     }
 
     @GetMapping("/removePrecinct/{precinct1}")
@@ -165,8 +170,7 @@ public class PrecinctController {
     public ResponseEntity<?> updateBoundary(@RequestParam String pCName, @RequestBody String geometry) {
         Precinct targetPrecinct = getPs().updateBoundary(pCName, geometry);
         if (targetPrecinct == null) {
-            String errMsg = ErrorMsg.unableToFindMsg(pCName);
-            ResponseEntity<String> re = new ResponseEntity<>(errMsg, HttpStatus.NOT_FOUND);
+            ResponseEntity<String> re = new ResponseEntity<>("Invalid Geometry", HttpStatus.BAD_REQUEST);
             return re;
         }
         ResponseEntity<Precinct> re = ResponseEntity.ok(targetPrecinct);
@@ -178,7 +182,7 @@ public class PrecinctController {
         PrecinctService ps = getPs();
         Precinct newPrecinct = ps.createNewPrecinct(precinct, parentName);
         if (newPrecinct == null) {
-            ResponseEntity<Void> re = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            ResponseEntity<String> re = new ResponseEntity<>("Invalid Geometry", HttpStatus.BAD_REQUEST);
             return re;
         }
         ResponseEntity<Precinct> re = ResponseEntity.ok(newPrecinct);
