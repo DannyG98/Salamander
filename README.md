@@ -22,4 +22,5 @@ Libraries Used:
   - Navigate to Salamander/src/main/resources/application.properties and configure a connection to your MySQL DB
   - Run `mvn spring-boot:run` in your terminal
   - Open a browser and go to `localhost:8080`
+  
   ** Note ** This repo does not contain any data for the database. If you want our data check the downloads section for a MySQL dump of our database
